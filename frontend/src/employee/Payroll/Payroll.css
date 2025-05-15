@@ -1,0 +1,48 @@
+/* Payroll Banner */
+.payroll-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0; /* Adjust padding for height */
+  color: white;
+  position: relative;
+  margin-left: 40px; /* Align with the rest of the content */
+  border-radius: 10px; /* Optional: Add rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+}
+
+.payroll-banner-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Payroll Container */
+.payroll-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  margin-left: 40px;
+}
+
+/* Payroll Table */
+.payroll-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.payroll-table th,
+.payroll-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.payroll-table th {
+  background-color: #f5f5f5;
+}
+
+.payroll-table td strong {
+  font-weight: bold;
+}

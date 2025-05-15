@@ -1,0 +1,214 @@
+/* Full Page Styling */
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #0b3b91, #1e5bbf); /* Blue gradient background */
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+}
+
+/* Blue Header at the Top */
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: rgba(0, 0, 0, 0.2); /* Transparent overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.school-logo {
+  width: 60px;
+  height: auto;
+  position: absolute;
+  left: 20px;
+}
+
+.school-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Login Form */
+.login-container {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  margin-top: 100px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px auto; /* Center horizontally and add bottom margin */
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0b3b91, #1e5bbf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 40px;
+}
+
+.login-title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* Input Fields */
+.input-container {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.input-container label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.input-container input {
+  width: 94%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.input-container input:focus {
+  outline: none;
+  border-color: #0b3b91;
+}
+
+/* Password Group */
+.password-group {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 70%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #aaa;
+  transition: color 0.3s ease;
+}
+
+.eye-icon:hover {
+  color: #0b3b91;
+}
+
+/* Dropdown Selector for Login Type */
+.login-type-selector {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  color: #333;
+  margin-top: 5px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.login-type-selector:focus {
+  outline: none;
+  border-color: #0b3b91;
+}
+
+/* Options Section */
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #666;
+}
+
+.forgot-password {
+  color: #0b3b91;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: #1e5bbf;
+}
+
+/* Login Button */
+.login-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: linear-gradient(135deg, #0b3b91, #1e5bbf);
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.login-button:hover {
+  background: linear-gradient(135deg, #1e5bbf, #0b3b91);
+}
+
+/* Toggle Login Button */
+.toggle-login-button {
+  margin-top: 15px;
+  background: none;
+  border: none;
+  color: #0b3b91;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.toggle-login-button:hover {
+  color: #1e5bbf;
+}

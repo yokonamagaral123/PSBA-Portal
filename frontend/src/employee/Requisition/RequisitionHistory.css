@@ -1,0 +1,48 @@
+/* Requisition History Banner */
+.requisition-history-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0; /* Adjust padding for height */
+  color: white;
+  position: relative;
+  margin-left: 40px; /* Align with the rest of the content */
+  border-radius: 10px; /* Optional: Add rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+}
+
+.requisition-history-banner-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Main Content */
+.content {
+  margin-left: 40px; /* Adjust content slightly to the right */
+  padding: 20px;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th,
+table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}

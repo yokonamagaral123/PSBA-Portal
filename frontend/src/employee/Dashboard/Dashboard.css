@@ -1,0 +1,178 @@
+/* Dashboard Banner */
+.dashboard-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0; /* Adjust padding for height */
+  color: white;
+  position: relative;
+  margin-left: 40px; /* Align with the rest of the content */
+  border-radius: 10px; /* Optional: Add rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+}
+
+.dashboard-banner-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Dashboard Widgets Layout */
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Space between widgets */
+  margin-top: 20px;
+  margin-left: 40px; /* Adjust content slightly to the right */
+}
+
+/* Image Carousel */
+.image-carousel {
+  position: relative;
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better visual separation */
+}
+
+.image-carousel img {
+  width: 100%; /* Ensure the image takes up the full width of the container */
+  height: 400px; /* Set a fixed height for all images */
+  object-fit: cover; /* Ensure the image scales properly without distortion */
+  transition: transform 0.5s ease-in-out; /* Smooth transition for image sliding */
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 50%;
+}
+
+.carousel-button.left {
+  left: 10px;
+}
+
+.carousel-button.right {
+  right: 10px;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+
+.carousel-dots .dot {
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.carousel-dots .dot.active {
+  background-color: white;
+}
+
+/* Widget Cards */
+.widget,
+.announcements,
+.todo,
+.calendar {
+  background: white;
+  padding: 20px; /* Increased padding for better spacing */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Announcements & To-Do */
+.announcements h3,
+.todo h3 {
+  margin-top: 0;
+  font-size: 18px; /* Ensure consistent font size */
+}
+
+/* To-Do Button */
+.todo button,
+.todo-btn {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px; /* Adjusted padding for better clickability */
+  font-size: 16px;
+  background-color: #2583d8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.todo button:hover,
+.todo-btn:hover {
+  background-color: #1e6ab4;
+}
+
+/* Calendar Table */
+.calendar h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px; /* Ensure consistent font size */
+}
+
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.calendar th,
+.calendar td {
+  padding: 10px; /* Increased padding for better readability */
+  border: 1px solid #ddd;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-banner {
+    margin-left: 0; /* Remove margin for smaller screens */
+  }
+
+  .dashboard-title {
+    font-size: 20px; /* Adjust title size for smaller screens */
+    text-align: center; /* Center-align title on smaller screens */
+  }
+
+  .dashboard-widgets {
+    grid-template-columns: 1fr; /* Single column layout for smaller screens */
+    margin-left: 0; /* Remove margin for smaller screens */
+  }
+
+  .widget,
+  .announcements,
+  .todo,
+  .calendar {
+    padding: 15px; /* Reduce padding for smaller screens */
+  }
+
+  .carousel-button {
+    padding: 8px; /* Adjust button size for smaller screens */
+  }
+
+  .carousel-dots .dot {
+    width: 8px;
+    height: 8px; /* Adjust dot size for smaller screens */
+  }
+}

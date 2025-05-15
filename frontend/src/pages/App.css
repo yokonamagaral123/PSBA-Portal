@@ -1,0 +1,66 @@
+/* Global Layout */
+.app-container {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px; /* Default width */
+  height: 100vh;
+  background-color: #2583d8;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  transition: width 0.3s ease; /* Smooth transition for collapsing */
+  z-index: 1000; /* Ensure it stays above other elements */
+}
+
+.sidebar.minimized {
+  width: 70px; /* Minimized width */
+  padding: 20px 10px;
+}
+
+/* Page Content */
+.page-content {
+  margin-left: 250px; /* Default sidebar width */
+  padding: 20px; /* Adjusted padding for better spacing */
+  transition: margin-left 0.3s ease; /* Smooth transition for collapsing */
+  width: calc(100% - 250px); /* Adjust width based on sidebar */
+}
+
+.sidebar-minimized .page-content {
+  margin-left: 70px; /* Adjust for minimized sidebar */
+  width: calc(100% - 70px); /* Adjust width based on minimized sidebar */
+}
+
+/* Top Bar */
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 290px; /* Default sidebar width */
+  right: 0;
+  z-index: 1000;
+  height: 50px;
+  transition: left 0.3s ease; /* Smooth transition for collapsing */
+}
+
+.sidebar-minimized .top-bar {
+  left: 90px; /* Adjust for minimized sidebar */
+}
+
+/* Adjust Page Content for Top Bar */
+.page-content {
+  margin-top: 50px; /* Adjust for the top bar height */
+} 
