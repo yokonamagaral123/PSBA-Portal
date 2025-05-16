@@ -34,7 +34,7 @@ router.post('/create', auth, async (req, res) => {
       time,
       reason,
       requestedBy: user._id,
-      requestedByName,
+      requestedByName: requestedByName,
     });
 
     await requisition.save();

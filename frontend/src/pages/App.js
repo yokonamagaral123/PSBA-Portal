@@ -25,10 +25,12 @@ import AdminPayroll from "../admin/AdminPayroll";
 
 
 // Import HR components
-import HrDashboard from "../hr/HrDashboard";
-import HrProfile from "../hr/HrProfile";
+import HrDashboard from "../hr/HrDashboard/HrDashboard";
+import HrProfile from "../hr/HrProfile/HrProfile";
+import HrSidebar from "../hr/HrSidebar/HrSidebar";
 import HrSettings from "../hr/HrSettings";
 import HrAttendance from "../hr/HrAttendance";
+
 
 import "./App.css";
 
@@ -109,7 +111,7 @@ const App = () => {
             path="/*"
             element={
               <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
-                <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
+                <HrSidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
                 <div className="page-content">
                   <Routes>
                     <Route path="/hr-dashboard" element={<HrDashboard />} />
