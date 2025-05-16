@@ -28,8 +28,14 @@ import HrDashboard from "../hr/HrDashboard/HrDashboard";
 import HrProfile from "../hr/HrProfile/HrProfile";
 import HrSidebar from "../hr/HrSidebar/HrSidebar";
 import HrSettings from "../hr/HrSettings";
-import HrAttendance from "../hr/HrAttendance";
-
+import HrAttendance from "../hr/HrAttendance/HrAttendance";
+import HrRequisitionHistory from "../hr/HrRequisition/HrRequisitionHistory";
+import HrGeneralRequest from "../hr/HrRequisition/HrGeneralRequest";
+import HrLeaveRequest from "../hr/HrRequisition/HrLeaveRequest";
+import HrViewPayroll from "../hr/HrView/HrViewPayroll";
+import HrViewAttendance from "../hr/HrView/HrViewAttendance";
+import HrViewRequisition from "../hr/HrView/HrViewRequisition";
+import HrViewDocuments from "../hr/HrView/HrViewDocuments";
 import "./App.css";
 
 const App = () => {
