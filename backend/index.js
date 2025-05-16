@@ -20,15 +20,19 @@ const authRoutes = require("./routes/auth");
 const requisitionRoutes = require("./routes/requisition");
 const adminRoutes = require("./routes/admin");
 const employeeRoutes = require("./routes/employee");
+const announcementsRoutes = require("./routes/announcements"); 
+const todoRoutes = require("./routes/todo");
 
 app.use("/api", authRoutes);
 app.use("/api/requisitions", requisitionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/employee", employeeRoutes);
+app.use("/api/announcements", announcementsRoutes); 
+app.use("/api/todos", todoRoutes);
 
 // Test route
-app.get("/", (req, res) => {
-  res.send("API is running");
+app.get("/test", (req, res) => {
+  res.send("Test route works!");
 });
 
 // Start the server
