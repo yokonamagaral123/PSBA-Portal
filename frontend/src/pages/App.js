@@ -23,14 +23,19 @@ import AdminLeaveRequest from "../admin/AdminLeaveRequest";
 import AdminRequisitionHistory from "../admin/AdminRequisitionHistory";
 import AdminPayroll from "../admin/AdminPayroll";
 
-
 // Import HR components
 import HrDashboard from "../hr/HrDashboard/HrDashboard";
 import HrProfile from "../hr/HrProfile/HrProfile";
 import HrSidebar from "../hr/HrSidebar/HrSidebar";
 import HrSettings from "../hr/HrSettings";
-import HrAttendance from "../hr/HrAttendance";
-
+import HrAttendance from "../hr/HrAttendance/HrAttendance";
+import HrRequisitionHistory from "../hr/HrRequisition/HrRequisitionHistory";
+import HrGeneralRequest from "../hr/HrRequisition/HrGeneralRequest";
+import HrLeaveRequest from "../hr/HrRequisition/HrLeaveRequest";
+import HrViewPayroll from "../hr/HrView/HrViewPayroll";
+import HrViewAttendance from "../hr/HrView/HrViewAttendance";
+import HrViewRequisition from "../hr/HrView/HrViewRequisition";
+import HrViewDocuments from "../hr/HrView/HrViewDocuments";
 
 import "./App.css";
 
@@ -118,7 +123,14 @@ const App = () => {
                     <Route path="/hr-profile" element={<HrProfile />} />
                     <Route path="/hr-settings" element={<HrSettings />} />
                     <Route path="/hr-attendance" element={<HrAttendance />} />
+                    <Route path="/hr-view/payroll" element={<HrViewPayroll />} />
+                    <Route path="/hr-view/attendance" element={<HrViewAttendance />} />
+                    <Route path="/hr-view/requisition" element={<HrViewRequisition />} />
+                    <Route path="/hr-view/documents" element={<HrViewDocuments />} />
                     <Route path="*" element={<Navigate to="/hr-dashboard" />} />
+                    <Route path="/hr-requisition-history" element={<HrRequisitionHistory />} />
+                    <Route path="/hr-general-request" element={<HrGeneralRequest />} />
+                    <Route path="/hr-leave-request" element={<HrLeaveRequest />} />
                   </Routes>
                 </div>
               </div>
