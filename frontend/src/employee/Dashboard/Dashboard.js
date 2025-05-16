@@ -9,6 +9,54 @@ const images = [bannerImage, schoolImage, school2Image];
 const Dashboard = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Announcements state and handlers
+  const [announcements, setAnnouncements] = useState([]);
+  const [showAnnouncementInput, setShowAnnouncementInput] = useState(false);
+  const [announcementInput, setAnnouncementInput] = useState("");
+
+  const handleAnnouncementAddClick = () => {
+    setShowAnnouncementInput(true);
+  };
+
+  const handleAnnouncementInputChange = (e) => {
+    setAnnouncementInput(e.target.value);
+  };
+
+  const handleAnnouncementInputKeyDown = (e) => {
+    if (e.key === "Enter" && announcementInput.trim() !== "") {
+      setAnnouncements([...announcements, announcementInput.trim()]);
+      setAnnouncementInput("");
+      setShowAnnouncementInput(false);
+    } else if (e.key === "Escape") {
+      setShowAnnouncementInput(false);
+      setAnnouncementInput("");
+    }
+  };
+
+  // To-Do state and handlers
+  const [todos, setTodos] = useState([]);
+  const [showInput, setShowInput] = useState(false);
+  const [todoInput, setTodoInput] = useState("");
+
+  const handleAddClick = () => {
+    setShowInput(true);
+  };
+
+  const handleInputChange = (e) => {
+    setTodoInput(e.target.value);
+  };
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === "Enter" && todoInput.trim() !== "") {
+      setTodos([...todos, todoInput.trim()]);
+      setTodoInput("");
+      setShowInput(false);
+    } else if (e.key === "Escape") {
+      setShowInput(false);
+      setTodoInput("");
+    }
+  };
+
   // Automatically change the image every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -74,14 +122,53 @@ const Dashboard = () => {
           </table>
         </div>
 
+        {/* Announcements Section */}
         <div className="announcements">
-          <h3>Announcements</h3>
-          <p>No announcements yet.</p>
+          <div className="announcements-header">
+            <h3>Announcements</h3>
+            <button onClick={handleAnnouncementAddClick}>+</button>
+          </div>
+          {showAnnouncementInput && (
+            <input
+              type="text"
+              className="announcement-input"
+              value={announcementInput}
+              onChange={handleAnnouncementInputChange}
+              onKeyDown={handleAnnouncementInputKeyDown}
+              autoFocus
+              placeholder="Enter announcement and press Enter"
+            />
+          )}
+          <ul className="announcement-list">
+            {announcements.length === 0 && <li>No announcements yet.</li>}
+            {announcements.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
         </div>
 
+        {/* To-Do Section */}
         <div className="todo">
-          <h3>To-Do</h3>
-          <button>+</button>
+          <div className="todo-header">
+            <h3>To-Do</h3>
+            <button onClick={handleAddClick}>+</button>
+          </div>
+          {showInput && (
+            <input
+              type="text"
+              className="todo-input"
+              value={todoInput}
+              onChange={handleInputChange}
+              onKeyDown={handleInputKeyDown}
+              autoFocus
+              placeholder="Enter your task and press Enter"
+            />
+          )}
+          <ul className="todo-list">
+            {todos.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </>

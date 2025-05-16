@@ -54,26 +54,31 @@ const GeneralRequest = () => {
   };
 
   return (
-    <div className="content">
-      <h1>General Request</h1>
-      <form onSubmit={handleSubmit}>
-        <select name="department" value={formData.department} onChange={handleChange}>
-          <option value="">Department</option>
-          <option value="HR">HR</option>
-          <option value="IT">IT</option>
-        </select>
-        <select name="purpose" value={formData.purpose} onChange={handleChange}>
-          <option value="">Purpose</option>
-          <option value="Equipment Request">Equipment Request</option>
-          <option value="Maintenance">Maintenance</option>
-        </select>
-        <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
-        <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
-        <input type="time" name="time" value={formData.time} onChange={handleChange} />
-        <textarea name="reason" placeholder="Reason..." value={formData.reason} onChange={handleChange}></textarea>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <>
+      <div className="general-request-banner">
+        <h1 className="general-request-banner-title">GENERAL REQUEST</h1>
+      </div>
+      <div className="content">
+        <h1>General Request</h1>
+        <form onSubmit={handleSubmit}>
+          <select name="department" value={formData.department} onChange={handleChange}>
+            <option value="">Department</option>
+            <option value="HR">HR</option>
+            <option value="IT">IT</option>
+          </select>
+          <select name="purpose" value={formData.purpose} onChange={handleChange}>
+            <option value="">Purpose</option>
+            <option value="Equipment Request">Equipment Request</option>
+            <option value="Maintenance">Maintenance</option>
+          </select>
+          <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
+          <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
+          <input type="time" name="time" value={formData.time} onChange={handleChange} />
+          <textarea name="reason" placeholder="Reason..." value={formData.reason} onChange={handleChange}></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </>
   );
 };
 

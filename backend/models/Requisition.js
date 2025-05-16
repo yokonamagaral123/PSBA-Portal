@@ -12,6 +12,9 @@ const requisitionSchema = new mongoose.Schema({
   dateRequested: { type: Date, default: Date.now },
   requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   requestedByName: { type: String, required: true }, // Name of the requester
+  requestedByEmployeeID: { type: String }, // Employee ID of the requester
+  remarks: { type: String }, // New field for remarks
+  status: { type: String },  // New field for status
 });
 
 const Requisition = mongoose.model('Requisition', requisitionSchema);
