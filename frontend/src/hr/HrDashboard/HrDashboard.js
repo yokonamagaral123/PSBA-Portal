@@ -15,8 +15,10 @@ const HrDashboard = () => {
 
   // Calendar state
   const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [calendar, setCalendar] = useState({
+    month: today.getMonth(),
+    year: today.getFullYear(),
+  });
 
   // To-Do state
   const [showInput, setShowInput] = useState(false);
@@ -28,6 +30,34 @@ const HrDashboard = () => {
   const [announcementInput, setAnnouncementInput] = useState("");
   const [announcements, setAnnouncements] = useState([]);
 
+  // Fetch announcements from backend on mount
+  useEffect(() => {
+    fetch("http://localhost:5000/api/announcements")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setAnnouncements(data.announcements);
+      })
+      .catch(err => console.error("Failed to fetch announcements:", err));
+  }, []);
+
+  // Fetch todos for this user on mount (user-specific by token)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch("http://localhost:5000/api/todos", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) setTodos(data.todos.map(t => t.task));
+        })
+        .catch(err => console.error("Failed to fetch todos:", err));
+    }
+  }, []);
+
+  // Carousel auto-advance
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -45,22 +75,20 @@ const HrDashboard = () => {
 
   // Calendar navigation
   const prevMonth = () => {
-    setCurrentMonth((prev) => {
-      if (prev === 0) {
-        setCurrentYear((y) => y - 1);
-        return 11;
+    setCalendar(({ month, year }) => {
+      if (month === 0) {
+        return { month: 11, year: year - 1 };
       }
-      return prev - 1;
+      return { month: month - 1, year };
     });
   };
 
   const nextMonth = () => {
-    setCurrentMonth((prev) => {
-      if (prev === 11) {
-        setCurrentYear((y) => y + 1);
-        return 0;
+    setCalendar(({ month, year }) => {
+      if (month === 11) {
+        return { month: 0, year: year + 1 };
       }
-      return prev + 1;
+      return { month: month + 1, year };
     });
   };
 
@@ -73,8 +101,8 @@ const HrDashboard = () => {
     return new Date(year, month, 1).getDay();
   };
 
-  const daysInMonth = getDaysInMonth(currentMonth, currentYear);
-  const firstDayOfWeek = getFirstDayOfWeek(currentMonth, currentYear);
+  const daysInMonth = getDaysInMonth(calendar.month, calendar.year);
+  const firstDayOfWeek = getFirstDayOfWeek(calendar.month, calendar.year);
 
   // Build calendar grid
   const calendarRows = [];
@@ -88,8 +116,8 @@ const HrDashboard = () => {
   for (let day = 1; day <= daysInMonth; day++) {
     const isToday =
       day === today.getDate() &&
-      currentMonth === today.getMonth() &&
-      currentYear === today.getFullYear();
+      calendar.month === today.getMonth() &&
+      calendar.year === today.getFullYear();
 
     cells.push(
       <td key={day} className={isToday ? "today" : ""}>{day}</td>
@@ -111,7 +139,24 @@ const HrDashboard = () => {
 
   const handleInputKeyDown = (e) => {
     if (e.key === "Enter" && todoInput.trim()) {
-      setTodos([...todos, todoInput.trim()]);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("You must be logged in to add a to-do.");
+        return;
+      }
+      fetch("http://localhost:5000/api/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ task: todoInput.trim() })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) setTodos(prev => [data.todo.task, ...prev]);
+        })
+        .catch(err => console.error("Failed to add todo:", err));
       setTodoInput("");
       setShowInput(false);
     }
@@ -130,9 +175,22 @@ const HrDashboard = () => {
     setAnnouncementInput(e.target.value);
   };
 
+  // Post new announcement to backend and update state
   const handleAnnouncementInputKeyDown = (e) => {
     if (e.key === "Enter" && announcementInput.trim()) {
-      setAnnouncements([...announcements, announcementInput.trim()]);
+      // Announcements may or may not need token, adjust as needed
+      fetch("http://localhost:5000/api/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: announcementInput.trim() })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setAnnouncements(prev => [data.announcement, ...prev]);
+          }
+        })
+        .catch(err => console.error("Failed to post announcement:", err));
       setAnnouncementInput("");
       setShowAnnouncementInput(false);
     }
@@ -176,7 +234,7 @@ const HrDashboard = () => {
           <div className="calendar-header">
             <button onClick={prevMonth}>&lt;</button>
             <h3 style={{ display: "inline", margin: "0 10px" }}>
-              {monthNames[currentMonth]} {currentYear}
+              {monthNames[calendar.month]} {calendar.year}
             </h3>
             <button onClick={nextMonth}>&gt;</button>
           </div>
@@ -215,12 +273,23 @@ const HrDashboard = () => {
               placeholder="Enter announcement and press Enter"
             />
           )}
-          <ul className="announcement-list">
-            {announcements.length === 0 && <li>No announcements yet.</li>}
+          <div className="announcement-list">
+            {announcements.length === 0 && <div className="announcement-item">No announcements yet.</div>}
             {announcements.map((item, idx) => (
-              <li key={idx}>{item}</li>
+              <div className="announcement-item" key={item._id || idx}>
+                <span className="announcement-bullet">&#8226;</span>
+                <div className="announcement-content">
+                  <div>
+                    <strong>{item.createdBy || "Unknown User"}</strong>
+                  </div>
+                  <div>{item.message}</div>
+                  <div className="announcement-date">
+                    {item.createdAt ? new Date(item.createdAt).toLocaleString() : ""}
+                  </div>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
 
         {/* To-Do Section */}

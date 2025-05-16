@@ -23,7 +23,6 @@ import AdminLeaveRequest from "../admin/AdminLeaveRequest";
 import AdminRequisitionHistory from "../admin/AdminRequisitionHistory";
 import AdminPayroll from "../admin/AdminPayroll";
 
-
 // Import HR components
 import HrDashboard from "../hr/HrDashboard/HrDashboard";
 import HrProfile from "../hr/HrProfile/HrProfile";
@@ -31,12 +30,12 @@ import HrSidebar from "../hr/HrSidebar/HrSidebar";
 import HrSettings from "../hr/HrSettings";
 import HrAttendance from "../hr/HrAttendance";
 
-
 import "./App.css";
 
 const App = () => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [user, setUser] = useState(null);
 
   const toggleSidebar = () => {
     setIsMinimized(!isMinimized);
@@ -47,12 +46,22 @@ const App = () => {
     if (storedRole) {
       setUserRole(storedRole);
     }
+    // Try to get user info from localStorage (or fetch from backend if needed)
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
+
+  // Example: After login, save user info to localStorage and state
+  // You should do this in your Login component after successful login:
+  // localStorage.setItem("user", JSON.stringify(userObject));
+  // setUser(userObject);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login setUserRole={setUserRole} />} />
+        <Route path="/" element={<Login setUserRole={setUserRole} setUser={setUser} />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {userRole === "employee" && (
@@ -114,7 +123,7 @@ const App = () => {
                 <HrSidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
                 <div className="page-content">
                   <Routes>
-                    <Route path="/hr-dashboard" element={<HrDashboard />} />
+                    <Route path="/hr-dashboard" element={<HrDashboard user={user} />} />
                     <Route path="/hr-profile" element={<HrProfile />} />
                     <Route path="/hr-settings" element={<HrSettings />} />
                     <Route path="/hr-attendance" element={<HrAttendance />} />
