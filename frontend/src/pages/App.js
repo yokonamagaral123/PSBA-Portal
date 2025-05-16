@@ -127,7 +127,14 @@ const App = () => {
                     <Route path="/hr-profile" element={<HrProfile />} />
                     <Route path="/hr-settings" element={<HrSettings />} />
                     <Route path="/hr-attendance" element={<HrAttendance />} />
+                    <Route path="/hr-view/payroll" element={<HrViewPayroll />} />
+                    <Route path="/hr-view/attendance" element={<HrViewAttendance />} />
+                    <Route path="/hr-view/requisition" element={<HrViewRequisition />} />
+                    <Route path="/hr-view/documents" element={<HrViewDocuments />} />
                     <Route path="*" element={<Navigate to="/hr-dashboard" />} />
+                    <Route path="/hr-requisition-history" element={<HrRequisitionHistory />} />
+                    <Route path="/hr-general-request" element={<HrGeneralRequest />} />
+                    <Route path="/hr-leave-request" element={<HrLeaveRequest />} />
                   </Routes>
                 </div>
               </div>

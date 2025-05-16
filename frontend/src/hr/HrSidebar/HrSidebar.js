@@ -5,6 +5,7 @@ import { FaBars, FaTachometerAlt, FaUser, FaCog, FaSignOutAlt, FaClock, FaFileAl
 
 const HrSidebar = ({ isMinimized, toggleSidebar }) => {
   const [isRequisitionOpen, setIsRequisitionOpen] = useState(false);
+  const [isHrViewOpen, setIsHrViewOpen] = useState(false);
   const location = useLocation();
 
   const toggleRequisition = () => {
@@ -60,31 +61,49 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
             <ul className="dropdown-menu">
               <li>
                 <Link
-                  to="/requisition/general"
-                  className={
-                    isActive("/requisition/general") ? "active" : ""
-                  }
+                  to="/hr-general-request"
+                  className={isActive("/hr-general-request") ? "active" : ""}
                 >
                   General Request
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/requisition/leave"
-                  className={isActive("/requisition/leave") ? "active" : ""}
+                  to="/hr-leave-request"
+                  className={isActive("/hr-leave-request") ? "active" : ""}
                 >
                   Leave Request
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/requisition/history"
-                  className={
-                    isActive("/requisition/history") ? "active" : ""
-                  }
+                  to="/hr-requisition-history"
+                  className={isActive("/hr-requisition-history") ? "active" : ""}
                 >
                   Requisition History
                 </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li className="dropdown">
+          <span onClick={() => setIsHrViewOpen(!isHrViewOpen)} className="dropdown-toggle">
+            <FaUser />
+            {!isMinimized && <span>HR View ▼</span>}
+          </span>
+          {!isMinimized && isHrViewOpen && (
+            <ul className="dropdown-menu">
+              <li>
+                <Link to="/hr-view/payroll" className={isActive("/hr-view/payroll") ? "active" : ""}>Payroll</Link>
+              </li>
+              <li>
+                <Link to="/hr-view/attendance" className={isActive("/hr-view/attendance") ? "active" : ""}>Attendance</Link>
+              </li>
+              <li>
+                <Link to="/hr-view/requisition" className={isActive("/hr-view/requisition") ? "active" : ""}>Requisition</Link>
+              </li>
+              <li>
+                <Link to="/hr-view/documents" className={isActive("/hr-view/documents") ? "active" : ""}>Documents</Link>
               </li>
             </ul>
           )}
