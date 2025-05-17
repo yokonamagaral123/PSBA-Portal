@@ -16,8 +16,8 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className={`sidebar ${isMinimized ? "minimized" : ""}`}>
-      <div className="sidebar-header">
+    <div className={`adminsidebar ${isMinimized ? "minimized" : ""}`}>
+      <div className="adminsidebar-header">
         {!isMinimized && <h2>Admin Portal</h2>}
         <span className="menu-icon" onClick={toggleSidebar}>
           <FaBars />
