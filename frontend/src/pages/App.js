@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "../employee/Sidebar/Sidebar";
-import AdminSidebar from "../admin/AdminSidebar";
+import AdminSidebar from "../admin/AdminSidebar/AdminSidebar";
 import NotificationBell from "../employee/NotifcationBell/NotificationBell";
 import Login from "../employee/Login/Login";
 import Dashboard from "../employee/Dashboard/Dashboard";
@@ -15,13 +15,17 @@ import Payroll from "../employee/Payroll/Payroll";
 import Settings from "../employee/Settings/Settings";
 import AssistBotHelp from "../employee/AssistBotHelp/AssistBotHelp";
 import AdminDashboard from "../admin/AdminDashboard";
-import AdminProfile from "../admin/AdminProfile";
-import AdminSettings from "../admin/AdminSettings";
-import AdminAttendance from "../admin/AdminAttendance";
-import AdminGeneralRequest from "../admin/AdminGeneralRequest";
-import AdminLeaveRequest from "../admin/AdminLeaveRequest";
-import AdminRequisitionHistory from "../admin/AdminRequisitionHistory";
-import AdminPayroll from "../admin/AdminPayroll";
+import AdminProfile from "../admin/AdminProfile/AdminProfile";
+import AdminSettings from "../admin/AdminSettings/AdminSettings";
+import AdminAttendance from "../admin/AdminAttendance/AdminAttendance";
+import AdminGeneralRequest from "../admin/AdminRequisition/AdminGeneralRequest";
+import AdminLeaveRequest from "../admin/AdminRequisition/AdminLeaveRequest";
+import AdminRequisitionHistory from "../admin/AdminRequisition/AdminRequisitionHistory";
+import AdminPayroll from "../admin/AdminPayroll/AdminPayroll";
+import AdminViewAttendance from "../admin/AdminView/AdminViewAttendance";
+import AdminViewPayroll from "../admin/AdminView/AdminViewPayroll";
+import AdminViewRequisition from "../admin/AdminView/AdminViewRequisition";
+import AdminViewDocuments from "../admin/AdminView/AdminViewDocuments";
 
 // Import HR components
 import HrDashboard from "../hr/HrDashboard/HrDashboard";
@@ -113,6 +117,10 @@ const App = () => {
                     <Route path="/admin-leave-request" element={<AdminLeaveRequest />} />
                     <Route path="/admin-requisition-history" element={<AdminRequisitionHistory />} />
                     <Route path="/admin-payroll" element={<AdminPayroll />} />
+                    <Route path="/admin-view/attendance" element={<AdminViewAttendance />} />
+                    <Route path="/admin-view/payroll" element={<AdminViewPayroll />} />
+                    <Route path="/admin-view/requisition" element={<AdminViewRequisition />} />
+                    <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
                     <Route path="*" element={<Navigate to="/admin-dashboard" />} />
                   </Routes>
                 </div>

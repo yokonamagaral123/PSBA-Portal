@@ -1,0 +1,57 @@
+/* Attendance Banner */
+.admin-attendance-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0;
+  color: white;
+  position: relative;
+  margin-left: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.admin-attendance-banner-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Main Content */
+.admin-attendance-main {
+  padding: 20px;
+  margin-left: 40px;
+}
+
+.admin-attendance-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Attendance Table */
+.admin-attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.admin-attendance-table th,
+.admin-attendance-table td {
+  border: 1px solid #ccc;
+  padding: 12px 10px;
+  text-align: left;
+}
+
+.admin-attendance-table th {
+  background-color: #f2f2f2;
+}
+
+.admin-attendance-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.admin-attendance-table tr:hover {
+  background-color: #e8f4ff;
+}

@@ -1,0 +1,49 @@
+/* Copied and adapted from HrViewAttendance.css */
+/* Dashboard Banner */
+.admindashboard-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0;
+  color: white;
+  position: relative;
+  margin-left: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.adminviewattendance-container {
+  padding-left: 40px;
+  padding-right: 20px;
+}
+
+.adminviewattendance-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.adminviewattendance-table th,
+.adminviewattendance-table td {
+  border: 1px solid #d1d5db;
+}
+
+.adminviewattendance-table th .adminviewattendance-header-content {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.adminviewattendance-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.adminviewattendance-searchbar {
+  margin-bottom: 16px;
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+

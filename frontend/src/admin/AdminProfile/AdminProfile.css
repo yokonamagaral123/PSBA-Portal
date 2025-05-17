@@ -1,0 +1,71 @@
+/* Profile Banner */
+.adminprofile-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 30px;
+  color: white;
+  position: relative;
+  margin-left: 40px;
+  border-radius: 10px; /* Optional: Add rounded corners */
+}
+
+/* Profile Image */
+.adminprofile-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid white;
+  margin-bottom: 10px;
+}
+
+/* Profile Info */
+.adminprofile-info h2 {
+  margin: 10px 0 5px;
+}
+
+.adminprofile-info p {
+  margin: 0;
+}
+
+/* Profile Details Section */
+.adminprofile-details {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  margin-left: 40px;
+}
+
+.adminprofile-details h3 {
+  margin-bottom: 10px;
+}
+
+.adminprofile-details ul {
+  list-style: none;
+  padding: 0;
+}
+
+.adminprofile-details ul li {
+  margin-bottom: 5px;
+}
+
+/* Edit Button */
+.adminedit-button {
+  display: block;
+  width: 100px;
+  padding: 10px;
+  background-color: #2584d6;
+  color: white;
+  border: none;
+  text-align: center;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.adminedit-button:hover {
+  background-color: #1b6bbf;
+}
