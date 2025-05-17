@@ -5,6 +5,7 @@ import { FaBars, FaTachometerAlt, FaUser, FaCog, FaSignOutAlt, FaClock, FaFileAl
 
 const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
   const [isRequisitionOpen, setIsRequisitionOpen] = useState(false);
+  const [isAdminViewOpen, setIsAdminViewOpen] = useState(false);
   const location = useLocation();
 
   const toggleRequisition = () => {
@@ -15,8 +16,8 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className={`sidebar ${isMinimized ? "minimized" : ""}`}>
-      <div className="sidebar-header">
+    <div className={`adminsidebar ${isMinimized ? "minimized" : ""}`}>
+      <div className="adminsidebar-header">
         {!isMinimized && <h2>Admin Portal</h2>}
         <span className="menu-icon" onClick={toggleSidebar}>
           <FaBars />
@@ -80,6 +81,48 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
                   className={isActive("/admin-requisition-history") ? "active" : ""}
                 >
                   Requisition History
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li className="dropdown">
+          <span onClick={() => setIsAdminViewOpen(!isAdminViewOpen)} className="dropdown-toggle">
+            <FaFileAlt />
+            {!isMinimized && <span>Admin View ▼</span>}
+          </span>
+          {!isMinimized && isAdminViewOpen && (
+            <ul className="dropdown-menu">
+              <li>
+                <Link
+                  to="/admin-view/attendance"
+                  className={isActive("/admin-view/attendance") ? "active" : ""}
+                >
+                  Attendance
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/admin-view/documents"
+                  className={isActive("/admin-view/documents") ? "active" : ""}
+                >
+                  Documents
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/admin-view/payroll"
+                  className={isActive("/admin-view/payroll") ? "active" : ""}
+                >
+                  Payroll
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/admin-view/requisition"
+                  className={isActive("/admin-view/requisition") ? "active" : ""}
+                >
+                  Requisition
                 </Link>
               </li>
             </ul>

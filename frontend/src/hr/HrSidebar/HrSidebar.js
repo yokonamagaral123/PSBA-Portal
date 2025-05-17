@@ -16,10 +16,10 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className={`sidebar ${isMinimized ? "minimized" : ""}`}>
-      <div className="sidebar-header">
+    <div className={`hrsidebar${isMinimized ? " minimized" : ""}`}>
+      <div className="hrsidebar-header">
         {!isMinimized && <h2>HR Portal</h2>}
-        <span className="menu-icon" onClick={toggleSidebar}>
+        <span className="hr-menu-icon" onClick={toggleSidebar}>
           <FaBars />
         </span>
       </div>
@@ -52,13 +52,13 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
             {!isMinimized && <span>Attendance</span>}
           </Link>
         </li>
-        <li className="dropdown">
-          <span onClick={toggleRequisition} className="dropdown-toggle">
+        <li className="hr-dropdown">
+          <span onClick={toggleRequisition} className="hr-dropdown-toggle">
             <FaFileAlt />
             {!isMinimized && <span>Requisition ▼</span>}
           </span>
           {!isMinimized && isRequisitionOpen && (
-            <ul className="dropdown-menu">
+            <ul className="hr-dropdown-menu">
               <li>
                 <Link
                   to="/hr-general-request"
@@ -86,13 +86,13 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
             </ul>
           )}
         </li>
-        <li className="dropdown">
-          <span onClick={() => setIsHrViewOpen(!isHrViewOpen)} className="dropdown-toggle">
+        <li className="hr-dropdown">
+          <span onClick={() => setIsHrViewOpen(!isHrViewOpen)} className="hr-dropdown-toggle">
             <FaUser />
             {!isMinimized && <span>HR View ▼</span>}
           </span>
           {!isMinimized && isHrViewOpen && (
-            <ul className="dropdown-menu">
+            <ul className="hr-dropdown-menu">
               <li>
                 <Link to="/hr-view/payroll" className={isActive("/hr-view/payroll") ? "active" : ""}>Payroll</Link>
               </li>

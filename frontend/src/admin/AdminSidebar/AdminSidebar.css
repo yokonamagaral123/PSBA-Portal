@@ -1,0 +1,118 @@
+/* Admin Sidebar Styles */
+.adminsidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #2583d8;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  transition: width 0.3s ease;
+  z-index: 1000;
+}
+
+.adminsidebar.minimized {
+  width: 70px;
+  padding: 20px 10px;
+}
+
+/* Admin Sidebar Header */
+.adminsidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.adminsidebar-header h2 {
+  font-size: 20px;
+  text-align: center;
+  margin: 0;
+}
+
+.adminsidebar.minimized .adminsidebar-header h2 {
+  display: none;
+}
+
+/* Admin Sidebar List */
+.adminsidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.adminsidebar ul li {
+  margin-bottom: 15px;
+}
+
+.adminsidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 15px;
+  border-radius: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.adminsidebar ul li a.active,
+.adminsidebar ul li a:hover {
+  background-color: #1c5a80;
+  font-weight: bold;
+}
+
+/* Admin Dropdown Menu */
+.adminsidebar .dropdown .dropdown-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border-radius: 5px;
+  gap: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.adminsidebar .dropdown-menu {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.adminsidebar .dropdown-menu li {
+  margin-bottom: 10px;
+}
+
+.adminsidebar .dropdown-menu li a {
+  color: white;
+  text-decoration: none;
+}
+
+.adminsidebar .dropdown-menu li a:hover {
+  text-decoration: underline;
+}
+
+/* Hamburger Icon */
+.adminsidebar .menu-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.adminsidebar.minimized .dropdown-menu,
+.adminsidebar.minimized .dropdown-toggle span,
+.adminsidebar.minimized ul li a span {
+  display: none;
+}
+
+.adminsidebar.minimized ul li a,
+.adminsidebar.minimized .dropdown .dropdown-toggle {
+  justify-content: center;
+}
+
+.adminsidebar.minimized ul li {
+  margin-bottom: 20px;
+}
