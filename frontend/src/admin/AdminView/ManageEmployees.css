@@ -1,0 +1,217 @@
+/* Modern styles for Manage Employees page */
+.manage-employees-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 32px 24px 24px 24px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13), 0 1.5px 6px rgba(0,0,0,0.07);
+  position: relative;
+}
+
+.manage-employees-container h1 {
+  text-align: center;
+  margin-bottom: 28px;
+  color: #1a237e;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.manage-employees-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  background: #f7fafd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.manage-employees-table th, .manage-employees-table td {
+  padding: 14px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e3e8ee;
+}
+
+.manage-employees-table th {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.manage-employees-table tr:last-child td {
+  border-bottom: none;
+}
+
+.view-btn, .edit-btn, .remove-btn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-right: 6px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.view-btn {
+  background: #1976d2;
+  color: #fff;
+}
+.view-btn:hover {
+  background: #1565c0;
+}
+.edit-btn {
+  background: #43a047;
+  color: #fff;
+}
+.edit-btn:hover {
+  background: #2e7d32;
+}
+.remove-btn {
+  background: #e53935;
+  color: #fff;
+}
+.remove-btn:hover {
+  background: #b71c1c;
+}
+
+.manage-employees-loading {
+  text-align: center;
+  color: #1976d2;
+  font-size: 1.2rem;
+  margin: 32px 0;
+}
+
+/* Modal overlay and modal styles */
+.manage-employees-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(33, 33, 33, 0.32);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
+}
+
+.manage-employees-modal {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 32px 36px 28px 36px;
+  max-width: 480px;
+  width: 95vw;
+  text-align: left;
+  animation: fadeIn 0.3s;
+  position: relative;
+}
+
+.manage-employees-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #1976d2;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+}
+.manage-employees-modal-close:hover {
+  color: #1565c0;
+}
+
+.manage-employees-profile-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+}
+.manage-employees-profile-list li {
+  margin-bottom: 7px;
+  font-size: 1.05rem;
+}
+
+.manage-employees-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.manage-employees-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 18px;
+  margin-bottom: 18px;
+}
+
+.manage-employees-edit-grid label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #1976d2;
+  font-size: 1rem;
+  gap: 6px;
+}
+
+.manage-employees-edit-grid input {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1.5px solid #d0d7e2;
+  border-radius: 6px;
+  background: #f7fafd;
+  transition: border 0.2s;
+}
+
+.manage-employees-edit-grid input:focus {
+  border: 1.5px solid #1976d2;
+  outline: none;
+}
+
+.manage-employees-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.manage-employees-add-btn {
+  display: inline-block;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 600;
+  padding: 11px 28px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  margin-bottom: 18px;
+  margin-left: auto;
+  margin-right: 0;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.manage-employees-add-btn:hover {
+  background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+  transform: translateY(-2px) scale(1.03);
+}
+@media (max-width: 768px) {
+  .manage-employees-container {
+    padding: 12px 2vw 12px 2vw;
+  }
+  .manage-employees-modal {
+    padding: 18px 6vw 18px 6vw;
+  }
+  .manage-employees-edit-grid {
+    grid-template-columns: 1fr;
+  }
+  .manage-employees-add-btn {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+}
