@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./AdminDashboard.css";
-import { FaUsers, FaBuilding, FaMoneyBillWave, FaFileAlt, FaCheckCircle, FaHourglassHalf, FaTimesCircle } from "react-icons/fa";
-import bannerImage from '../../assets/blue.png';
+import { FaUsers, FaBuilding, FaFileAlt, FaCheckCircle, FaHourglassHalf, FaTimesCircle } from "react-icons/fa";
 import schoolImage from '../../assets/school.png';
 import school2Image from '../../assets/school2.png';
 
-const images = [schoolImage, school2Image,];
-
+const images = [schoolImage, school2Image];
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
@@ -18,16 +16,19 @@ const AdminDashboard = () => {
   // Carousel state
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Calendar state
+  // Calendar state: use a single Date object for robust navigation
   const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
-
-  // Announcements state
-  const [announcements] = useState([]); // Static for now
+  const [calendarDate, setCalendarDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
 
   // To-Do state
-  const [todos] = useState([]); // Static for now
+  const [showInput, setShowInput] = useState(false);
+  const [todoInput, setTodoInput] = useState("");
+  const [todos, setTodos] = useState([]);
+
+  // Announcements state
+  const [showAnnouncementInput, setShowAnnouncementInput] = useState(false);
+  const [announcementInput, setAnnouncementInput] = useState("");
+  const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
     fetch("/api/admin/user-count")
@@ -36,89 +37,209 @@ const AdminDashboard = () => {
       .catch(() => setUserCount(0));
   }, []);
 
+  // Carousel auto-advance
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Carousel handlers
-  const goToPrevious = () => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  const goToNext = () => setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  const goToPrevious = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+  };
 
-  // Calendar helpers
-  const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
-  const getFirstDayOfWeek = (month, year) => new Date(year, month, 1).getDay();
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
 
+  // Calendar navigation (robust, single state)
+  const prevMonth = () => {
+    setCalendarDate((prevDate) => {
+      const newDate = new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1);
+      return newDate;
+    });
+  };
+
+  const nextMonth = () => {
+    setCalendarDate((prevDate) => {
+      const newDate = new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1);
+      return newDate;
+    });
+  };
+
+  // Generate calendar days
+  const getDaysInMonth = (month, year) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfWeek = (month, year) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const currentMonth = calendarDate.getMonth();
+  const currentYear = calendarDate.getFullYear();
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
   const firstDayOfWeek = getFirstDayOfWeek(currentMonth, currentYear);
 
   // Build calendar grid
   const calendarRows = [];
   let cells = [];
-  for (let i = 0; i < firstDayOfWeek; i++) cells.push(<td key={`empty-${i}`}></td>);
+
+  // Fill initial empty cells
+  for (let i = 0; i < firstDayOfWeek; i++) {
+    cells.push(<td key={`empty-start-${i}`}></td>);
+  }
+
   for (let day = 1; day <= daysInMonth; day++) {
-    cells.push(<td key={day}>{day}</td>);
+    const isToday =
+      day === today.getDate() &&
+      currentMonth === today.getMonth() &&
+      currentYear === today.getFullYear();
+
+    cells.push(
+      <td key={day} className={isToday ? "today" : ""}>{day}</td>
+    );
     if ((cells.length) % 7 === 0 || day === daysInMonth) {
-      calendarRows.push(<tr key={day}>{cells}</tr>);
+      calendarRows.push(<tr key={`row-${day}`}>{cells}</tr>);
       cells = [];
     }
   }
 
+  // To-Do handlers
+  const handleAddClick = () => setShowInput(true);
+  const handleInputChange = (e) => setTodoInput(e.target.value);
+  const handleInputKeyDown = (e) => {
+    if (e.key === "Enter" && todoInput.trim()) {
+      setTodos([...todos, todoInput.trim()]);
+      setTodoInput("");
+      setShowInput(false);
+    }
+    if (e.key === "Escape") {
+      setShowInput(false);
+      setTodoInput("");
+    }
+  };
+
+  // Announcement handlers
+  const handleAnnouncementAddClick = () => setShowAnnouncementInput(true);
+  const handleAnnouncementInputChange = (e) => setAnnouncementInput(e.target.value);
+  const handleAnnouncementInputKeyDown = (e) => {
+    if (e.key === "Enter" && announcementInput.trim()) {
+      setAnnouncements([...announcements, announcementInput.trim()]);
+      setAnnouncementInput("");
+      setShowAnnouncementInput(false);
+    }
+    if (e.key === "Escape") {
+      setShowAnnouncementInput(false);
+      setAnnouncementInput("");
+    }
+  };
+
   return (
-    <div className="admin-dashboard-container">
-      {/* Banner */}
-      <div className="dashboard-banner" style={{
-        background: `url(${bannerImage}) no-repeat center`,
-        backgroundSize: "cover",
-        textAlign: "center",
-        padding: "110px 0",
-        color: "white",
-        borderRadius: "10px",
-        marginBottom: "20px"
-      }}>
-        <h1 className="dashboard-banner-title">DASHBOARD</h1>
+    <>
+      {/* Dashboard Banner */}
+      <div className="dashboard-banner">
+        <h1 className="dashboard-banner-title">ADMIN DASHBOARD</h1>
       </div>
 
-      {/* Widgets */}
-      <div className="dashboard-widgets" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+      {/* Dashboard Content */}
+      <div className="dashboard-widgets">
         {/* Image Carousel */}
-        <div className="widget image-carousel" style={{ background: "#fff", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-          <img src={images[currentIndex]} alt="School" style={{ width: "100%", height: "300px", objectFit: "cover" }} />
-          <button className="carousel-button left" onClick={goToPrevious}>&lt;</button>
-          <button className="carousel-button right" onClick={goToNext}>&gt;</button>
+        <div className="image-carousel">
+          <button className="carousel-button left" onClick={goToPrevious}>
+            &#8249;
+          </button>
+          <img src={images[currentIndex]} alt={`Slide ${currentIndex + 1}`} />
+          <button className="carousel-button right" onClick={goToNext}>
+            &#8250;
+          </button>
+          <div className="carousel-dots">
+            {images.map((_, index) => (
+              <span
+                key={index}
+                className={`dot ${index === currentIndex ? "active" : ""}`}
+                onClick={() => setCurrentIndex(index)}
+              ></span>
+            ))}
+          </div>
         </div>
 
         {/* Calendar */}
-        <div className="widget calendar" style={{ background: "#fff", borderRadius: "10px", padding: "20px" }}>
-          <h3>{monthNames[currentMonth]} {currentYear}</h3>
+        <div className="calendar">
+          <div className="calendar-header">
+            <button onClick={prevMonth}>&lt;</button>
+            <h3 style={{ display: "inline", margin: "0 10px" }}>
+              {monthNames[currentMonth]} {currentYear}
+            </h3>
+            <button onClick={nextMonth}>&gt;</button>
+          </div>
           <table>
             <thead>
               <tr>
-                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
               </tr>
             </thead>
-            <tbody>{calendarRows}</tbody>
+            <tbody>
+              {calendarRows}
+            </tbody>
           </table>
         </div>
 
-        {/* Announcements */}
-        <div className="widget announcements" style={{ background: "#fff", borderRadius: "10px", padding: "20px" }}>
-          <h3>Announcements</h3>
-          {announcements.length === 0 ? (
-            <p>No announcements yet.</p>
-          ) : (
-            <ul>
-              {announcements.map((a, i) => <li key={i}>{a}</li>)}
-            </ul>
+        {/* Announcements Section */}
+        <div className="announcements">
+          <div className="announcements-header">
+            <h3>Announcements</h3>
+            <button onClick={handleAnnouncementAddClick}>+</button>
+          </div>
+          {showAnnouncementInput && (
+            <input
+              type="text"
+              className="announcement-input"
+              value={announcementInput}
+              onChange={handleAnnouncementInputChange}
+              onKeyDown={handleAnnouncementInputKeyDown}
+              autoFocus
+              placeholder="Enter announcement and press Enter"
+            />
           )}
+          <ul className="announcement-list">
+            {announcements.length === 0 && <li>No announcements yet.</li>}
+            {announcements.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
         </div>
 
-        {/* To-Do */}
-        <div className="widget todo" style={{ background: "#fff", borderRadius: "10px", padding: "20px" }}>
-          <h3>To-Do</h3>
-          <button style={{ background: "#2196f3", color: "#fff", border: "none", borderRadius: "5px", width: "40px", height: "40px", fontSize: "1.5rem" }}>+</button>
-          {todos.length === 0 ? (
-            <p></p>
-          ) : (
-            <ul>
-              {todos.map((t, i) => <li key={i}>{t}</li>)}
-            </ul>
+        {/* To-Do Section */}
+        <div className="todo">
+          <div className="todo-header">
+            <h3>To-Do</h3>
+            <button onClick={handleAddClick}>+</button>
+          </div>
+          {showInput && (
+            <input
+              type="text"
+              className="todo-input"
+              value={todoInput}
+              onChange={handleInputChange}
+              onKeyDown={handleInputKeyDown}
+              autoFocus
+              placeholder="Enter your task and press Enter"
+            />
           )}
+          <ul className="todo-list">
+            {todos.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
         </div>
       </div>
 
@@ -141,15 +262,6 @@ const AdminDashboard = () => {
           <div className="dashboard-card-content">
             <div className="dashboard-card-title">Total Departments</div>
             <div className="dashboard-card-value">3</div>
-          </div>
-        </div>
-        <div className="dashboard-card">
-          <div className="dashboard-card-icon" style={{ background: "#e74c3c", color: "#fff" }}>
-            <FaMoneyBillWave />
-          </div>
-          <div className="dashboard-card-content">
-            <div className="dashboard-card-title">Monthly Pay</div>
-            <div className="dashboard-card-value">${1900}</div>
           </div>
         </div>
       </div>
@@ -192,7 +304,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
