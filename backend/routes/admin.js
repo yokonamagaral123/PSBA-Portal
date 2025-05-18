@@ -5,6 +5,16 @@ const User = require("../models/User");
 
 const router = express.Router(); // Initialize the router
 
+// User count route (fix: move to top level)
+router.get("/user-count", async (req, res) => {
+  try {
+    const count = await User.countDocuments();
+    res.json({ count });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // Create employee route
 router.post("/create-employee", async (req, res) => {
   try {
