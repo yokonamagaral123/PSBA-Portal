@@ -26,6 +26,7 @@ import AdminViewAttendance from "../admin/AdminView/AdminViewAttendance";
 import AdminViewPayroll from "../admin/AdminView/AdminViewPayroll";
 import AdminViewRequisition from "../admin/AdminView/AdminViewRequisition";
 import AdminViewDocuments from "../admin/AdminView/AdminViewDocuments";
+import AdminAccountCreation from "../admin/AdminView/AdminAccountCreation";
 
 // Import HR components
 import HrDashboard from "../hr/HrDashboard/HrDashboard";
@@ -121,6 +122,7 @@ const App = () => {
                     <Route path="/admin-view/payroll" element={<AdminViewPayroll />} />
                     <Route path="/admin-view/requisition" element={<AdminViewRequisition />} />
                     <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
+                    <Route path="/admin-view/account-creation" element={<AdminAccountCreation />} />
                     <Route path="*" element={<Navigate to="/admin-dashboard" />} />
                   </Routes>
                 </div>
