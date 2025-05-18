@@ -203,26 +203,26 @@ const HrDashboard = () => {
   return (
     <>
       {/* Dashboard Banner */}
-      <div className="dashboard-banner">
-        <h1 className="dashboard-banner-title">HR DASHBOARD</h1>
+      <div className="hrdashboard-banner">
+        <h1 className="hrdashboard-banner-title">HR DASHBOARD</h1>
       </div>
 
       {/* Dashboard Content */}
-      <div className="dashboard-widgets">
+      <div className="hrdashboard-widgets">
         {/* Image Carousel */}
-        <div className="image-carousel">
-          <button className="carousel-button left" onClick={goToPrevious}>
+        <div className="hrdashboard-image-carousel">
+          <button className="hrdashboard-carousel-button left" onClick={goToPrevious}>
             &#8249;
           </button>
           <img src={images[currentIndex]} alt={`Slide ${currentIndex + 1}`} />
-          <button className="carousel-button right" onClick={goToNext}>
+          <button className="hrdashboard-carousel-button right" onClick={goToNext}>
             &#8250;
           </button>
-          <div className="carousel-dots">
+          <div className="hrdashboard-carousel-dots">
             {images.map((_, index) => (
               <span
                 key={index}
-                className={`dot ${index === currentIndex ? "active" : ""}`}
+                className={`hrdashboard-dot ${index === currentIndex ? "hrdashboard-active" : ""}`}
                 onClick={() => setCurrentIndex(index)}
               ></span>
             ))}
@@ -230,8 +230,8 @@ const HrDashboard = () => {
         </div>
 
         {/* Functional Calendar */}
-        <div className="calendar">
-          <div className="calendar-header">
+        <div className="hrdashboard-calendar">
+          <div className="hrdashboard-calendar-header">
             <button onClick={prevMonth}>&lt;</button>
             <h3 style={{ display: "inline", margin: "0 10px" }}>
               {monthNames[calendar.month]} {calendar.year}
@@ -257,15 +257,15 @@ const HrDashboard = () => {
         </div>
 
         {/* Announcements Section */}
-        <div className="announcements">
-          <div className="announcements-header">
+        <div className="hrdashboard-announcements">
+          <div className="hrdashboard-announcements-header">
             <h3>Announcements</h3>
             <button onClick={handleAnnouncementAddClick}>+</button>
           </div>
           {showAnnouncementInput && (
             <input
               type="text"
-              className="announcement-input"
+              className="hrdashboard-announcement-input"
               value={announcementInput}
               onChange={handleAnnouncementInputChange}
               onKeyDown={handleAnnouncementInputKeyDown}
@@ -273,17 +273,17 @@ const HrDashboard = () => {
               placeholder="Enter announcement and press Enter"
             />
           )}
-          <div className="announcement-list">
-            {announcements.length === 0 && <div className="announcement-item">No announcements yet.</div>}
+          <div className="hrdashboard-announcement-list">
+            {announcements.length === 0 && <div className="hrdashboard-announcement-item">No announcements yet.</div>}
             {announcements.map((item, idx) => (
-              <div className="announcement-item" key={item._id || idx}>
-                <span className="announcement-bullet">&#8226;</span>
-                <div className="announcement-content">
+              <div className="hrdashboard-announcement-item" key={item._id || idx}>
+                <span className="hrdashboard-announcement-bullet">&#8226;</span>
+                <div className="hrdashboard-announcement-content">
                   <div>
                     <strong>{item.createdBy || "Unknown User"}</strong>
                   </div>
                   <div>{item.message}</div>
-                  <div className="announcement-date">
+                  <div className="hrdashboard-announcement-date">
                     {item.createdAt ? new Date(item.createdAt).toLocaleString() : ""}
                   </div>
                 </div>
@@ -293,15 +293,15 @@ const HrDashboard = () => {
         </div>
 
         {/* To-Do Section */}
-        <div className="todo">
-          <div className="todo-header">
+        <div className="hrdashboard-todo">
+          <div className="hrdashboard-todo-header">
             <h3>To-Do</h3>
             <button onClick={handleAddClick}>+</button>
           </div>
           {showInput && (
             <input
               type="text"
-              className="todo-input"
+              className="hrdashboard-todo-input"
               value={todoInput}
               onChange={handleInputChange}
               onKeyDown={handleInputKeyDown}
@@ -309,7 +309,7 @@ const HrDashboard = () => {
               placeholder="Enter your task and press Enter"
             />
           )}
-          <ul className="todo-list">
+          <ul className="hrdashboard-todo-list">
             {todos.map((item, idx) => (
               <li key={idx}>{item}</li>
             ))}

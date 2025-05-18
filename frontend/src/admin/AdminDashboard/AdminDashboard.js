@@ -11,8 +11,7 @@ const monthNames = [
 ];
 
 const AdminDashboard = () => {
-  const [employees, setEmployees] = useState([]);
-  const [departments, setDepartments] = useState([]);
+  const [employees, setEmployees] = useState([]); // Add employees state
   const [requisitions, setRequisitions] = useState([]);
 
   // Carousel state
@@ -33,22 +32,22 @@ const AdminDashboard = () => {
   const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
-    // Fetch all employees
+    // Fetch all employees (for count and departments)
     const fetchEmployees = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("/api/admin/employees", {
+        const res = await fetch("http://localhost:5000/api/admin/employees", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error("Failed to fetch employees:", res.status, errText);
+        }
         const data = await res.json();
         setEmployees(data.employees || []);
-        // Unique departments
-        setDepartments(
-          Array.from(new Set((data.employees || []).map(e => e.department).filter(Boolean)))
-        );
-      } catch {
+      } catch (err) {
+        console.error("Error fetching employees:", err);
         setEmployees([]);
-        setDepartments([]);
       }
     };
     fetchEmployees();
@@ -57,12 +56,17 @@ const AdminDashboard = () => {
     const fetchRequisitions = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("/api/requisitions/all", {
+        const res = await fetch("http://localhost:5000/api/requisitions/all", { 
           headers: { Authorization: `Bearer ${token}` },
         });
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error("Failed to fetch requisitions:", res.status, errText);
+        }
         const data = await res.json();
         setRequisitions(data.requisitions || []);
-      } catch {
+      } catch (err) {
+        console.error("Error fetching requisitions:", err);
         setRequisitions([]);
       }
     };
@@ -170,36 +174,36 @@ const AdminDashboard = () => {
   };
 
   // Dashboard stats
-  const totalEmployees = employees.length;
-  const totalDepartments = departments.length;
+  const totalEmployees = employees.length; // Use employees array for count
+  const totalDepartments = Array.from(new Set(employees.map(e => e.department).filter(Boolean))).length;
   const leaveApplied = requisitions.filter(r => r.type === "General Request" || r.type === "Leave Request").length;
   const leaveApproved = requisitions.filter(r => r.status === "approved").length;
   const leavePending = requisitions.filter(r => r.status === "pending").length;
-  const leaveRejected = requisitions.filter(r => r.status === "declined" || r.status === "rejected").length;
+  const leaveRejected = requisitions.filter(r => r.status === "declined").length;
 
   return (
     <>
-      {/* Dashboard Banner */}
-      <div className="dashboard-banner">
-        <h1 className="dashboard-banner-title">ADMIN DASHBOARD</h1>
+      {/* Admin Dashboard Banner */}
+      <div className="admindashboard-banner">
+        <h1 className="admindashboard-banner-title">ADMIN DASHBOARD</h1>
       </div>
 
       {/* Dashboard Content */}
-      <div className="dashboard-widgets">
+      <div className="admindashboard-widgets">
         {/* Image Carousel */}
-        <div className="image-carousel">
-          <button className="carousel-button left" onClick={goToPrevious}>
+        <div className="admindashboard-image-carousel">
+          <button className="admindashboard-carousel-button left" onClick={goToPrevious}>
             &#8249;
           </button>
           <img src={images[currentIndex]} alt={`Slide ${currentIndex + 1}`} />
-          <button className="carousel-button right" onClick={goToNext}>
+          <button className="admindashboard-carousel-button right" onClick={goToNext}>
             &#8250;
           </button>
-          <div className="carousel-dots">
+          <div className="admindashboard-carousel-dots">
             {images.map((_, index) => (
               <span
                 key={index}
-                className={`dot ${index === currentIndex ? "active" : ""}`}
+                className={`dot${index === currentIndex ? " active" : ""}`}
                 onClick={() => setCurrentIndex(index)}
               ></span>
             ))}
@@ -207,8 +211,8 @@ const AdminDashboard = () => {
         </div>
 
         {/* Calendar */}
-        <div className="calendar">
-          <div className="calendar-header">
+        <div className="admindashboard-calendar">
+          <div className="admindashboard-calendar-header">
             <button onClick={prevMonth}>&lt;</button>
             <h3 style={{ display: "inline", margin: "0 10px" }}>
               {monthNames[currentMonth]} {currentYear}
@@ -234,15 +238,15 @@ const AdminDashboard = () => {
         </div>
 
         {/* Announcements Section */}
-        <div className="announcements">
-          <div className="announcements-header">
+        <div className="admindashboard-announcements">
+          <div className="admindashboard-announcements-header">
             <h3>Announcements</h3>
             <button onClick={handleAnnouncementAddClick}>+</button>
           </div>
           {showAnnouncementInput && (
             <input
               type="text"
-              className="announcement-input"
+              className="admindashboard-announcement-input"
               value={announcementInput}
               onChange={handleAnnouncementInputChange}
               onKeyDown={handleAnnouncementInputKeyDown}
@@ -250,7 +254,7 @@ const AdminDashboard = () => {
               placeholder="Enter announcement and press Enter"
             />
           )}
-          <ul className="announcement-list">
+          <ul className="admindashboard-announcement-list">
             {announcements.length === 0 && <li>No announcements yet.</li>}
             {announcements.map((item, idx) => (
               <li key={idx}>{item}</li>
@@ -259,15 +263,15 @@ const AdminDashboard = () => {
         </div>
 
         {/* To-Do Section */}
-        <div className="todo">
-          <div className="todo-header">
+        <div className="admindashboard-todo">
+          <div className="admindashboard-todo-header">
             <h3>To-Do</h3>
             <button onClick={handleAddClick}>+</button>
           </div>
           {showInput && (
             <input
               type="text"
-              className="todo-input"
+              className="admindashboard-todo-input"
               value={todoInput}
               onChange={handleInputChange}
               onKeyDown={handleInputKeyDown}
@@ -275,7 +279,7 @@ const AdminDashboard = () => {
               placeholder="Enter your task and press Enter"
             />
           )}
-          <ul className="todo-list">
+          <ul className="admindashboard-todo-list">
             {todos.map((item, idx) => (
               <li key={idx}>{item}</li>
             ))}
@@ -283,64 +287,64 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Existing Overview and Leave Details */}
-      <div className="dashboard-section-title">Dashboard Overview</div>
-      <div className="dashboard-overview">
-        <div className="dashboard-card">
-          <div className="dashboard-card-icon" style={{ background: "#009688" }}>
+      {/* Admin Overview and Leave Details */}
+      <div className="admindashboard-section-title">Admin Overview</div>
+      <div className="admindashboard-overview">
+        <div className="admindashboard-card">
+          <div className="admindashboard-card-icon" style={{ background: "#009688" }}>
             <FaUsers />
           </div>
-          <div className="dashboard-card-content">
-            <div className="dashboard-card-title">Total Employees</div>
-            <div className="dashboard-card-value">{totalEmployees}</div>
+          <div className="admindashboard-card-content">
+            <div className="admindashboard-card-title">Total Admin Employees</div>
+            <div className="admindashboard-card-value">{totalEmployees}</div>
           </div>
         </div>
-        <div className="dashboard-card">
-          <div className="dashboard-card-icon" style={{ background: "#f7c948", color: "#fff" }}>
+        <div className="admindashboard-card">
+          <div className="admindashboard-card-icon" style={{ background: "#f7c948", color: "#fff" }}>
             <FaBuilding />
           </div>
-          <div className="dashboard-card-content">
-            <div className="dashboard-card-title">Total Departments</div>
-            <div className="dashboard-card-value">{totalDepartments}</div>
+          <div className="admindashboard-card-content">
+            <div className="admindashboard-card-title">Total Admin Departments</div>
+            <div className="admindashboard-card-value">{totalDepartments}</div>
           </div>
         </div>
       </div>
-      <div className="dashboard-section-title">Leave Details</div>
-      <div className="leave-details-cards">
-        <div className="leave-card applied">
-          <div className="leave-card-icon" style={{ background: "#009688", color: "#fff" }}>
+      <div className="admindashboard-section-title">Admin Leave Details</div>
+      <div className="admindashboard-leave-details-cards">
+        <div className="admindashboard-leave-card applied">
+          <div className="admindashboard-leave-card-icon" style={{ background: "#009688", color: "#fff" }}>
             <FaFileAlt />
           </div>
-          <div className="leave-card-content">
-            <div className="leave-card-title">Leave Applied</div>
-            <div className="leave-card-value">{leaveApplied}</div>
+          <div className="admindashboard-leave-card-content">
+            <div className="admindashboard-leave-card-title">Admin Leave Applied</div>
+            <div className="admindashboard-leave-card-value">{leaveApplied}</div>
           </div>
         </div>
-        <div className="leave-card approved">
-          <div className="leave-card-icon" style={{ background: "#3bb77e", color: "#fff" }}>
+        <div className="admindashboard-leave-card approved">
+          <div className="admindashboard-leave-card-icon" style={{ background: "#3bb77e", color: "#fff" }}>
             <FaCheckCircle />
           </div>
-          <div className="leave-card-content">
-            <div className="leave-card-title approved">Leave Approved</div>
-            <div className="leave-card-value">{leaveApproved}</div>
+          <div className="admindashboard-leave-card-content">
+            <div className="admindashboard-leave-card-title approved">Admin Leave Approved</div>
+            <div className="admindashboard-leave-card-value">{leaveApproved}</div>
           </div>
         </div>
-        <div className="leave-card pending">
-          <div className="leave-card-icon" style={{ background: "#e6b800", color: "#fff" }}>
+        <div className="admindashboard-leave-card pending">
+          <div className="admindashboard-leave-card-icon" style={{ background: "#e6b800", color: "#fff" }}>
             <FaHourglassHalf />
           </div>
-          <div className="leave-card-content">
-            <div className="leave-card-title pending">Leave Pending</div>
-            <div className="leave-card-value">{leavePending}</div>
+          <div className="admindashboard-leave-card-content">
+            <div className="admindashboard-leave-card-title pending">Admin Leave Pending</div>
+            <div className="admindashboard-leave-card-value">{leavePending}</div>
           </div>
         </div>
-        <div className="leave-card rejected">
-          <div className="leave-card-icon" style={{ background: "#e74c3c", color: "#fff" }}>
+        <div className="admindashboard-leave-card rejected">
+          <div className="admindashboard-leave-card-icon" style={{ background: "#e74c3c", color: "#fff" }}>
             <FaTimesCircle />
           </div>
-          <div className="leave-card-content">
-            <div className="leave-card-title rejected">Leave Rejected</div>
-            <div className="leave-card-value">{leaveRejected}</div>
+          <div className="admindashboard-leave-card-content">
+            <div className="admindashboard-leave-card-title rejected">Admin Leave Rejected</div>
+            <div className="admindashboard-leave-card-value">{leaveRejected}</div>
           </div>
         </div>
       </div>
