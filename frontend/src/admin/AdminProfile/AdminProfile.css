@@ -1,5 +1,5 @@
-/* Profile Banner */
-.profile-banner {
+/* Admin Profile Banner */
+.adminprofile-banner {
   background: url("../../assets/blue.png") no-repeat center;
   background-size: cover;
   text-align: center;
@@ -7,11 +7,11 @@
   color: white;
   position: relative;
   margin-left: 40px;
-  border-radius: 10px; /* Optional: Add rounded corners */
+  border-radius: 10px;
 }
 
-/* Profile Image */
-.profile-image {
+/* Admin Profile Image */
+.adminprofile-image {
   width: 120px;
   height: 120px;
   object-fit: cover;
@@ -20,17 +20,17 @@
   margin-bottom: 10px;
 }
 
-/* Profile Info */
-.profile-info h2 {
+/* Admin Profile Info */
+.adminprofile-info h2 {
   margin: 10px 0 5px;
 }
 
-.profile-info p {
+.adminprofile-info p {
   margin: 0;
 }
 
-/* Profile Details Section */
-.profile-details {
+/* Admin Profile Details Section */
+.adminprofile-details {
   padding: 20px;
   background-color: #ffffff;
   border-radius: 10px;
@@ -39,21 +39,21 @@
   margin-left: 40px;
 }
 
-.profile-details h3 {
+.adminprofile-details h3 {
   margin-bottom: 10px;
 }
 
-.profile-details ul {
+.adminprofile-details ul {
   list-style: none;
   padding: 0;
 }
 
-.profile-details ul li {
+.adminprofile-details ul li {
   margin-bottom: 5px;
 }
 
-/* Edit Button */
-.edit-button {
+/* Admin Edit Button */
+.adminedit-button {
   display: block;
   width: 100px;
   padding: 10px;
@@ -66,6 +66,131 @@
   border-radius: 5px;
 }
 
-.edit-button:hover {
+.adminedit-button:hover {
   background-color: #1b6bbf;
+}
+
+/* Modern Modal Overlay for Admin */
+.adminprofile-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(37, 131, 216, 0.18);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+/* Modern Modal Box for Admin */
+.adminprofile-modal.modern-modal {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 40px rgba(37, 131, 216, 0.18);
+  padding: 36px 32px 28px 32px;
+  max-width: 570px;
+  width: 100%;
+  position: relative;
+  animation: modalPopIn 0.25s cubic-bezier(.4, 2, .6, 1) both;
+}
+
+@keyframes modalPopIn {
+  0% {
+    transform: scale(0.95) translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.adminprofile-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #2583d8;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+}
+
+.adminprofile-modal-close:hover {
+  color: #1b6bbf;
+}
+
+.adminprofile-modal h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: #2583d8;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.adminprofile-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.adminprofile-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  margin-bottom: 18px;
+}
+
+.adminprofile-edit-grid label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #1b6bbf;
+  font-size: 1rem;
+  gap: 6px;
+}
+
+.adminprofile-edit-grid input {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1.5px solid #d0d7e2;
+  border-radius: 6px;
+  background: #f7fafd;
+  transition: border 0.2s;
+}
+
+.adminprofile-edit-grid input:focus {
+  border: 1.5px solid #2583d8;
+  outline: none;
+}
+
+.adminprofile-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.adminprofile-modal .adminedit-button {
+  min-width: 100px;
+  padding: 10px 0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #2583d8 80%, #1b6bbf 100%);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.1);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.adminprofile-modal .adminedit-button:hover {
+  background: linear-gradient(90deg, #1b6bbf 80%, #2583d8 100%);
+  box-shadow: 0 4px 16px rgba(37, 131, 216, 0.18);
 }

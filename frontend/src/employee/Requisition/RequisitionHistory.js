@@ -53,6 +53,8 @@ const RequisitionHistory = () => {
               <th>Reason</th>
               <th>Date Requested</th>
               <th>Requested By</th>
+              <th>Status</th>
+              <th>Remarks</th>
             </tr>
           </thead>
           <tbody>
@@ -69,11 +71,15 @@ const RequisitionHistory = () => {
                       (req.requestedBy && req.requestedBy.name) ||
                       (req.requestedBy && typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}
                   </td>
+                  <td style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>
+                    {req.status || 'Pending'}
+                  </td>
+                  <td>{req.remarks || ''}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6">No requisitions found</td>
+                <td colSpan="8">No requisitions found</td>
               </tr>
             )}
           </tbody>

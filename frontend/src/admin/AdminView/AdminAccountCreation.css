@@ -1,0 +1,158 @@
+/* General styling for the form container */
+.admin-account-creation {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 32px 28px 24px 28px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13), 0 1.5px 6px rgba(0,0,0,0.07);
+  position: relative;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-account-creation h1 {
+  text-align: center;
+  margin-bottom: 28px;
+  color: #1a237e;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.account-creation-form h2 {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #283593;
+  border-bottom: 2px solid #1976d2;
+  padding-bottom: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.account-creation-form .form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.account-creation-form .form-group input,
+.account-creation-form .form-group select {
+  flex: 1 1 calc(50% - 12px);
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1.5px solid #cfd8dc;
+  border-radius: 7px;
+  background: #f5f7fa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 2px rgba(25, 118, 210, 0.03);
+}
+
+.account-creation-form .form-group input:focus,
+.account-creation-form .form-group select:focus {
+  border-color: #1976d2;
+  outline: none;
+  background: #e3f2fd;
+}
+
+.account-creation-form label {
+  font-size: 15px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.account-creation-submit-button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  font-size: 17px;
+  color: #fff;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-top: 28px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.account-creation-submit-button:hover {
+  background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+}
+
+.account-creation-form input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+}
+
+/* Modal overlay and modal styles */
+.account-creation-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(33, 33, 33, 0.32);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
+}
+
+.account-creation-modal {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 32px 36px 28px 36px;
+  max-width: 420px;
+  width: 95vw;
+  text-align: center;
+  animation: fadeIn 0.3s;
+}
+
+.account-creation-modal h2 {
+  color: #1976d2;
+  margin-bottom: 18px;
+  font-size: 1.3rem;
+}
+
+.account-creation-modal p {
+  color: #333;
+  font-size: 1.08rem;
+  margin-bottom: 18px;
+}
+
+.account-creation-modal button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.account-creation-modal button:hover {
+  background: #1565c0;
+}
+
+@media (max-width: 768px) {
+  .admin-account-creation {
+    padding: 16px 4vw 18px 4vw;
+  }
+  .account-creation-form .form-group input,
+  .account-creation-form .form-group select {
+    flex: 1 1 100%;
+  }
+  .account-creation-modal {
+    padding: 18px 6vw 18px 6vw;
+  }
+}

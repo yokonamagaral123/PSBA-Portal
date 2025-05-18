@@ -55,4 +55,38 @@ router.get("/details/:employeeID", async (req, res) => {
   }
 });
 
+// Update employee details using the token
+router.put("/details", async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ success: false, message: "Authorization token is required" });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is missing in the token" });
+    }
+    // Only allow updating fields that exist in the schema
+    const updateFields = { ...req.body };
+    // Prevent changing unique identifiers
+    delete updateFields.email;
+    delete updateFields.employeeID;
+    delete updateFields.username;
+
+    const updated = await EmployeeDetails.findOneAndUpdate(
+      { email },
+      { $set: updateFields },
+      { new: true }
+    );
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Employee not found" });
+    }
+    res.status(200).json({ success: true, employee: updated });
+  } catch (error) {
+    console.error("Error updating employee details:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 module.exports = router;
