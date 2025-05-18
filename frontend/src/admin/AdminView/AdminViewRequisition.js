@@ -5,6 +5,7 @@ const AdminViewRequisition = () => {
   const [requisitions, setRequisitions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editRows, setEditRows] = useState({});
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     const fetchRequisitions = async () => {
@@ -69,6 +70,7 @@ const AdminViewRequisition = () => {
   };
 
   const filteredRequisitions = requisitions.filter(req => {
+    if (statusFilter !== "all" && req.status !== statusFilter) return false;
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
@@ -91,7 +93,7 @@ const AdminViewRequisition = () => {
         <h1 className="dashboard-banner-title">ADMIN VIEW REQUISITION</h1>
       </div>
       <div className="adminview-requisition-container">
-        <div className="adminview-requisition-searchbar">
+        <div className="adminview-requisition-filters">
           <input
             type="text"
             placeholder="Search by Type, Department, Purpose, Status, etc."
@@ -99,6 +101,16 @@ const AdminViewRequisition = () => {
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
+          <select
+            className="adminview-requisition-status-filter"
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+          >
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="declined">Declined</option>
+          </select>
         </div>
         <table className="adminview-requisition-table">
           <thead>

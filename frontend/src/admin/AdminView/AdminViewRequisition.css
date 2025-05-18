@@ -46,5 +46,17 @@
   justify-content: flex-end;
 }
 
+.adminview-requisition-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 18px;
+  margin-top: 32px;
+}
+
+.adminview-requisition-status-filter {
+  width: 140px;
+  min-width: 0;
+}
+
 
 
