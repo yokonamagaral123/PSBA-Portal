@@ -186,16 +186,16 @@ const Profile = () => {
           <li><strong>Emergency Contact Relation:</strong> {info.emergencyContactRelation || "N/A"}</li>
         </ul>
 
-        <button className="edit-button" onClick={openEditModal}>
+        <button className="edit-button" type="button" onClick={openEditModal}>
           Edit
         </button>
       </div>
 
       {/* Modal Popup for Editing */}
       {showModal && (
-        <div className="profile-modal-overlay">
+        <div className="profile-modal-overlay active">
           <div className="profile-modal modern-modal">
-            <button className="profile-modal-close" onClick={closeModal}>&times;</button>
+            <button className="profile-modal-close" type="button" onClick={closeModal}>&times;</button>
             <h2>Edit Profile</h2>
             <form className="profile-edit-form" onSubmit={handleSave}>
               <div className="profile-edit-grid">
