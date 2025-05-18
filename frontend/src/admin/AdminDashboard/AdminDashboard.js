@@ -11,7 +11,9 @@ const monthNames = [
 ];
 
 const AdminDashboard = () => {
-  const [userCount, setUserCount] = useState(0);
+  const [employees, setEmployees] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [requisitions, setRequisitions] = useState([]);
 
   // Carousel state
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,10 +33,40 @@ const AdminDashboard = () => {
   const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
-    fetch("/api/admin/user-count")
-      .then((res) => res.json())
-      .then((data) => setUserCount(data.count))
-      .catch(() => setUserCount(0));
+    // Fetch all employees
+    const fetchEmployees = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/admin/employees", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setEmployees(data.employees || []);
+        // Unique departments
+        setDepartments(
+          Array.from(new Set((data.employees || []).map(e => e.department).filter(Boolean)))
+        );
+      } catch {
+        setEmployees([]);
+        setDepartments([]);
+      }
+    };
+    fetchEmployees();
+
+    // Fetch all requisitions
+    const fetchRequisitions = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/requisitions/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setRequisitions(data.requisitions || []);
+      } catch {
+        setRequisitions([]);
+      }
+    };
+    fetchRequisitions();
   }, []);
 
   // Carousel auto-advance
@@ -136,6 +168,14 @@ const AdminDashboard = () => {
       setAnnouncementInput("");
     }
   };
+
+  // Dashboard stats
+  const totalEmployees = employees.length;
+  const totalDepartments = departments.length;
+  const leaveApplied = requisitions.filter(r => r.type === "General Request" || r.type === "Leave Request").length;
+  const leaveApproved = requisitions.filter(r => r.status === "approved").length;
+  const leavePending = requisitions.filter(r => r.status === "pending").length;
+  const leaveRejected = requisitions.filter(r => r.status === "declined" || r.status === "rejected").length;
 
   return (
     <>
@@ -252,7 +292,7 @@ const AdminDashboard = () => {
           </div>
           <div className="dashboard-card-content">
             <div className="dashboard-card-title">Total Employees</div>
-            <div className="dashboard-card-value">{userCount}</div>
+            <div className="dashboard-card-value">{totalEmployees}</div>
           </div>
         </div>
         <div className="dashboard-card">
@@ -261,7 +301,7 @@ const AdminDashboard = () => {
           </div>
           <div className="dashboard-card-content">
             <div className="dashboard-card-title">Total Departments</div>
-            <div className="dashboard-card-value">3</div>
+            <div className="dashboard-card-value">{totalDepartments}</div>
           </div>
         </div>
       </div>
@@ -273,7 +313,7 @@ const AdminDashboard = () => {
           </div>
           <div className="leave-card-content">
             <div className="leave-card-title">Leave Applied</div>
-            <div className="leave-card-value">2</div>
+            <div className="leave-card-value">{leaveApplied}</div>
           </div>
         </div>
         <div className="leave-card approved">
@@ -282,7 +322,7 @@ const AdminDashboard = () => {
           </div>
           <div className="leave-card-content">
             <div className="leave-card-title approved">Leave Approved</div>
-            <div className="leave-card-value">2</div>
+            <div className="leave-card-value">{leaveApproved}</div>
           </div>
         </div>
         <div className="leave-card pending">
@@ -291,7 +331,7 @@ const AdminDashboard = () => {
           </div>
           <div className="leave-card-content">
             <div className="leave-card-title pending">Leave Pending</div>
-            <div className="leave-card-value">1</div>
+            <div className="leave-card-value">{leavePending}</div>
           </div>
         </div>
         <div className="leave-card rejected">
@@ -300,7 +340,7 @@ const AdminDashboard = () => {
           </div>
           <div className="leave-card-content">
             <div className="leave-card-title rejected">Leave Rejected</div>
-            <div className="leave-card-value">1</div>
+            <div className="leave-card-value">{leaveRejected}</div>
           </div>
         </div>
       </div>
