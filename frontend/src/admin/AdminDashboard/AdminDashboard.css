@@ -1,0 +1,257 @@
+/* Admin Dashboard Banner */
+.dashboard-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.dashboard-banner-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Dashboard Widgets Layout */
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+/* Widget Cards */
+.widget,
+.announcements,
+.todo,
+.calendar {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-height: 340px;
+  position: relative;
+}
+
+/* Image Carousel */
+.image-carousel {
+  position: relative;
+  overflow: hidden;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.image-carousel img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(33,150,243,0.8);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 2;
+}
+.carousel-button.left {
+  left: 10px;
+}
+.carousel-button.right {
+  right: 10px;
+}
+
+/* Calendar Table */
+.calendar h3 {
+  margin-bottom: 16px;
+}
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.calendar th,
+.calendar td {
+  border: 1px solid #e0e0e0;
+  width: 14.2%;
+  height: 32px;
+  text-align: center;
+  font-size: 1rem;
+}
+.calendar td.today {
+  background: #eaf4fc;
+  font-weight: bold;
+}
+
+/* Announcements & To-Do */
+.announcements h3,
+.todo h3 {
+  margin-bottom: 12px;
+}
+.announcements ul,
+.todo ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.announcements p,
+.todo p {
+  color: #888;
+}
+
+/* To-Do Button */
+.todo button {
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Overview Cards */
+.dashboard-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #22223b;
+  margin: 32px 0 24px 0;
+}
+
+.dashboard-overview {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 24px 32px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 220px;
+  transition: box-shadow 0.2s;
+}
+
+.dashboard-card-icon {
+  font-size: 2.2rem;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-card-title {
+  font-size: 1.05rem;
+  color: #22223b;
+  font-weight: 500;
+}
+
+.dashboard-card-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #22223b;
+}
+
+/* Leave Details Section */
+.leave-details-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.leave-card {
+  flex: 1 1 240px;
+  min-width: 220px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  transition: box-shadow 0.2s;
+}
+
+.leave-card-icon {
+  font-size: 2rem;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leave-card-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #22223b;
+}
+
+.leave-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #22223b;
+}
+
+/* Leave Card Colors */
+.leave-card.applied {
+  background: #eaf4fc;
+}
+
+.leave-card.approved {
+  background: #eafbe7;
+}
+
+.leave-card.pending {
+  background: #fffbe7;
+}
+
+.leave-card.rejected {
+  background: #ffeaea;
+}
+
+.leave-card-title.approved {
+  color: #3bb77e;
+}
+
+.leave-card-title.pending {
+  color: #e6b800;
+}
+
+.leave-card-title.rejected {
+  color: #e74c3c;
+}
+
+/* Responsive for mobile */
+@media (max-width: 900px) {
+  .dashboard-overview,
+  .leave-details-cards,
+  .dashboard-widgets {
+    flex-direction: column;
+    gap: 20px;
+    display: flex;
+  }
+  .dashboard-banner {
+    padding: 60px 0;
+  }
+}

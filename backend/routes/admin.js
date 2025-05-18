@@ -127,6 +127,17 @@ router.post("/create-employee", async (req, res) => {
 
     res.status(500).json({ message: "Failed to create employee account." });
   }
+
+  router.get("/user-count", async (req, res) => {
+  try {
+    const count = await User.countDocuments();
+    res.json({ count });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 });
 
 module.exports = router; // Export the router
