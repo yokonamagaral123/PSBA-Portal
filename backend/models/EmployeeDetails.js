@@ -23,7 +23,7 @@ const employeeDetailsSchema = new mongoose.Schema({
   startDate: { type: Date },
   employmentStatus: { type: String }, // Active, On Leave, etc.
   username: { type: String, required: true, unique: true }, // Must match the User username
-  
+  profileImage: { type: String }, // Cloudinary image URL
 });
 
 // Create and export the EmployeeDetails model
