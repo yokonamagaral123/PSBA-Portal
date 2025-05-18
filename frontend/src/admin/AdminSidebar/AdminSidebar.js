@@ -125,6 +125,14 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
                   Requisition
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/admin-view/account-creation"
+                  className={isActive("/admin-view/account-creation") ? "active" : ""}
+                >
+                  Account Creation
+                </Link>
+              </li>
             </ul>
           )}
         </li>
