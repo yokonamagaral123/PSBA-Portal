@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { FaCheckCircle } from "react-icons/fa";
 import bannerImage from '../../assets/image.png';
 import schoolImage from '../../assets/school.png';
 import school2Image from '../../assets/school2.png';
@@ -9,6 +10,16 @@ const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
+
+// Helper: Get number of days in a month
+function getDaysInMonth(month, year) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+// Helper: Get the first day of the week for a month (0=Sunday, 1=Monday, ...)
+function getFirstDayOfWeek(month, year) {
+  return new Date(year, month, 1).getDay();
+}
 
 const HrDashboard = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,7 +34,12 @@ const HrDashboard = () => {
   // To-Do state
   const [showInput, setShowInput] = useState(false);
   const [todoInput, setTodoInput] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [todos, setTodos] = useState([]);
+
+  // Overlay state for calendar day details
+  const [overlayOpen, setOverlayOpen] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
 
   // Announcements state
   const [showAnnouncementInput, setShowAnnouncementInput] = useState(false);
@@ -51,20 +67,117 @@ const HrDashboard = () => {
       })
         .then(res => res.json())
         .then(data => {
-          if (data.success) setTodos(data.todos.map(t => t.task));
+          if (data.success) setTodos(data.todos.map(t => ({
+            _id: t._id,
+            task: t.task,
+            dueDate: t.dueDate,
+            done: t.done
+          })));
         })
         .catch(err => console.error("Failed to fetch todos:", err));
     }
   }, []);
 
-  // Carousel auto-advance
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  // Mark as done handler (with backend response)
+  const handleMarkAsDone = (id) => {
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:5000/api/todos/${id}/done`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.todo) {
+          setTodos(prev =>
+            prev.map(todo =>
+              todo._id === id ? { ...todo, ...data.todo } : todo
+            )
+          );
+        }
+      })
+      .catch(err => console.error("Failed to mark as done:", err));
+  };
 
+  // Highlight days with due tasks (green if all done, orange if any not done)
+  const dueDaysMap = {};
+  todos.forEach(item => {
+    if (!item.dueDate) return;
+    const date = new Date(item.dueDate);
+    if (
+      date.getMonth() === calendar.month &&
+      date.getFullYear() === calendar.year
+    ) {
+      const day = date.getDate();
+      if (!dueDaysMap[day]) dueDaysMap[day] = [];
+      dueDaysMap[day].push(item);
+    }
+  });
+
+  // Helper: Get tasks for a specific day
+  const getTasksForDay = (day) => {
+    return todos.filter(item => {
+      if (!item.dueDate) return false;
+      const date = new Date(item.dueDate);
+      return (
+        date.getDate() === day &&
+        date.getMonth() === calendar.month &&
+        date.getFullYear() === calendar.year
+      );
+    });
+  };
+
+  // Build calendar grid
+  const daysInMonth = getDaysInMonth(calendar.month, calendar.year);
+  const firstDayOfWeek = getFirstDayOfWeek(calendar.month, calendar.year);
+  const calendarRows = [];
+  let cells = [];
+
+  // Fill initial empty cells
+  for (let i = 0; i < firstDayOfWeek; i++) {
+    cells.push(<td key={`empty-start-${i}`}></td>);
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const isToday =
+      day === today.getDate() &&
+      calendar.month === today.getMonth() &&
+      calendar.year === today.getFullYear();
+
+    const tasksForDay = dueDaysMap[day] || [];
+    const hasDue = tasksForDay.length > 0;
+    const allDone = hasDue && tasksForDay.every(t => t.done);
+
+    // Class logic: green if all done, orange if any not done
+    let tdClass = "";
+    if (isToday && hasDue && allDone) tdClass = "today done-task";
+    else if (isToday && hasDue) tdClass = "today due-task";
+    else if (isToday) tdClass = "today";
+    else if (hasDue && allDone) tdClass = "done-task";
+    else if (hasDue) tdClass = "due-task";
+
+    cells.push(
+      <td
+        key={day}
+        className={tdClass}
+        onClick={() => {
+          setSelectedDay(day);
+          setOverlayOpen(true);
+        }}
+        style={{ cursor: "pointer" }}
+      >
+        {day}
+      </td>
+    );
+    if ((cells.length) % 7 === 0 || day === daysInMonth) {
+      calendarRows.push(<tr key={`row-${day}`}>{cells}</tr>);
+      cells = [];
+    }
+  }
+
+  // Carousel navigation
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
@@ -92,77 +205,59 @@ const HrDashboard = () => {
     });
   };
 
-  // Generate calendar days
-  const getDaysInMonth = (month, year) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const getFirstDayOfWeek = (month, year) => {
-    return new Date(year, month, 1).getDay();
-  };
-
-  const daysInMonth = getDaysInMonth(calendar.month, calendar.year);
-  const firstDayOfWeek = getFirstDayOfWeek(calendar.month, calendar.year);
-
-  // Build calendar grid
-  const calendarRows = [];
-  let cells = [];
-
-  // Fill initial empty cells
-  for (let i = 0; i < firstDayOfWeek; i++) {
-    cells.push(<td key={`empty-start-${i}`}></td>);
-  }
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const isToday =
-      day === today.getDate() &&
-      calendar.month === today.getMonth() &&
-      calendar.year === today.getFullYear();
-
-    cells.push(
-      <td key={day} className={isToday ? "today" : ""}>{day}</td>
-    );
-    if ((cells.length) % 7 === 0 || day === daysInMonth) {
-      calendarRows.push(<tr key={`row-${day}`}>{cells}</tr>);
-      cells = [];
-    }
-  }
-
   // To-Do handlers
   const handleAddClick = () => {
     setShowInput(true);
+    setDueDate("");
+    setTodoInput("");
   };
 
   const handleInputChange = (e) => {
     setTodoInput(e.target.value);
   };
 
-  const handleInputKeyDown = (e) => {
-    if (e.key === "Enter" && todoInput.trim()) {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("You must be logged in to add a to-do.");
-        return;
-      }
-      fetch("http://localhost:5000/api/todos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ task: todoInput.trim() })
+  const handleDueDateChange = (e) => {
+    setDueDate(e.target.value);
+  };
+
+  const handleAddTodo = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to add a to-do.");
+      return;
+    }
+    if (!todoInput.trim()) return;
+    fetch("http://localhost:5000/api/todos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ task: todoInput.trim(), dueDate: dueDate || null })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setTodos(prev => [{
+          _id: data.todo._id,
+          task: data.todo.task,
+          dueDate: data.todo.dueDate,
+          done: data.todo.done
+        }, ...prev]);
       })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) setTodos(prev => [data.todo.task, ...prev]);
-        })
-        .catch(err => console.error("Failed to add todo:", err));
-      setTodoInput("");
-      setShowInput(false);
+      .catch(err => console.error("Failed to add todo:", err));
+    setTodoInput("");
+    setDueDate("");
+    setShowInput(false);
+  };
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleAddTodo();
     }
     if (e.key === "Escape") {
       setShowInput(false);
       setTodoInput("");
+      setDueDate("");
     }
   };
 
@@ -178,7 +273,6 @@ const HrDashboard = () => {
   // Post new announcement to backend and update state
   const handleAnnouncementInputKeyDown = (e) => {
     if (e.key === "Enter" && announcementInput.trim()) {
-      // Announcements may or may not need token, adjust as needed
       fetch("http://localhost:5000/api/announcements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -256,6 +350,34 @@ const HrDashboard = () => {
           </table>
         </div>
 
+        {/* Overlay for selected day */}
+        {overlayOpen && (
+          <div className="calendar-overlay">
+            <div className="calendar-overlay-content">
+              <button className="calendar-overlay-close" onClick={() => setOverlayOpen(false)}>
+                &times;
+              </button>
+              <h2>
+                {monthNames[calendar.month]} {selectedDay}, {calendar.year}
+              </h2>
+              <h4>Tasks Due:</h4>
+              <ul>
+                {getTasksForDay(selectedDay).length === 0 && (
+                  <li>No tasks due on this day.</li>
+                )}
+                {getTasksForDay(selectedDay).map((task, idx) => (
+                  <li key={idx}>
+                    {task.task}
+                    {task.done && (
+                      <span style={{ color: "#218838", marginLeft: 8 }}>(Done)</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
         {/* Announcements Section */}
         <div className="announcements">
           <div className="announcements-header">
@@ -299,19 +421,61 @@ const HrDashboard = () => {
             <button onClick={handleAddClick}>+</button>
           </div>
           {showInput && (
-            <input
-              type="text"
-              className="todo-input"
-              value={todoInput}
-              onChange={handleInputChange}
-              onKeyDown={handleInputKeyDown}
-              autoFocus
-              placeholder="Enter your task and press Enter"
-            />
+            <div className="todo-input-row">
+              <input
+                type="text"
+                className="todo-input"
+                value={todoInput}
+                onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
+                autoFocus
+                placeholder="Enter your task"
+                style={{ flex: 2 }}
+              />
+              <input
+                type="date"
+                className="todo-input"
+                value={dueDate}
+                onChange={handleDueDateChange}
+                onKeyDown={handleInputKeyDown}
+                placeholder="Due date"
+                style={{ flex: 1 }}
+              />
+              <button
+                className="todo-btn todo-check-btn"
+                onClick={handleAddTodo}
+                title="Add To-Do"
+              >
+                <FaCheckCircle />
+              </button>
+            </div>
           )}
           <ul className="todo-list">
             {todos.map((item, idx) => (
-              <li key={idx}>{item}</li>
+              <li key={item._id || idx} className={item.done ? "done" : ""}>
+                <span className="todo-bullet">&#8226;</span>
+                <div
+                  className="todo-task-box"
+                  style={item.done ? { textDecoration: "line-through", color: "#888" } : {}}
+                >
+                  <div className="todo-task-title">{item.task}</div>
+                  {item.dueDate && (
+                    <div className="todo-task-due">
+                      (Due: {new Date(item.dueDate).toLocaleDateString()})
+                    </div>
+                  )}
+                </div>
+                {!item.done && (
+                  <button
+                    className="todo-mark-done-btn"
+                    onClick={() => handleMarkAsDone(item._id)}
+                    title="Mark as done"
+                  >
+                    <FaCheckCircle style={{ color: "#218838" }} />
+                  </button>
+                )}
+                {/* No check icon when done */}
+              </li>
             ))}
           </ul>
         </div>
