@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, default: 'employee' }, // Default role is 'employee'
-  leaveCredits: {
+   leaveCredits: {
     sick: { type: Number, default: 10 },
     vacation: { type: Number, default: 10 }
   }
