@@ -1,31 +1,25 @@
-/* Dashboard Banner */
-.dashboard-banner {
+/* HR Dashboard Banner */
+.hrdashboard-banner {
   background: url("../../assets/blue.png") no-repeat center;
   background-size: cover;
   text-align: center;
   padding: 110px 0; /* Adjust padding for height */
   color: white;
   position: relative;
-  margin-left: 0;
-  border-radius: 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100vw;
-  min-width: 100vw;
-  left: 50%;
-  right: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
+  margin-left: 40px; /* Align with the rest of the content */
+  border-radius: 10px; /* Optional: Add rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
 }
 
-.dashboard-banner-title {
+.hrdashboard-banner-title {
   font-size: 36px;
   font-weight: bold;
   text-transform: uppercase;
   margin: 0;
 }
 
-/* Dashboard Widgets Layout */
-.dashboard-widgets {
+/* HR Dashboard Widgets Layout */
+.hrdashboard-widgets {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
@@ -33,8 +27,8 @@
   margin-left: 40px;
 }
 
-/* Image Carousel */
-.image-carousel {
+/* HR Image Carousel */
+.hrdashboard-image-carousel {
   position: relative;
   width: 100%;
   max-height: 400px;
@@ -43,14 +37,14 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.image-carousel img {
+.hrdashboard-image-carousel img {
   width: 100%;
   height: 400px;
   object-fit: cover;
   transition: transform 0.5s ease-in-out;
 }
 
-.carousel-button {
+.hrdashboard-carousel-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -63,15 +57,15 @@
   border-radius: 50%;
 }
 
-.carousel-button.left {
+.hrdashboard-carousel-button.left {
   left: 10px;
 }
 
-.carousel-button.right {
+.hrdashboard-carousel-button.right {
   right: 10px;
 }
 
-.carousel-dots {
+.hrdashboard-carousel-dots {
   position: absolute;
   bottom: 10px;
   left: 50%;
@@ -80,7 +74,7 @@
   gap: 5px;
 }
 
-.carousel-dots .dot {
+.hrdashboard-dot {
   width: 10px;
   height: 10px;
   background-color: rgba(255, 255, 255, 0.5);
@@ -89,39 +83,38 @@
   transition: background-color 0.3s ease;
 }
 
-.carousel-dots .dot.active {
+.hrdashboard-dot.hrdashboard-active {
   background-color: white;
 }
 
-/* Widget Cards */
-.widget,
-.announcements,
-.todo,
-.calendar {
+/* HR Widget Cards */
+.hrdashboard-announcements,
+.hrdashboard-todo,
+.hrdashboard-calendar {
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Announcements & To-Do */
-.announcements h3,
-.todo h3 {
+/* HR Announcements & To-Do */
+.hrdashboard-announcements h3,
+.hrdashboard-todo h3 {
   margin-top: 0;
   font-size: 18px;
 }
 
-.announcements-header {
+.hrdashboard-announcements-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.announcements-header h3 {
+.hrdashboard-announcements-header h3 {
   margin: 0;
 }
 
-.announcements-header button {
+.hrdashboard-announcements-header button {
   margin: 0;
   padding: 10px 20px;
   font-size: 16px;
@@ -133,11 +126,11 @@
   transition: background-color 0.3s ease;
 }
 
-.announcements-header button:hover {
+.hrdashboard-announcements-header button:hover {
   background-color: #1e6ab4;
 }
 
-.announcement-input {
+.hrdashboard-announcement-input {
   width: 100%;
   padding: 8px 10px;
   margin: 10px 0;
@@ -147,7 +140,7 @@
   box-sizing: border-box;
 }
 
-.announcement-list {
+.hrdashboard-announcement-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -155,12 +148,7 @@
   padding: 0;
 }
 
-.announcement-list li {
-  margin-bottom: 6px;
-  font-size: 15px;
-}
-
-.announcement-item {
+.hrdashboard-announcement-item {
   display: flex;
   align-items: flex-start;
   background: #dde9ff;
@@ -168,10 +156,10 @@
   box-shadow: 0 2px 8px rgba(37, 131, 216, 0.07);
   padding: 14px 18px;
   gap: 12px;
-  border: 0.3px solid #2583d8; /* Blue border for separation */
+  border: 0.3px solid #2583d8;
 }
 
-.announcement-bullet {
+.hrdashboard-announcement-bullet {
   color: #2583d8;
   font-size: 2rem;
   line-height: 1;
@@ -179,19 +167,19 @@
   flex-shrink: 0;
 }
 
-.announcement-content {
+.hrdashboard-announcement-content {
   flex: 1;
 }
 
-.announcement-date {
+.hrdashboard-announcement-date {
   font-size: 0.85em;
   color: #888;
   margin-top: 2px;
 }
 
-/* To-Do Button */
-.todo button,
-.todo-btn {
+/* HR To-Do Button */
+.hrdashboard-todo button,
+.hrdashboard-todo-btn {
   display: block;
   margin: 10px auto;
   padding: 10px 20px;
@@ -204,26 +192,26 @@
   transition: background-color 0.3s ease;
 }
 
-.todo-header {
+.hrdashboard-todo-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.todo-header h3 {
+.hrdashboard-todo-header h3 {
   margin: 0;
 }
 
-.todo-header button {
+.hrdashboard-todo-header button {
   margin: 0;
 }
 
-.todo button:hover,
-.todo-btn:hover {
+.hrdashboard-todo button:hover,
+.hrdashboard-todo-btn:hover {
   background-color: #1e6ab4;
 }
 
-.todo-input {
+.hrdashboard-todo-input {
   width: 100%;
   padding: 8px 10px;
   margin: 10px 0;
@@ -233,167 +221,51 @@
   box-sizing: border-box;
 }
 
-.todo-input-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.todo-list {
-  list-style: none;
+.hrdashboard-todo-list {
+  list-style: disc inside;
   margin: 10px 0 0 0;
   padding: 0;
 }
 
-.todo-list li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16px;
-  position: relative;
+.hrdashboard-todo-list li {
+  margin-bottom: 6px;
+  font-size: 15px;
 }
 
-.todo-bullet {
-  color: #b85c00;
-  font-size: 2rem;
-  line-height: 1;
-  margin-right: 12px;
-  margin-left: 2px;
-  flex-shrink: 0;
-  margin-top: 2px;
-  transition: color 0.2s;
-}
-
-.todo-task-box {
-  background: #fff8e1;
-  border: 1.5px solid #ffcc80;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(255, 204, 128, 0.07);
-  padding: 12px 18px 8px 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-  flex: 1;
-  transition: border-color 0.2s, background 0.2s;
-}
-
-.todo-list li.done .todo-bullet {
-  color: #218838;
-}
-
-.todo-list li.done .todo-task-box {
-  border-color: #7be87b;
-  background: #b6f5b6;
-}
-
-.todo-task-title {
-  font-weight: 500;
-  color: #222;
-  margin-bottom: 2px;
-  word-break: break-word;
-}
-
-.todo-task-due {
-  color: #888;
-  font-size: 0.98em;
-  margin-top: 2px;
-  margin-bottom: 0;
-  word-break: break-word;
-}
-
-.todo-check-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #2583d8;
-  font-size: 1.8em;
-  padding: 0 4px;
-  display: flex;
-  align-items: center;
-  transition: color 0.2s;
-}
-
-.todo-check-btn:hover {
-  color: #1e6ab4;
-}
-
-.todo-mark-done-btn {
-  background: none !important;
-  color: #218838;
-  border: none;
-  border-radius: 50%;
-  padding: 0 4px;
-  font-size: 1.8em;
-  cursor: pointer;
-  margin-left: 14px;
-  transition: background 0.2s;
-  box-shadow: none;
-  outline: none;
-  display: flex;
-  align-items: center;
-  height: 40px;
-}
-
-.todo-mark-done-btn:hover {
-  background: #e6f9e6;
-}
-
-.todo-mark-done-btn svg {
-  background: none !important;
-  color: #218838 !important;
-  border-radius: 50%;
-  display: block;
-}
-
-/* Calendar Table */
-.calendar h3 {
+/* HR Calendar Table */
+.hrdashboard-calendar h3 {
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 18px;
 }
 
-.calendar table {
+.hrdashboard-calendar table {
   width: 100%;
   border-collapse: collapse;
   text-align: center;
 }
 
-.calendar th,
-.calendar td {
-  padding: 0;
+.hrdashboard-calendar th,
+.hrdashboard-calendar td {
+  padding: 10px;
   border: 1px solid #ddd;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
-  max-width: 40px;
-  max-height: 40px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 1em;
-  line-height: 40px;
-  box-sizing: border-box;
 }
 
-.calendar td.today {
-  background: none !important;
-  color: #2583d8 !important;
+.hrdashboard-calendar td.hrdashboard-today {
+  background: #2583d8;
+  color: #fff;
+  border-radius: 50%;
   font-weight: bold;
-  text-decoration: underline;
-  border-radius: 0;
-  box-shadow: none;
 }
 
-
-.calendar-header {
+.hrdashboard-calendar-header {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
 }
 
-.calendar-header button {
+.hrdashboard-calendar-header button {
   background: #2583d8;
   color: #fff;
   border: none;
@@ -404,122 +276,9 @@
   margin: 0 5px;
 }
 
-.calendar td.due-task {
-  background: #ffe6b3 !important;
-  color: #b85c00 !important;
-  font-weight: bold;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px #ffd580;
-  transition: background 0.2s, color 0.2s;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
-  max-width: 32px;
-  max-height: 32px;
-  line-height: 32px;
-  margin: auto;
-  font-size: 1em;
-  display: table-cell;
-  vertical-align: middle;
-  padding: 0;
-}
-
-.calendar td.today.due-task {
-  background: #ffe6b3 !important;
-  color: #2583d8 !important;        
-  font-weight: bold;
-  text-decoration: underline;
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px #ffd580;
-}
-
-.calendar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(30, 30, 30, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.calendar-overlay-content {
-  background: #fff;
-  padding: 32px 28px 24px 28px;
-  border-radius: 12px;
-  min-width: 300px;
-  max-width: 90vw;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  position: relative;
-  text-align: left;
-}
-
-.calendar-overlay-close {
-  position: absolute;
-  top: 12px;
-  right: 18px;
-  background: none;
-  border: none;
-  font-size: 2rem;
-  color: #2583d8;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.calendar-overlay h2 {
-  margin-top: 0;
-  margin-bottom: 12px;
-}
-
-.calendar-overlay ul {
-  padding-left: 18px;
-  margin: 0;
-}
-
-.calendar td.done-task {
-  background: #b6f5b6 !important; /* light green */
-  color: #218838 !important;      /* dark green */
-  font-weight: bold;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px #7be87b;
-  transition: background 0.2s, color 0.2s;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
-  max-width: 32px;
-  max-height: 32px;
-  line-height: 32px;
-  margin: auto;
-  font-size: 1em;
-  display: table-cell;
-  vertical-align: middle;
-  padding: 0;
-}
-
-.calendar td.today.done-task {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
-  max-width: 40px;
-  max-height: 40px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 1em;
-  line-height: 40px;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .dashboard-banner {
+  .hrdashboard-banner {
     margin-left: 0;
     width: 100vw;
     min-width: 100vw;
@@ -529,28 +288,27 @@
     transform: translateX(-50%);
   }
 
-  .dashboard-title {
+  .hrdashboard-title {
     font-size: 20px;
     text-align: center;
   }
 
-  .dashboard-widgets {
+  .hrdashboard-widgets {
     grid-template-columns: 1fr;
     margin-left: 0;
   }
 
-  .widget,
-  .announcements,
-  .todo,
-  .calendar {
+  .hrdashboard-announcements,
+  .hrdashboard-todo,
+  .hrdashboard-calendar {
     padding: 15px;
   }
 
-  .carousel-button {
+  .hrdashboard-carousel-button {
     padding: 8px;
   }
 
-  .carousel-dots .dot {
+  .hrdashboard-carousel-dots .hrdashboard-dot {
     width: 8px;
     height: 8px;
   }
