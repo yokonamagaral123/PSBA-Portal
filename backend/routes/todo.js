@@ -13,14 +13,14 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// Add a new to-do for the logged-in user (with dueDate support)
+// Add a new to-do for the logged-in user (with dueDate and time support)
 router.post("/", auth, async (req, res) => {
   try {
-    const { task, dueDate } = req.body;
+    const { task, dueDate, time } = req.body;
     if (!task) {
       return res.status(400).json({ success: false, message: "Task is required" });
     }
-    const todo = new ToDo({ email: req.user.email, task, dueDate });
+    const todo = new ToDo({ email: req.user.email, task, dueDate, time });
     await todo.save();
     res.status(201).json({ success: true, todo });
   } catch (err) {
