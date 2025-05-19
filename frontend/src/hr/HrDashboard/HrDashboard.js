@@ -415,16 +415,16 @@ const HrDashboard = () => {
         </div>
 
         {/* To-Do Section */}
-        <div className="todo">
-          <div className="todo-header">
+        <div className="hrdashboard-todo">
+          <div className="hrdashboard-todo-header">
             <h3>To-Do</h3>
             <button onClick={handleAddClick}>+</button>
           </div>
           {showInput && (
-            <div className="todo-input-row">
+            <div className="hrdashboard-todo-input-row">
               <input
                 type="text"
-                className="todo-input"
+                className="hrdashboard-todo-input"
                 value={todoInput}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
@@ -434,7 +434,7 @@ const HrDashboard = () => {
               />
               <input
                 type="date"
-                className="todo-input"
+                className="hrdashboard-todo-input"
                 value={dueDate}
                 onChange={handleDueDateChange}
                 onKeyDown={handleInputKeyDown}
@@ -442,7 +442,7 @@ const HrDashboard = () => {
                 style={{ flex: 1 }}
               />
               <button
-                className="todo-btn todo-check-btn"
+                className="hrdashboard-todo-btn hrdashboard-todo-check-btn"
                 onClick={handleAddTodo}
                 title="Add To-Do"
               >
@@ -450,24 +450,24 @@ const HrDashboard = () => {
               </button>
             </div>
           )}
-          <ul className="todo-list">
+          <ul className="hrdashboard-todo-list">
             {todos.map((item, idx) => (
               <li key={item._id || idx} className={item.done ? "done" : ""}>
-                <span className="todo-bullet">&#8226;</span>
+                <span className="hrdashboard-todo-bullet">&#8226;</span>
                 <div
-                  className="todo-task-box"
+                  className="hrdashboard-todo-task-box"
                   style={item.done ? { textDecoration: "line-through", color: "#888" } : {}}
                 >
-                  <div className="todo-task-title">{item.task}</div>
+                  <div className="hrdashboard-todo-task-title">{item.task}</div>
                   {item.dueDate && (
-                    <div className="todo-task-due">
+                    <div className="hrdashboard-todo-task-due">
                       (Due: {new Date(item.dueDate).toLocaleDateString()})
                     </div>
                   )}
                 </div>
                 {!item.done && (
                   <button
-                    className="todo-mark-done-btn"
+                    className="hrdashboard-todo-mark-done-btn"
                     onClick={() => handleMarkAsDone(item._id)}
                     title="Mark as done"
                   >
