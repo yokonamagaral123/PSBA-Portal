@@ -1,17 +1,21 @@
-/* Dashboard Banner */
-.dashboard-banner {
+/* Employee Dashboard CSS: All styles transferred and adapted from AdminDashboard.css.
+   All class names are now employee-specific (e.g., .employee-dashboard-*, .employee-calendar, .employee-announcements, etc.)
+*/
+
+/* Employee Dashboard Banner */
+.employee-dashboard-banner {
   background: url("../../assets/blue.png") no-repeat center;
   background-size: cover;
   text-align: center;
-  padding: 110px 0; /* Adjust padding for height */
+  padding: 110px 0;
   color: white;
-  position: relative;
-  margin-left: 40px; /* Align with the rest of the content */
-  border-radius: 10px; /* Optional: Add rounded corners */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-left: 40px;
 }
 
-.dashboard-banner-title {
+.employee-dashboard-banner-title {
   font-size: 36px;
   font-weight: bold;
   text-transform: uppercase;
@@ -19,32 +23,43 @@
 }
 
 /* Dashboard Widgets Layout */
-.dashboard-widgets {
+.employee-dashboard-widgets {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
-  gap: 20px; /* Space between widgets */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
   margin-top: 20px;
-  margin-left: 40px; /* Adjust content slightly to the right */
+  margin-left: 40px;
 }
 
-/* Image Carousel */
-.image-carousel {
+/* Widget Cards */
+.employee-announcements,
+.employee-todo,
+.employee-calendar {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-height: 340px;
+  position: relative;
+}
+
+/* Employee Dashboard Image Carousel */
+.employee-image-carousel {
   position: relative;
   width: 100%;
   max-height: 400px;
   overflow: hidden;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better visual separation */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-.image-carousel img {
-  width: 100%; /* Ensure the image takes up the full width of the container */
-  height: 400px; /* Set a fixed height for all images */
-  object-fit: cover; /* Ensure the image scales properly without distortion */
-  transition: transform 0.5s ease-in-out; /* Smooth transition for image sliding */
+.employee-image-carousel img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out;
+  border-radius: 10px;
 }
-
-.carousel-button {
+.employee-carousel-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -55,17 +70,17 @@
   cursor: pointer;
   z-index: 10;
   border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.5rem;
 }
-
-.carousel-button.left {
+.employee-carousel-button.left {
   left: 10px;
 }
-
-.carousel-button.right {
+.employee-carousel-button.right {
   right: 10px;
 }
-
-.carousel-dots {
+.employee-carousel-dots {
   position: absolute;
   bottom: 10px;
   left: 50%;
@@ -73,8 +88,7 @@
   display: flex;
   gap: 5px;
 }
-
-.carousel-dots .dot {
+.employee-carousel-dots .dot {
   width: 10px;
   height: 10px;
   background-color: rgba(255, 255, 255, 0.5);
@@ -82,97 +96,460 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
-.carousel-dots .dot.active {
+.employee-carousel-dots .dot.active {
   background-color: white;
 }
 
-/* Widget Cards */
-.widget,
-.announcements,
-.todo,
-.calendar {
-  background: white;
-  padding: 20px; /* Increased padding for better spacing */
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* --- MODALS & CALENDAR/TODO/ANNOUNCEMENT STYLES --- */
+.employee-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.employee-modal {
+  min-width: 420px;
+  max-width: 520px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  padding: 28px 28px 22px 28px;
+  position: relative;
+  margin: auto;
+  top: 10vh;
+}
+.employee-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 26px;
+  background: none;
+  border: none;
+  color: #444;
+  cursor: pointer;
+  font-weight: 700;
+  z-index: 2;
+}
+.employee-modal-submit {
+  margin-top: 18px;
+  padding: 13px 0;
+  font-weight: 700;
+  font-size: 20px;
+  background: #0066d6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+.employee-announcement-list,
+.employee-todo-list {
+  list-style: disc inside;
+  margin: 10px 0 0 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thick;
+  scrollbar-color: #b3b3b3 #f5f5f5;
+}
+.employee-todo-list::-webkit-scrollbar,
+.employee-announcement-list::-webkit-scrollbar {
+  width: 7px;
+  background: #f5f5f5;
+}
+.employee-todo-list::-webkit-scrollbar-thumb,
+.employee-announcement-list::-webkit-scrollbar-thumb {
+  background: #b3b3b3;
+  border-radius: 6px;
+}
+.employee-announcement-item {
+  display: flex;
+  align-items: flex-start;
+  background: #dde9ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.07);
+  padding: 14px 18px;
+  gap: 12px;
+  border: 0.3px solid #2583d8;
+}
+.employee-announcement-bullet {
+  color: #2583d8;
+  font-size: 2rem;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.employee-announcement-content {
+  flex: 1;
+}
+.employee-announcement-date {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 2px;
+}
+.employee-todo-list li {
+  border-radius: 12px;
+  margin-bottom: 14px;
+  padding: 14px 18px 14px 0;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  box-shadow: none;
+  border: none;
+  position: relative;
+  font-size: 1.08rem;
+}
+.employee-todo-list li[data-due="true"] {
+  background: #fffbe6;
+  border: 1.5px solid #ffe58f;
+}
+.employee-todo-list li.done {
+  background: #e6ffed;
+  border: 1.5px solid #b7eb8f;
+}
+.employee-todo-bullet {
+  color: #2583d8;
+  font-size: 1.2rem;
+  margin-left: 18px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.employee-todo-task-title {
+  font-weight: 700;
+}
+.employee-todo-task-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.employee-todo-task-due {
+  font-size: 1rem;
+  color: #222;
+  margin-top: 2px;
+}
+.employee-todo-mark-done-btn {
+  background: #fff;
+  border: 2px solid #3bb77e;
+  color: #3bb77e;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+  box-shadow: none;
+  margin-left: 10px;
+}
+.employee-todo-mark-done-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+.employee-todo-mark-done-btn:hover:not(:disabled) {
+  background: #e6ffed;
+  border-color: #3bb77e;
 }
 
-/* Announcements & To-Do */
-.announcements h3,
-.todo h3 {
-  margin-top: 0;
-  font-size: 18px; /* Ensure consistent font size */
-}
-
-/* To-Do Button */
-.todo button,
-.todo-btn {
-  display: block;
-  margin: 10px auto;
-  padding: 10px 20px; /* Adjusted padding for better clickability */
-  font-size: 16px;
-  background-color: #2583d8;
-  color: white;
+.employee-todo-header button {
+  background: #2196f3;
+  color: #fff;
   border: none;
   border-radius: 5px;
+  width: 56px;
+  height: 40px;
+  font-size: rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s ease; /* Smooth hover effect */
+  transition: background 0.15s;
+  box-shadow: none;
+  margin-left: 12px;
+}
+.employee-todo-header button:hover {
+  background: #1760a8;
 }
 
-.todo button:hover,
-.todo-btn:hover {
-  background-color: #1e6ab4;
-}
-
-/* Calendar Table */
-.calendar h3 {
+.employee-calendar h3 {
   margin-top: 0;
   margin-bottom: 10px;
-  font-size: 18px; /* Ensure consistent font size */
+  font-size: 18px;
 }
-
-.calendar table {
+.employee-calendar table {
   width: 100%;
   border-collapse: collapse;
   text-align: center;
 }
-
-.calendar th,
-.calendar td {
-  padding: 10px; /* Increased padding for better readability */
+.employee-calendar th,
+.employee-calendar td {
+  padding: 10px;
   border: 1px solid #ddd;
 }
+.employee-calendar td.employee-dashboard-today {
+  background: #2583d8;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.employee-dashboard-due-task {
+  background: #ffe066 !important;
+  color: #333;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.employee-dashboard-done-task {
+  background: #7be495 !important;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .dashboard-banner {
-    margin-left: 0; /* Remove margin for smaller screens */
+.employee-announcements h3,
+.employee-todo h3 {
+  margin-bottom: 12px;
+}
+.employee-announcements-header,
+.employee-todo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.employee-announcements ul,
+.employee-todo ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.employee-announcements p,
+.employee-todo p {
+  color: #888;
+}
+.employee-announcement-input,
+.employee-todo-input {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+.employee-section-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #1a237e;
+  margin: 32px 0 24px 0;
+  margin-left: 40px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+  border-left: 6px solid #2196f3;
+  padding-left: 18px;
+  background: linear-gradient(90deg, #e3f2fd 60%, transparent 100%);
+  border-radius: 6px;
+}
+.employee-leave-details-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-left: 40px;
+}
+.employee-leave-card {
+  flex: 1 1 240px;
+  min-width: 220px;
+  background: linear-gradient(135deg, #fff 60%, #e3f2fd 100%);
+  border-radius: 12px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.08);
+  transition: box-shadow 0.2s, transform 0.2s;
+  border: 1.5px solid #2196f3;
+  margin-left: 0;
+  cursor: pointer;
+}
+.employee-leave-card:hover {
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.18);
+  transform: translateY(-4px) scale(1.03);
+}
+.employee-leave-card-icon {
+  font-size: 2.2rem;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2196f3 60%, #e3f2fd 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.12);
+}
+.employee-leave-card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1a237e;
+  letter-spacing: 0.5px;
+}
+.employee-leave-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #22223b;
+}
+.employee-leave-card.applied {
+  background: #eaf4fc;
+}
+.employee-leave-card.approved {
+  background: #eafbe7;
+}
+.employee-leave-card.pending {
+  background: #fffbe7;
+}
+.employee-leave-card.rejected {
+  background: #ffeaea;
+}
+.employee-leave-card-title.approved {
+  color: #3bb77e;
+}
+.employee-leave-card-title.pending {
+  color: #e6b800;
+}
+.employee-leave-card-title.rejected {
+  color: #e74c3c;
+}
+.employee-modal-title {
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 22px;
+  margin-top: 0;
+}
+.employee-modal-task-list {
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+.employee-modal-task-empty {
+  text-align: center;
+  color: #888;
+  font-size: 16px;
+  padding: 18px 0;
+}
+.employee-modal-task-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 17px;
+  min-height: 44px;
+  transition: background 0.2s;
+  border: 1.5px solid #ffe58f;
+  background: #fffbe6;
+}
+.employee-modal-task-card.done {
+  border: 1.5px solid #b7eb8f;
+  background: #e6ffed;
+}
+.employee-modal-task-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.employee-modal-task-title {
+  font-weight: 700;
+}
+.employee-modal-task-time {
+  color: #222;
+  font-weight: 400;
+  font-size: 16px;
+}
+.employee-modal-task-status {
+  margin-left: 8px;
+  font-weight: 700;
+}
+.employee-modal-task-status.pending {
+  color: #e6b800;
+}
+.employee-modal-task-status.done {
+  color: #3bb77e;
+}
+.employee-modal-task-check {
+  background: #fff;
+  border: 2px solid #e6b800;
+  color: #e6b800;
+  border-radius: 50%;
+  width: 22px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+  box-shadow: none;
+  margin-left: 10px;
+}
+.employee-modal-task-check:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.employee-calendar-cell {
+  position: relative;
+}
+.employee-calendar-today-dot {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background: #2583d8;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0 0 2px #2583d8;
+  pointer-events: none;
+}
+.employee-calendar-nav-btn {
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: none;
+}
+.employee-calendar-nav-btn:hover {
+  background: #1760a8;
+}
+@media (max-width: 900px) {
+  .employee-dashboard-banner {
+    padding: 60px 0;
+    margin-left: 0;
   }
-
-  .dashboard-title {
-    font-size: 20px; /* Adjust title size for smaller screens */
-    text-align: center; /* Center-align title on smaller screens */
+  .employee-dashboard-widgets {
+    grid-template-columns: 1fr;
+    margin-left: 0;
   }
-
-  .dashboard-widgets {
-    grid-template-columns: 1fr; /* Single column layout for smaller screens */
-    margin-left: 0; /* Remove margin for smaller screens */
+  .employee-image-carousel img {
+    height: 220px;
   }
-
-  .widget,
-  .announcements,
-  .todo,
-  .calendar {
-    padding: 15px; /* Reduce padding for smaller screens */
-  }
-
-  .carousel-button {
-    padding: 8px; /* Adjust button size for smaller screens */
-  }
-
-  .carousel-dots .dot {
-    width: 8px;
-    height: 8px; /* Adjust dot size for smaller screens */
+  .employee-modal {
+    min-width: 90vw;
+    padding: 18px 8px 16px 8px;
   }
 }
