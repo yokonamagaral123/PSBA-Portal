@@ -14,6 +14,16 @@ const Dashboard = () => {
   const [showAnnouncementInput, setShowAnnouncementInput] = useState(false);
   const [announcementInput, setAnnouncementInput] = useState("");
 
+  // Fetch announcements from backend on mount
+  useEffect(() => {
+    fetch("http://localhost:5000/api/announcements")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setAnnouncements(data.announcements);
+      })
+      .catch(err => console.error("Failed to fetch announcements:", err));
+  }, []);
+
   const handleAnnouncementAddClick = () => {
     setShowAnnouncementInput(true);
   };
@@ -22,9 +32,32 @@ const Dashboard = () => {
     setAnnouncementInput(e.target.value);
   };
 
-  const handleAnnouncementInputKeyDown = (e) => {
+  // Post new announcement to backend and update state
+  const handleAnnouncementInputKeyDown = async (e) => {
     if (e.key === "Enter" && announcementInput.trim() !== "") {
-      setAnnouncements([...announcements, announcementInput.trim()]);
+      // Get user info from token (if available)
+      let createdBy = "Employee";
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          // Decode JWT to get email (or name if available)
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          createdBy = payload.name || payload.email || "Employee";
+        }
+      } catch {}
+      try {
+        const res = await fetch("http://localhost:5000/api/announcements", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: announcementInput.trim(), createdBy })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setAnnouncements(prev => [data.announcement, ...prev]);
+        }
+      } catch (err) {
+        console.error("Failed to post announcement:", err);
+      }
       setAnnouncementInput("");
       setShowAnnouncementInput(false);
     } else if (e.key === "Escape") {

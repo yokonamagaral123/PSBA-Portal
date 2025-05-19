@@ -14,7 +14,7 @@ import RequisitionHistory from "../employee/Requisition/RequisitionHistory";
 import Payroll from "../employee/Payroll/Payroll";
 import Settings from "../employee/Settings/Settings";
 import AssistBotHelp from "../employee/AssistBotHelp/AssistBotHelp";
-import AdminDashboard from "../admin/AdminDashboard";
+import AdminDashboard from "../admin/AdminDashboard/AdminDashboard";
 import AdminProfile from "../admin/AdminProfile/AdminProfile";
 import AdminSettings from "../admin/AdminSettings/AdminSettings";
 import AdminAttendance from "../admin/AdminAttendance/AdminAttendance";
@@ -27,6 +27,7 @@ import AdminViewPayroll from "../admin/AdminView/AdminViewPayroll";
 import AdminViewRequisition from "../admin/AdminView/AdminViewRequisition";
 import AdminViewDocuments from "../admin/AdminView/AdminViewDocuments";
 import AdminAccountCreation from "../admin/AdminView/AdminAccountCreation";
+import ManageEmployees from "../admin/AdminView/ManageEmployees";
 
 // Import HR components
 import HrDashboard from "../hr/HrDashboard/HrDashboard";
@@ -123,6 +124,7 @@ const App = () => {
                     <Route path="/admin-view/requisition" element={<AdminViewRequisition />} />
                     <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
                     <Route path="/admin-view/account-creation" element={<AdminAccountCreation />} />
+                    <Route path="/admin-view/manage-employees" element={<ManageEmployees />} />
                     <Route path="*" element={<Navigate to="/admin-dashboard" />} />
                   </Routes>
                 </div>

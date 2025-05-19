@@ -3,232 +3,212 @@
   background: url("../../assets/blue.png") no-repeat center;
   background-size: cover;
   text-align: center;
-  padding: 60px 20px;
+  padding: 30px;
   color: white;
   position: relative;
+  margin-left: 40px;
   border-radius: 10px;
-  margin-bottom: 20px;
 }
 
-.adminprofile-banner h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin: 0;
-}
-
-/* Profile Container */
-.adminprofile-container {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Profile Image and Info */
-.adminprofile-image-container {
-  text-align: center;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
+/* Admin Profile Image */
 .adminprofile-image {
-  width: 180px;
-  height: 180px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
   border-radius: 50%;
   border: 4px solid white;
-  margin: 0 auto 15px;
+  margin-bottom: 10px;
 }
 
+/* Admin Profile Info */
 .adminprofile-info h2 {
-  margin: 15px 0 10px;
-  font-size: 1.8rem;
-  text-align: center;
+  margin: 10px 0 5px;
 }
 
 .adminprofile-info p {
   margin: 0;
-  font-size: 1.2rem;
-  color: #666;
-  text-align: center;
 }
 
-/* Bottom Section */
-.adminprofile-bottom {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-/* Card Styling */
-.adminprofile-card {
+/* Admin Profile Details Section */
+.adminprofile-details {
+  padding: 20px;
   background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  margin-left: 40px;
 }
 
-.adminprofile-card h3 {
-  margin-bottom: 15px;
-  font-size: 1.5rem;
-  color: #333;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 10px;
+.adminprofile-details h3 {
+  margin-bottom: 10px;
 }
 
-.adminprofile-card ul {
+.adminprofile-details ul {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 
-.adminprofile-card ul li {
-  margin-bottom: 10px;
-  font-size: 1.1rem;
+.adminprofile-details ul li {
+  margin-bottom: 5px;
 }
 
-.adminprofile-card ul li strong {
-  color: #2583d8;
-}
-
-/* Edit Button */
-.adminprofile-edit-button-container {
-  text-align: center;
-  margin-top: 30px;
-}
-
+/* Admin Edit Button */
 .adminedit-button {
-  display: inline-block;
-  padding: 12px 25px;
+  display: block;
+  width: 100px;
+  padding: 10px;
   background-color: #2584d6;
   color: white;
   border: none;
   text-align: center;
+  margin-top: 10px;
   cursor: pointer;
   border-radius: 5px;
-  font-size: 1.2rem;
-  transition: background-color 0.3s ease;
 }
 
 .adminedit-button:hover {
   background-color: #1b6bbf;
 }
 
-/* Modal Overlay */
+/* Modern Modal Overlay for Admin */
 .adminprofile-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(37, 131, 216, 0.18);
   z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(2px);
 }
 
-/* Modal Box */
-.adminprofile-modal {
+/* Modern Modal Box for Admin */
+.adminprofile-modal.modern-modal {
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  padding: 30px;
-  max-width: 600px;
+  border-radius: 18px;
+  box-shadow: 0 8px 40px rgba(37, 131, 216, 0.18);
+  padding: 36px 32px 28px 32px;
+  max-width: 570px;
   width: 100%;
   position: relative;
+  animation: modalPopIn 0.25s cubic-bezier(.4, 2, .6, 1) both;
 }
 
-.adminprofile-modal h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
-  color: #2583d8;
-  text-align: center;
+@keyframes modalPopIn {
+  0% {
+    transform: scale(0.95) translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 .adminprofile-modal-close {
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 18px;
+  right: 22px;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: #2583d8;
   cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
 }
 
 .adminprofile-modal-close:hover {
   color: #1b6bbf;
 }
 
-/* Modal Form */
+.adminprofile-modal h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: #2583d8;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 .adminprofile-edit-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 0;
 }
 
 .adminprofile-edit-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px 20px;
+  gap: 18px 24px;
+  margin-bottom: 18px;
 }
 
 .adminprofile-edit-grid label {
   display: flex;
   flex-direction: column;
   font-weight: 500;
-  color: #333;
-  font-size: 0.95rem;
+  color: #1b6bbf;
+  font-size: 1rem;
+  gap: 6px;
 }
 
 .adminprofile-edit-grid input {
-  padding: 10px;
-  font-size: 0.95rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  transition: border 0.3s ease;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1.5px solid #d0d7e2;
+  border-radius: 6px;
+  background: #f7fafd;
+  transition: border 0.2s;
 }
 
 .adminprofile-edit-grid input:focus {
-  border-color: #2583d8;
+  border: 1.5px solid #2583d8;
   outline: none;
 }
 
 .adminprofile-modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 
-.adminprofile-modal-actions .adminedit-button {
-  padding: 10px 20px;
+.adminprofile-modal .adminedit-button {
+  min-width: 100px;
+  padding: 10px 0;
+  border-radius: 6px;
   font-size: 1rem;
-  border-radius: 5px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #2583d8 80%, #1b6bbf 100%);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.1);
+  transition: background 0.2s, box-shadow 0.2s;
 }
 
-.adminprofile-modal-actions .adminedit-button.cancel {
-  background-color: #ccc;
-  color: #333;
+.adminprofile-modal .adminedit-button:hover {
+  background: linear-gradient(90deg, #1b6bbf 80%, #2583d8 100%);
+  box-shadow: 0 4px 16px rgba(37, 131, 216, 0.18);
 }
 
-.adminprofile-modal-actions .adminedit-button.cancel:hover {
-  background-color: #bbb;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-  .adminprofile-bottom {
-    grid-template-columns: 1fr;
+  .adminprofile-details {
+    margin-left: 0;
   }
-
+  .adminprofile-banner {
+    margin-left: 0;
+    padding: 20px;
+  }
   .adminprofile-image {
-    width: 140px;
-    height: 140px;
+    width: 90px;
+    height: 90px;
+  }
+  .adminprofile-modal.modern-modal {
+    padding: 18px 6vw 18px 6vw;
+    max-width: 98vw;
   }
 }

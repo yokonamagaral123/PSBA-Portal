@@ -13,6 +13,14 @@ const announcementSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  date: {
+    type: String, // Store as YYYY-MM-DD
+    required: false
+  },
+  time: {
+    type: String, // Store as HH:mm (24-hour)
+    required: false
   }
 });
 

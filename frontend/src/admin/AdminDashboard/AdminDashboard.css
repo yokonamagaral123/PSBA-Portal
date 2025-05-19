@@ -1,0 +1,1107 @@
+/* Admin Dashboard Banner */
+.admindashboard-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.admindashboard-banner-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Dashboard Widgets Layout */
+.admindashboard-widgets {
+display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Space between widgets */
+  margin-top: 20px;
+  margin-left: 40px; /* Adjust content slightly to the right */
+}
+
+/* Widget Cards */
+.admindashboard-announcements,
+.admindashboard-todo,
+.admindashboard-calendar {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-height: 340px;
+  position: relative;
+}
+
+/* Admin Dashboard Image Carousel (copied and adapted from HR Dashboard) */
+.admindashboard-image-carousel {
+  position: relative;
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.admindashboard-image-carousel img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out;
+  border-radius: 10px;
+}
+.admindashboard-carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.5rem;
+}
+.admindashboard-carousel-button.left {
+  left: 10px;
+}
+.admindashboard-carousel-button.right {
+  right: 10px;
+}
+.admindashboard-carousel-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+.admindashboard-carousel-dots .dot {
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.admindashboard-carousel-dots .dot.active {
+  background-color: white;
+}
+
+/* --- MODALS & CALENDAR/TODO/ANNOUNCEMENT STYLES FROM HRDASHBOARD --- */
+.admindashboard-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admindashboard-modal {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 32px 28px 24px 28px;
+  min-width: 340px;
+  max-width: 95vw;
+  position: relative;
+  animation: fadeIn 0.2s;
+}
+.admindashboard-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.admindashboard-modal-close:hover {
+  color: #d32f2f;
+}
+.admindashboard-modal-submit {
+  transition: background 0.2s;
+}
+.admindashboard-modal-submit:hover {
+  background: #003366;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+.admindashboard-announcement-list,
+.admindashboard-todo-list {
+  list-style: disc inside;
+  margin: 10px 0 0 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thick;
+  scrollbar-color: #b3b3b3 #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar,
+.admindashboard-announcement-list::-webkit-scrollbar {
+  width: 7px;
+  background: #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar-thumb,
+.admindashboard-announcement-list::-webkit-scrollbar-thumb {
+  background: #b3b3b3;
+  border-radius: 6px;
+}
+.admindashboard-announcement-item {
+  display: flex;
+  align-items: flex-start;
+  background: #dde9ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.07);
+  padding: 14px 18px;
+  gap: 12px;
+  border: 0.3px solid #2583d8;
+}
+.admindashboard-announcement-bullet {
+  color: #2583d8;
+  font-size: 2rem;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.admindashboard-announcement-content {
+  flex: 1;
+}
+.admindashboard-announcement-date {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 2px;
+}
+.admindashboard-todo-list li {
+  margin-bottom: 6px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: background 0.3s;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-list li.done {
+  background: #7be49533;
+}
+.admindashboard-todo-list li:not(.done)[data-due="true"] {
+  background: #ffe06666;
+}
+.admindashboard-todo-bullet {
+  color: #2583d8;
+  font-size: 1.5rem;
+  margin-right: 10px;
+  flex-shrink: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-task-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.admindashboard-todo-task-title {
+  font-weight: 600;
+  font-size: 1.08em;
+  color: #222;
+  font-family: 'Segoe UI Semibold', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-task-due {
+  font-size: 0.97em;
+  color: #888;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-mark-done-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  transition: filter 0.2s;
+}
+.admindashboard-todo-mark-done-btn:hover {
+  filter: brightness(0.85);
+}
+.admindashboard-calendar h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.admindashboard-calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.admindashboard-calendar th,
+.admindashboard-calendar td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.admindashboard-calendar td.admindashboard-today {
+  background: #2583d8;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-due-task {
+  background: #ffe066 !important;
+  color: #333;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-done-task {
+  background: #7be495 !important;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* Announcements & To-Do */
+.admindashboard-announcements h3,
+.admindashboard-todo h3 {
+  margin-bottom: 12px;
+}
+.admindashboard-announcements-header,
+.admindashboard-todo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.admindashboard-announcements ul,
+.admindashboard-todo ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.admindashboard-announcements p,
+.admindashboard-todo p {
+  color: #888;
+}
+.admindashboard-announcement-input,
+.admindashboard-todo-input {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+.admindashboard-announcement-list,
+.admindashboard-todo-list {
+  list-style: disc inside;
+  margin: 10px 0 0 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thick;
+  scrollbar-color: #b3b3b3 #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar,
+.admindashboard-announcement-list::-webkit-scrollbar {
+  width: 7px;
+  background: #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar-thumb,
+.admindashboard-announcement-list::-webkit-scrollbar-thumb {
+  background: #b3b3b3;
+  border-radius: 6px;
+}
+.admindashboard-announcement-item {
+  display: flex;
+  align-items: flex-start;
+  background: #dde9ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.07);
+  padding: 14px 18px;
+  gap: 12px;
+  border: 0.3px solid #2583d8;
+}
+.admindashboard-announcement-bullet {
+  color: #2583d8;
+  font-size: 2rem;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.admindashboard-announcement-content {
+  flex: 1;
+}
+.admindashboard-announcement-date {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 2px;
+}
+.admindashboard-todo-list li {
+  margin-bottom: 6px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: background 0.3s;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-list li.done {
+  background: #7be49533;
+}
+.admindashboard-todo-list li:not(.done)[data-due="true"] {
+  background: #ffe06666;
+}
+.admindashboard-todo-bullet {
+  color: #2583d8;
+  font-size: 1.5rem;
+  margin-right: 10px;
+  flex-shrink: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-task-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.admindashboard-todo-task-title {
+  font-weight: 600;
+  font-size: 1.08em;
+  color: #222;
+  font-family: 'Segoe UI Semibold', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-task-due {
+  font-size: 0.97em;
+  color: #888;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-mark-done-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  transition: filter 0.2s;
+}
+.admindashboard-todo-mark-done-btn:hover {
+  filter: brightness(0.85);
+}
+.admindashboard-calendar h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.admindashboard-calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.admindashboard-calendar th,
+.admindashboard-calendar td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.admindashboard-calendar td.admindashboard-today {
+  background: #2583d8;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-due-task {
+  background: #ffe066 !important;
+  color: #333;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-done-task {
+  background: #7be495 !important;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* Announcements & To-Do */
+.admindashboard-announcements h3,
+.admindashboard-todo h3 {
+  margin-bottom: 12px;
+}
+.admindashboard-announcements-header,
+.admindashboard-todo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.admindashboard-announcements ul,
+.admindashboard-todo ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.admindashboard-announcements p,
+.admindashboard-todo p {
+  color: #888;
+}
+.admindashboard-announcement-input,
+.admindashboard-todo-input {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+.admindashboard-announcement-list,
+.admindashboard-todo-list {
+  list-style: disc inside;
+  margin: 10px 0 0 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thick;
+  scrollbar-color: #b3b3b3 #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar,
+.admindashboard-announcement-list::-webkit-scrollbar {
+  width: 7px;
+  background: #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar-thumb,
+.admindashboard-announcement-list::-webkit-scrollbar-thumb {
+  background: #b3b3b3;
+  border-radius: 6px;
+}
+.admindashboard-announcement-item {
+  display: flex;
+  align-items: flex-start;
+  background: #dde9ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.07);
+  padding: 14px 18px;
+  gap: 12px;
+  border: 0.3px solid #2583d8;
+}
+.admindashboard-announcement-bullet {
+  color: #2583d8;
+  font-size: 2rem;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.admindashboard-announcement-content {
+  flex: 1;
+}
+.admindashboard-announcement-date {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 2px;
+}
+.admindashboard-todo-list li {
+  margin-bottom: 6px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: background 0.3s;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-list li.done {
+  background: #7be49533;
+}
+.admindashboard-todo-list li:not(.done)[data-due="true"] {
+  background: #ffe06666;
+}
+.admindashboard-todo-bullet {
+  color: #2583d8;
+  font-size: 1.5rem;
+  margin-right: 10px;
+  flex-shrink: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-task-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.admindashboard-todo-task-title {
+  font-weight: 600;
+  font-size: 1.08em;
+  color: #222;
+  font-family: 'Segoe UI Semibold', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-task-due {
+  font-size: 0.97em;
+  color: #888;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-mark-done-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  transition: filter 0.2s;
+}
+.admindashboard-todo-mark-done-btn:hover {
+  filter: brightness(0.85);
+}
+.admindashboard-calendar h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.admindashboard-calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.admindashboard-calendar th,
+.admindashboard-calendar td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.admindashboard-calendar td.admindashboard-today {
+  background: #2583d8;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-due-task {
+  background: #ffe066 !important;
+  color: #333;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-done-task {
+  background: #7be495 !important;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* Announcements & To-Do */
+.admindashboard-announcements h3,
+.admindashboard-todo h3 {
+  margin-bottom: 12px;
+}
+.admindashboard-announcements-header,
+.admindashboard-todo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.admindashboard-announcements ul,
+.admindashboard-todo ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.admindashboard-announcements p,
+.admindashboard-todo p {
+  color: #888;
+}
+.admindashboard-announcement-input,
+.admindashboard-todo-input {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+.admindashboard-announcement-list,
+.admindashboard-todo-list {
+  list-style: disc inside;
+  margin: 10px 0 0 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thick;
+  scrollbar-color: #b3b3b3 #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar,
+.admindashboard-announcement-list::-webkit-scrollbar {
+  width: 7px;
+  background: #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar-thumb,
+.admindashboard-announcement-list::-webkit-scrollbar-thumb {
+  background: #b3b3b3;
+  border-radius: 6px;
+}
+.admindashboard-announcement-item {
+  display: flex;
+  align-items: flex-start;
+  background: #dde9ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.07);
+  padding: 14px 18px;
+  gap: 12px;
+  border: 0.3px solid #2583d8;
+}
+.admindashboard-announcement-bullet {
+  color: #2583d8;
+  font-size: 2rem;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.admindashboard-announcement-content {
+  flex: 1;
+}
+.admindashboard-announcement-date {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 2px;
+}
+.admindashboard-todo-list li {
+  margin-bottom: 6px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: background 0.3s;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-list li.done {
+  background: #7be49533;
+}
+.admindashboard-todo-list li:not(.done)[data-due="true"] {
+  background: #ffe06666;
+}
+.admindashboard-todo-bullet {
+  color: #2583d8;
+  font-size: 1.5rem;
+  margin-right: 10px;
+  flex-shrink: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-task-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.admindashboard-todo-task-title {
+  font-weight: 600;
+  font-size: 1.08em;
+  color: #222;
+  font-family: 'Segoe UI Semibold', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-task-due {
+  font-size: 0.97em;
+  color: #888;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-mark-done-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  transition: filter 0.2s;
+}
+.admindashboard-todo-mark-done-btn:hover {
+  filter: brightness(0.85);
+}
+.admindashboard-calendar h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.admindashboard-calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.admindashboard-calendar th,
+.admindashboard-calendar td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.admindashboard-calendar td.admindashboard-today {
+  background: #2583d8;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-due-task {
+  background: #ffe066 !important;
+  color: #333;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-done-task {
+  background: #7be495 !important;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* Announcements & To-Do */
+.admindashboard-announcements h3,
+.admindashboard-todo h3 {
+  margin-bottom: 12px;
+}
+.admindashboard-announcements-header,
+.admindashboard-todo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.admindashboard-announcements ul,
+.admindashboard-todo ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.admindashboard-announcements p,
+.admindashboard-todo p {
+  color: #888;
+}
+.admindashboard-announcement-input,
+.admindashboard-todo-input {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+.admindashboard-announcement-list,
+.admindashboard-todo-list {
+  list-style: disc inside;
+  margin: 10px 0 0 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thick;
+  scrollbar-color: #b3b3b3 #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar,
+.admindashboard-announcement-list::-webkit-scrollbar {
+  width: 7px;
+  background: #f5f5f5;
+}
+.admindashboard-todo-list::-webkit-scrollbar-thumb,
+.admindashboard-announcement-list::-webkit-scrollbar-thumb {
+  background: #b3b3b3;
+  border-radius: 6px;
+}
+.admindashboard-announcement-item {
+  display: flex;
+  align-items: flex-start;
+  background: #dde9ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.07);
+  padding: 14px 18px;
+  gap: 12px;
+  border: 0.3px solid #2583d8;
+}
+.admindashboard-announcement-bullet {
+  color: #2583d8;
+  font-size: 2rem;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.admindashboard-announcement-content {
+  flex: 1;
+}
+.admindashboard-announcement-date {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 2px;
+}
+.admindashboard-todo-list li {
+  margin-bottom: 6px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: background 0.3s;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-list li.done {
+  background: #7be49533;
+}
+.admindashboard-todo-list li:not(.done)[data-due="true"] {
+  background: #ffe06666;
+}
+.admindashboard-todo-bullet {
+  color: #2583d8;
+  font-size: 1.5rem;
+  margin-right: 10px;
+  flex-shrink: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-task-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.admindashboard-todo-task-title {
+  font-weight: 600;
+  font-size: 1.08em;
+  color: #222;
+  font-family: 'Segoe UI Semibold', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+}
+.admindashboard-todo-task-due {
+  font-size: 0.97em;
+  color: #888;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+.admindashboard-todo-mark-done-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  transition: filter 0.2s;
+}
+.admindashboard-todo-mark-done-btn:hover {
+  filter: brightness(0.85);
+}
+.admindashboard-calendar h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.admindashboard-calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.admindashboard-calendar th,
+.admindashboard-calendar td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.admindashboard-calendar td.admindashboard-today {
+  background: #2583d8;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-due-task {
+  background: #ffe066 !important;
+  color: #333;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.admindashboard-done-task {
+  background: #7be495 !important;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* Admin Specific Styles */
+.admindashboard-section-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #1a237e;
+  margin: 32px 0 24px 0;
+  margin-left: 40px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+  border-left: 6px solid #2196f3;
+  padding-left: 18px;
+  background: linear-gradient(90deg, #e3f2fd 60%, transparent 100%);
+  border-radius: 6px;
+}
+.admindashboard-overview {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+  margin-left: 40px;
+  max-width: 900px;
+  width: 100%;
+}
+.admindashboard-card {
+  background: linear-gradient(135deg, #e3f2fd 60%, #fff 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.08);
+  padding: 28px 36px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 220px;
+  transition: box-shadow 0.2s, transform 0.2s;
+  border: 1.5px solid #2196f3;
+  cursor: pointer;
+}
+.admindashboard-card:hover {
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.18);
+  transform: translateY(-4px) scale(1.03);
+}
+.admindashboard-card-icon {
+  font-size: 2.5rem;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 60px;
+  background: linear-gradient(135deg, #2196f3 60%, #e3f2fd 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.12);
+}
+.admindashboard-card-title {
+  font-size: 1.15rem;
+  color: #1a237e;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.admindashboard-leave-details-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-left: 40px;
+}
+.admindashboard-leave-card {
+  flex: 1 1 240px;
+  min-width: 220px;
+  background: linear-gradient(135deg, #fff 60%, #e3f2fd 100%);
+  border-radius: 12px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.08);
+  transition: box-shadow 0.2s, transform 0.2s;
+  border: 1.5px solid #2196f3;
+  margin-left: 0;
+  cursor: pointer;
+}
+.admindashboard-leave-card:hover {
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.18);
+  transform: translateY(-4px) scale(1.03);
+}
+.admindashboard-leave-card-icon {
+  font-size: 2.2rem;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2196f3 60%, #e3f2fd 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.12);
+}
+.admindashboard-leave-card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1a237e;
+  letter-spacing: 0.5px;
+}
+.admindashboard-leave-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #22223b;
+}
+.admindashboard-leave-card.applied {
+  background: #eaf4fc;
+}
+.admindashboard-leave-card.approved {
+  background: #eafbe7;
+}
+.admindashboard-leave-card.pending {
+  background: #fffbe7;
+}
+.admindashboard-leave-card.rejected {
+  background: #ffeaea;
+}
+.admindashboard-leave-card-title.approved {
+  color: #3bb77e;
+}
+.admindashboard-leave-card-title.pending {
+  color: #e6b800;
+}
+.admindashboard-leave-card-title.rejected {
+  color: #e74c3c;
+}
+
+/* Dashboard Main Content Layout */
+.dashboard-main-content {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: flex-start;
+}
+.dashboard-main-left {
+  flex: 1 1 400px;
+  min-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  /* Align with carousel height */
+  justify-content: flex-start;
+  height: 100%;
+}
+.dashboard-main-right {
+  flex: 2 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.dashboard-overview, .leave-details-cards {
+  margin-bottom: 30;
+}
+
+/* Responsive for mobile */
+@media (max-width: 900px) {
+  .dashboard-overview,
+  .leave-details-cards,
+  .dashboard-widgets {
+    flex-direction: column;
+    gap: 20px;
+    display: flex;
+  }
+  .dashboard-banner {
+    padding: 60px 0;
+  }
+  .dashboard-main-content {
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+  }
+  .dashboard-main-left, .dashboard-main-right {
+    min-width: 0;
+    height: auto;
+  }
+}
