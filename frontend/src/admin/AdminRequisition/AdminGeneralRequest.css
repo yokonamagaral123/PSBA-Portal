@@ -1,60 +1,124 @@
-/* Admin General Request CSS */
+/* Banner Styling */
 .admin-general-request-banner {
   background: url("../../assets/blue.png") no-repeat center;
   background-size: cover;
   text-align: center;
-  padding: 110px 0; /* Adjust padding for height */
+  padding: 100px 0;
   color: white;
   position: relative;
-  margin-left: 40px; /* Align with the rest of the content */
-  border-radius: 10px; /* Optional: Add rounded corners */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+  margin: 20px 40px;
+  border-radius: 15px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 .admin-general-request-banner-title {
-  font-size: 36px;
+  font-size: 40px;
   font-weight: bold;
   text-transform: uppercase;
   margin: 0;
+  letter-spacing: 2px;
 }
 
-/* Main Content */
+/* Main Content Styling */
 .admin-general-request-content {
-  margin-left: 40px; /* Adjust content slightly to the right */
-  padding: 20px;
+  margin: 20px 40px;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Form Styling */
 .admin-general-request-content form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.admin-general-request-content form label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  font-size: 14px;
+  color: #333;
 }
 
 .admin-general-request-content form select,
 .admin-general-request-content form input,
 .admin-general-request-content form textarea,
 .admin-general-request-content form button {
-  padding: 10px;
+  padding: 12px;
   font-size: 14px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 5px;
-}
-
-.admin-general-request-content form textarea {
   width: 100%;
-  height: 100px;
-  resize: none;
+  box-sizing: border-box;
 }
 
-.admin-general-request-content form button {
-  background-color: #2583d8;
+/* Reason Field Styling */
+.reason-container {
+  grid-column: 1 / -1; /* Full width */
+}
+
+.reason-container label {
+  font-size: 16px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.reason-container textarea {
+  height: 200px;
+  width: 100%;
+  padding: 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+/* Submit Button Styling */
+.submit-container {
+  grid-column: 1 / 2; /* Left side */
+  text-align: left;
+  margin-top: -10px;
+}
+
+.submit-container button {
+  background-color: #007bff;
   color: white;
   border: none;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  width: fit-content;
 }
 
-.admin-general-request-content form button:hover {
-  background-color: #1c5a80;
+.submit-container button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .admin-general-request-banner {
+    margin: 10px;
+  }
+
+  .admin-general-request-content {
+    margin: 10px;
+    padding: 20px;
+  }
+
+  .reason-container textarea {
+    height: 150px;
+  }
+
+  .submit-container {
+    grid-column: 1 / -1;
+  }
 }

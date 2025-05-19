@@ -19,7 +19,7 @@ const AdminLeaveRequest = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         alert("You are not logged in. Please log in first.");
         return;
@@ -61,26 +61,79 @@ const AdminLeaveRequest = () => {
       <div className="admin-leave-request-content">
         <h1>Admin Leave Request</h1>
         <form onSubmit={handleSubmit}>
-          <select name="leaveType" value={formData.leaveType} onChange={handleChange}>
-            <option value="">Leave Type</option>
-            <option value="Sick Leave">Sick Leave</option>
-            <option value="Vacation Leave">Vacation Leave</option>
-          </select>
-          <select name="purpose" value={formData.purpose} onChange={handleChange}>
-            <option value="">Purpose</option>
-            <option value="Medical">Medical</option>
-            <option value="Personal">Personal</option>
-          </select>
-          <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
-          <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
-          <input type="time" name="time" value={formData.time} onChange={handleChange} />
-          <textarea
-            name="reason"
-            placeholder="Reason..."
-            value={formData.reason}
-            onChange={handleChange}
-          ></textarea>
-          <button type="submit">Submit</button>
+          <div>
+            <label htmlFor="leaveType">Leave Type</label>
+            <select
+              name="leaveType"
+              id="leaveType"
+              value={formData.leaveType}
+              onChange={handleChange}
+            >
+              <option value="">Leave Type</option>
+              <option value="Sick Leave">Sick Leave</option>
+              <option value="Vacation Leave">Vacation Leave</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="purpose">Purpose</label>
+            <select
+              name="purpose"
+              id="purpose"
+              value={formData.purpose}
+              onChange={handleChange}
+            >
+              <option value="">Purpose</option>
+              <option value="Medical">Medical</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="startDate">Start Date</label>
+            <input
+              type="date"
+              name="startDate"
+              id="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="endDate">End Date</label>
+            <input
+              type="date"
+              name="endDate"
+              id="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="time">Time</label>
+            <input
+              type="time"
+              name="time"
+              id="time"
+              value={formData.time}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Reason Field */}
+          <div className="reason-container">
+            <label htmlFor="reason">Reason</label>
+            <textarea
+              name="reason"
+              id="reason"
+              placeholder="Enter your reason..."
+              value={formData.reason}
+              onChange={handleChange}
+            ></textarea>
+          </div>
+
+          {/* Submit Button */}
+          <div className="submit-container">
+            <button type="submit">Submit</button>
+          </div>
         </form>
       </div>
     </>
