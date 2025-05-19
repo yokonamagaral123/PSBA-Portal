@@ -5,11 +5,17 @@ const Announcement = require("../models/Announcements");
 // Create a new announcement
 router.post("/", async (req, res) => {
   try {
-    const { message, createdBy } = req.body;
+    const { message, createdBy, createdAt, date, time } = req.body;
     if (!message || !createdBy) {
       return res.status(400).json({ success: false, message: "Message and createdBy are required" });
     }
-    const announcement = new Announcement({ message, createdBy });
+    const announcement = new Announcement({
+      message,
+      createdBy,
+      createdAt: createdAt ? new Date(createdAt) : undefined,
+      date,
+      time
+    });
     await announcement.save();
     res.status(201).json({ success: true, announcement });
   } catch (error) {
