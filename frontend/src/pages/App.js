@@ -14,7 +14,7 @@ import RequisitionHistory from "../employee/Requisition/RequisitionHistory";
 import Payroll from "../employee/Payroll/Payroll";
 import Settings from "../employee/Settings/Settings";
 import AssistBotHelp from "../employee/AssistBotHelp/AssistBotHelp";
-import AdminDashboard from "../admin/AdminDashboard";
+import AdminDashboard from "../admin/AdminDashboard/AdminDashboard";
 import AdminProfile from "../admin/AdminProfile/AdminProfile";
 import AdminSettings from "../admin/AdminSettings/AdminSettings";
 import AdminAttendance from "../admin/AdminAttendance/AdminAttendance";
