@@ -194,3 +194,21 @@
   background: linear-gradient(90deg, #1b6bbf 80%, #2583d8 100%);
   box-shadow: 0 4px 16px rgba(37, 131, 216, 0.18);
 }
+
+@media (max-width: 768px) {
+  .adminprofile-details {
+    margin-left: 0;
+  }
+  .adminprofile-banner {
+    margin-left: 0;
+    padding: 20px;
+  }
+  .adminprofile-image {
+    width: 90px;
+    height: 90px;
+  }
+  .adminprofile-modal.modern-modal {
+    padding: 18px 6vw 18px 6vw;
+    max-width: 98vw;
+  }
+}
