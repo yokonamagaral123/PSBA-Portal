@@ -1,5 +1,5 @@
 /* Dashboard Banner */
-.adminview-dashboard-banner {
+.dashboard-banner {
   background: url("../../assets/blue.png") no-repeat center;
   background-size: cover;
   text-align: center;
@@ -11,7 +11,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
 }
 
-.adminview-requisition-table {
+.hrviewattendance-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -20,37 +20,38 @@
   border-radius: 12px;
   overflow: hidden;
   margin-top: 24px;
-  margin-left: 20px;
+  margin-left: 20px
+
 }
 
-.adminview-requisition-table th, .adminview-requisition-table td {
+.hrviewattendance-table th, .hrviewattendance-table td {
   padding: 14px 16px;
   text-align: left;
   font-size: 1rem;
 }
 
-.adminview-requisition-table th {
+.hrviewattendance-table th {
   background: #f4f8fb;
   color: #1a355e;
   font-weight: 600;
   border-bottom: 2px solid #e3e8ee;
 }
 
-.adminview-requisition-table tr {
+.hrviewattendance-table tr {
   transition: background 0.15s;
 }
 
-.adminview-requisition-table tbody tr:hover {
+.hrviewattendance-table tbody tr:hover {
   background: #f0f6fa;
 }
 
-.adminview-requisition-table td {
+.hrviewattendance-table td {
   border-bottom: 1px solid #e3e8ee;
   vertical-align: middle;
 }
 
-.adminview-requisition-table td select,
-.adminview-requisition-table td input[type="text"] {
+.hrviewattendance-table td select,
+.hrviewattendance-table td input[type="text"] {
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #cfd8dc;
@@ -59,13 +60,13 @@
   transition: border 0.2s;
 }
 
-.adminview-requisition-table td select:focus,
-.adminview-requisition-table td input[type="text"]:focus {
+.hrviewattendance-table td select:focus,
+.hrviewattendance-table td input[type="text"]:focus {
   border: 1.5px solid #1976d2;
   outline: none;
 }
 
-.adminview-requisition-table button {
+.hrviewattendance-table button {
   background: #1976d2;
   color: #fff;
   border: none;
@@ -76,34 +77,34 @@
   transition: background 0.2s;
 }
 
-.adminview-requisition-table button:disabled {
+.hrviewattendance-table button:disabled {
   background: #b0bec5;
   cursor: not-allowed;
 }
 
-.adminview-requisition-table .success {
+.hrviewattendance-table .success {
   color: #2e7d32;
   font-weight: 500;
 }
 
-.adminview-requisition-table .error {
+.hrviewattendance-table .error {
   color: #c62828;
   font-weight: 500;
 }
 
-.adminview-requisition-container {
+.hrviewattendance-container {
   max-width: 98vw;
   margin: 0 auto;
   padding: 0 18px 32px 18px;
 }
 
-.adminview-requisition-searchbar {
+.hrviewattendance-searchbar {
   margin-bottom: 18px;
   display: flex;
   justify-content: flex-end;
 }
 
-.adminview-requisition-input {
+.hrviewattendance-input {
   padding: 10px 16px;
   border-radius: 8px;
   border: 1.5px solid #b0bec5;
@@ -113,63 +114,7 @@
   transition: border 0.2s;
 }
 
-.adminview-requisition-input:focus {
+.hrviewattendance-input:focus {
   border: 1.5px solid #1976d2;
   outline: none;
 }
-
-.adminview-requisition-filters {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 18px;
-  margin-top: 32px;
-}
-
-.adminview-requisition-status-filter {
-  width: 140px;
-  min-width: 0;
-}
-
-.adminview-requisition-remarks-input {
-  width: 120px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #cfd8dc;
-  font-size: 1rem;
-  background: #f9fbfc;
-  transition: border 0.2s;
-}
-.adminview-requisition-remarks-input:focus {
-  border: 1.5px solid #1976d2;
-  outline: none;
-}
-
-.adminview-requisition-save-btn {
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 7px 18px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-  min-width: 60px;
-}
-.adminview-requisition-save-btn:disabled {
-  background: #b0bec5;
-  cursor: not-allowed;
-}
-
-.adminview-requisition-success {
-  color: #2e7d32;
-  font-weight: 500;
-  font-size: 12px;
-}
-.adminview-requisition-error {
-  color: #c62828;
-  font-weight: 500;
-  font-size: 12px;
-}
-
-
-

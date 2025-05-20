@@ -44,29 +44,39 @@ const AdminRequisitionHistory = () => {
         <table>
           <thead>
             <tr>
+              <th>Time</th>
+              <th>Admin Name</th>
               <th>Type</th>
               <th>Department/Leave Type</th>
               <th>Purpose</th>
               <th>Reason</th>
+              <th>Start Date</th>
+              <th>End Date</th>
               <th>Date Requested</th>
-              <th>Requested By</th>
+              <th>Status</th>
+              <th>Remarks</th>
             </tr>
           </thead>
           <tbody>
             {requisitions.length > 0 ? (
               requisitions.map((req, index) => (
                 <tr key={index}>
+                  <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
+                  <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
                   <td>{req.type}</td>
                   <td>{req.department || req.leaveType}</td>
                   <td>{req.purpose}</td>
                   <td>{req.reason}</td>
-                  <td>{new Date(req.dateRequested).toLocaleDateString()}</td>
-                  <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (req.requestedBy && typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
+                  <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
+                  <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>
+                  <td>{req.dateRequested ? new Date(req.dateRequested).toLocaleDateString() : ''}</td>
+                  <td style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{req.status || 'Pending'}</td>
+                  <td>{req.remarks || ''}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6">No requisitions found</td>
+                <td colSpan="11">No requisitions found</td>
               </tr>
             )}
           </tbody>

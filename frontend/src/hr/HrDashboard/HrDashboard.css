@@ -311,10 +311,11 @@
   border: 1px solid #ddd;
 }
 .hrdashboard-calendar td.hrdashboard-today {
-  background: #2583d8;
+  background: #2583d8 !important;
   color: #fff;
-  border-radius: 50%;
+  border-radius: 10px;
   font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
 }
 .hrdashboard-calendar-header {
   display: flex;
@@ -327,11 +328,20 @@
   background: #2583d8;
   color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 4px 10px;
-  font-size: 18px;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.5rem;
+  font-weight: bold;
   cursor: pointer;
-  margin: 0 5px;
+  margin: 0 6px;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.10);
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+.hrdashboard-calendar-header button:hover {
+  background: #0056b3;
+  color: #fff;
+  transform: scale(1.08);
 }
 
 /* Task Status Highlighting */
@@ -519,6 +529,94 @@
 }
 .hrdashboard-leave-card-title.rejected {
   color: #e74c3c;
+}
+
+/* --- BUTTONS: +, CLEAR (DELETE), CALENDAR NAV --- */
+.hrdashboard-todo-delete-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 1.6em;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.hrdashboard-todo-delete-btn:hover {
+  background: #ffeaea;
+  color: #b71c1c;
+}
+
+.hrdashboard-announcements-header button,
+.hrdashboard-todo-header button {
+  background: #2583d8;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.10);
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+.hrdashboard-announcements-header button:hover,
+.hrdashboard-todo-header button:hover {
+  background: #0056b3;
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.hrdashboard-calendar-header button {
+  background: #2583d8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0 6px;
+  box-shadow: 0 2px 8px rgba(37, 131, 216, 0.10);
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+.hrdashboard-calendar-header button:hover {
+  background: #0056b3;
+  color: #fff;
+  transform: scale(1.08);
+}
+
+/* --- BLUE BOXES FOR CALENDAR CELLS --- */
+.hrdashboard-calendar td.hrdashboard-today {
+  background: #fbff1c !important;
+  color: #000000;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
+}
+.hrdashboard-calendar td.hrdashboard-due-task {
+  background: #91f868 !important;
+  color: #000102;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
+}
+.hrdashboard-calendar td.hrdashboard-done-task {
+  background: #b3e5fc !important;
+  color: #2583d8;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
 }
 
 /* Responsive Adjustments */

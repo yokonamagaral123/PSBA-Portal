@@ -195,6 +195,79 @@
   box-shadow: 0 4px 16px rgba(37, 131, 216, 0.18);
 }
 
+/* Admin Profile Sections */
+.adminprofile-section {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  margin-left: 0;
+}
+
+.adminprofile-section h3 {
+  margin-bottom: 10px;
+  color: #2583d8;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.adminprofile-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.adminprofile-section ul li {
+  margin-bottom: 5px;
+}
+
+/* Compact Layout for Admin Profile Details */
+.adminprofile-details.compact-layout {
+  margin-left: 0;
+  margin-top: 24px;
+  padding: 18px 12px 18px 12px;
+  background: none;
+  box-shadow: none;
+}
+
+/* Flexbox Layout for Admin Profile Sections */
+.adminprofile-sections-flex {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.adminprofile-sections-flex.align-containers {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.adminprofile-section {
+  flex: 1 1 320px;
+  min-width: 260px;
+  max-width: 370px;
+  margin-bottom: 0;
+  padding: 16px 18px 12px 18px;
+  display: flex;
+  flex-direction: column;
+  height: auto; /* Remove 100% height, use min-height for equalization */
+  align-self: stretch; /* Ensures all sections stretch to same height in flex row */
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.adminprofile-edit-btn-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
 @media (max-width: 768px) {
   .adminprofile-details {
     margin-left: 0;
@@ -210,5 +283,28 @@
   .adminprofile-modal.modern-modal {
     padding: 18px 6vw 18px 6vw;
     max-width: 98vw;
+  }
+}
+
+@media (max-width: 1100px) {
+  .adminprofile-sections-flex {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .adminprofile-sections-flex.align-containers {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .adminprofile-section {
+    max-width: 100%;
+    min-width: 0;
+    height: auto;
+  }
+}
+
+/* Optional: For desktop, force a minimum height for all sections for perfect alignment */
+@media (min-width: 1101px) {
+  .adminprofile-section {
+    min-height: 340px;
   }
 }

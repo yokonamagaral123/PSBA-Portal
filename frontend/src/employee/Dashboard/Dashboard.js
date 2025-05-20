@@ -223,6 +223,25 @@ const EmployeeDashboard = () => {
       .catch(err => console.error("Failed to mark as done:", err));
   };
 
+  // Add handleDeleteTodo function (like AdminDashboard)
+  const handleDeleteTodo = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:5000/api/todos/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        setTodos((prev) => prev.filter((todo) => todo._id !== id && todo.id !== id));
+      }
+    } catch (err) {
+      console.error("Failed to delete todo:", err);
+    }
+  };
+
   // Overlay for calendar day details
   const handleCalendarDayClick = (day) => {
     const dateStr = `${calendar.year}-${String(calendar.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -401,6 +420,15 @@ const EmployeeDashboard = () => {
                 {!item.done && (
                   <button className="employee-todo-mark-done-btn" onClick={() => handleMarkAsDone(item._id || item.id)} title="Mark as done">✔</button>
                 )}
+                {/* Add clear (delete) button for all todos */}
+                <button
+                  className="employee-todo-delete-btn"
+                  onClick={() => handleDeleteTodo(item._id || item.id)}
+                  title="Delete To-Do"
+                  style={{ background: 'none', padding: 0, marginLeft: 8, color: '#e74c3c', fontSize: 18 }}
+                >
+                  &times;
+                </button>
               </li>
             ))}
           </ul>
@@ -437,10 +465,23 @@ const EmployeeDashboard = () => {
                     onKeyDown={handleInputKeyDown}
                     placeholder="--:-- --"
                   />
-                  <button
-                    className="employee-modal-submit"
-                    onClick={handleAddTodo}
-                  >Add To-Do</button>
+                  <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+                    <button
+                      className="employee-modal-submit"
+                      style={{ flex: 1 }}
+                      onClick={handleAddTodo}
+                    >Add To-Do</button>
+                    <button
+                      type="button"
+                      className="employee-modal-submit"
+                      style={{ flex: 1, background: '#e74c3c', color: '#fff' }}
+                      onClick={() => {
+                        setTodoInput("");
+                        setDueDate("");
+                        setTodoTime("");
+                      }}
+                    >Clear</button>
+                  </div>
                 </div>
               </div>
             </div>

@@ -93,7 +93,7 @@ const AdminViewRequisition = () => {
         <h1 className="dashboard-banner-title">ADMIN VIEW REQUISITION</h1>
       </div>
       <div className="adminview-requisition-container">
-        <div className="adminview-requisition-filters">
+        <div className="adminview-requisition-filters" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }}>
           <input
             type="text"
             placeholder="Search by Type, Department, Purpose, Status, etc."
@@ -115,11 +115,14 @@ const AdminViewRequisition = () => {
         <table className="adminview-requisition-table">
           <thead>
             <tr>
+              <th>Time</th>
               <th>Employee ID</th>
               <th>Type</th>
               <th>Department/Leave Type</th>
               <th>Purpose</th>
               <th>Reason</th>
+              <th>Start Date</th>
+              <th>End Date</th>
               <th>Date Requested</th>
               <th>Requested By</th>
               <th>Status</th>
@@ -134,11 +137,14 @@ const AdminViewRequisition = () => {
                 const isEditing = edit.status !== undefined || edit.remarks !== undefined;
                 return (
                   <tr key={req._id}>
+                    <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
                     <td>{req.requestedByEmployeeID || (req.requestedBy && req.requestedBy.employeeID) || ''}</td>
                     <td>{req.type}</td>
                     <td>{req.department || req.leaveType}</td>
                     <td>{req.purpose}</td>
                     <td>{req.reason}</td>
+                    <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
+                    <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>
                     <td>{req.dateRequested ? new Date(req.dateRequested).toLocaleDateString() : ''}</td>
                     <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
                     <td>
@@ -159,26 +165,26 @@ const AdminViewRequisition = () => {
                         onChange={e => handleEditChange(req._id, "remarks", e.target.value)}
                         disabled={edit.loading}
                         placeholder="Add remarks"
-                        style={{ width: "120px" }}
+                        className="adminview-requisition-remarks-input"
                       />
                     </td>
                     <td>
                       <button
                         onClick={() => handleSave(req._id)}
                         disabled={edit.loading || (!isEditing)}
-                        style={{ minWidth: 60 }}
+                        className="adminview-requisition-save-btn"
                       >
                         {edit.loading ? "Saving..." : "Save"}
                       </button>
-                      {edit.error && <div style={{ color: "red", fontSize: 12 }}>{edit.error}</div>}
-                      {edit.success && <div style={{ color: "green", fontSize: 12 }}>{edit.success}</div>}
+                      {edit.error && <div className="adminview-requisition-error">{edit.error}</div>}
+                      {edit.success && <div className="adminview-requisition-success">{edit.success}</div>}
                     </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="10">No requisitions found</td>
+                <td colSpan="13">No requisitions found</td>
               </tr>
             )}
           </tbody>
