@@ -161,6 +161,25 @@ const HrDashboard = () => {
       .catch(err => console.error("Failed to mark as done:", err));
   };
 
+  // Delete todo handler
+  const handleDeleteTodo = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:5000/api/todos/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        setTodos((prev) => prev.filter((todo) => todo._id !== id));
+      }
+    } catch (err) {
+      console.error("Failed to delete todo:", err);
+    }
+  };
+
   // Highlight days with due tasks (green if all done, orange if any not done)
   const dueDaysMap = {};
   todos.forEach(item => {
@@ -694,13 +713,24 @@ const HrDashboard = () => {
                     placeholder="Time"
                     style={{ fontSize: 15, padding: 7 }}
                   />
-                  <button
-                    className="hrdashboard-modal-submit"
-                    style={{ marginTop: 16, padding: '10px 0', fontWeight: 600, fontSize: 16, background: '#0056b3', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
-                    onClick={async () => {
-                      await handleInputKeyDown({ key: 'Enter' });
-                    }}
-                  >Add To-Do</button>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <button
+                      className="hrdashboard-modal-submit"
+                      style={{ flex: 1, marginTop: 16, padding: '10px 0', fontWeight: 600, fontSize: 16, background: '#0056b3', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
+                      onClick={async () => {
+                        await handleInputKeyDown({ key: 'Enter' });
+                      }}
+                    >Add To-Do</button>
+                    <button
+                      type="button"
+                      style={{ flex: 1, marginTop: 16, padding: '10px 0', fontWeight: 600, fontSize: 16, background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
+                      onClick={() => {
+                        setTodoInput("");
+                        setDueDate("");
+                        setTodoTime("");
+                      }}
+                    >Clear</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -736,6 +766,14 @@ const HrDashboard = () => {
                     <FaCheckCircle style={{ color: "#218838", background: 'none' }} />
                   </button>
                 )}
+                <button
+                  className="hrdashboard-todo-mark-done-btn"
+                  title="Delete To-Do"
+                  style={{ background: 'none', padding: 0, marginLeft: 6 }}
+                  onClick={() => handleDeleteTodo(item._id)}
+                >
+                  <span style={{ color: '#e74c3c', fontWeight: 700, fontSize: 18, display: 'inline-block', lineHeight: 1 }}>&#10006;</span>
+                </button>
                 {/* No check icon when done */}
               </li>
             ))}

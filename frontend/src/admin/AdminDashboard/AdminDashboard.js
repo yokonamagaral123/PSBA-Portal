@@ -387,6 +387,25 @@ const AdminDashboard = () => {
       .catch(err => console.error("Failed to mark as done:", err));
   };
 
+  // Add handleDeleteTodo function (copied and adapted from HrDashboard)
+  const handleDeleteTodo = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:5000/api/todos/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        setTodos((prev) => prev.filter((todo) => todo._id !== id));
+      }
+    } catch (err) {
+      console.error("Failed to delete todo:", err);
+    }
+  };
+
   return (
     <>
       {/* Admin Dashboard Banner */}
@@ -623,13 +642,24 @@ const AdminDashboard = () => {
                     placeholder="Time"
                     style={{ fontSize: 15, padding: 7 }}
                   />
-                  <button
-                    className="admindashboard-modal-submit"
-                    style={{ marginTop: 16, padding: '10px 0', fontWeight: 600, fontSize: 16, background: '#0056b3', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
-                    onClick={async () => {
-                      await handleInputKeyDown({ key: 'Enter' });
-                    }}
-                  >Add To-Do</button>
+                  <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                    <button
+                      className="admindashboard-modal-submit"
+                      style={{ flex: 1, padding: '10px 0', fontWeight: 600, fontSize: 16, background: '#0056b3', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
+                      onClick={async () => {
+                        await handleInputKeyDown({ key: 'Enter' });
+                      }}
+                    >Add To-Do</button>
+                    <button
+                      type="button"
+                      style={{ flex: 1, padding: '10px 0', fontWeight: 600, fontSize: 16, background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
+                      onClick={() => {
+                        setTodoInput("");
+                        setDueDate("");
+                        setTodoTime("");
+                      }}
+                    >Clear</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -665,7 +695,15 @@ const AdminDashboard = () => {
                     <FaCheckCircle style={{ color: "#218838", background: 'none' }} />
                   </button>
                 )}
-                {/* No check icon when done */}
+                {/* Add clear (delete) button for all todos */}
+                <button
+                  className="admindashboard-todo-delete-btn"
+                  onClick={() => handleDeleteTodo(item._id)}
+                  title="Delete To-Do"
+                  style={{ background: 'none', padding: 0, marginLeft: 8, color: '#e74c3c', fontSize: 18 }}
+                >
+                  &times;
+                </button>
               </li>
             ))}
           </ul>

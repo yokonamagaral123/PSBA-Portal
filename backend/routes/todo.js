@@ -45,4 +45,31 @@ router.patch("/:id/done", auth, async (req, res) => {
   }
 });
 
+// Delete a to-do by ID for the logged-in user
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    // Add logging for debugging
+    console.log('DELETE /api/todos/:id called', {
+      id: req.params.id,
+      user: req.user ? req.user.email : null
+    });
+    // Validate ObjectId format
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ success: false, message: 'Invalid To-Do ID format' });
+    }
+    const todo = await ToDo.findOneAndDelete({ _id: req.params.id, email: req.user.email });
+    if (!todo) {
+      console.log('To-Do not found or not owned by user', {
+        id: req.params.id,
+        user: req.user ? req.user.email : null
+      });
+      return res.status(404).json({ success: false, message: 'To-Do not found' });
+    }
+    res.json({ success: true, message: 'To-Do deleted' });
+  } catch (err) {
+    console.error('Error in DELETE /api/todos/:id', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 module.exports = router;

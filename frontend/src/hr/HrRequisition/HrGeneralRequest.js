@@ -58,24 +58,78 @@ const HrGeneralRequest = () => {
       <div className="general-request-banner">
         <h1 className="general-request-banner-title">HR GENERAL REQUEST</h1>
       </div>
-      <div className="content">
+      <div className="admin-general-request-content">
         <h1>HR General Request</h1>
         <form onSubmit={handleSubmit}>
-          <select name="department" value={formData.department} onChange={handleChange}>
-            <option value="">Department</option>
-            <option value="HR">HR</option>
-            <option value="IT">IT</option>
-          </select>
-          <select name="purpose" value={formData.purpose} onChange={handleChange}>
-            <option value="">Purpose</option>
-            <option value="Equipment Request">Equipment Request</option>
-            <option value="Maintenance">Maintenance</option>
-          </select>
-          <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
-          <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
-          <input type="time" name="time" value={formData.time} onChange={handleChange} />
-          <textarea name="reason" placeholder="Reason..." value={formData.reason} onChange={handleChange}></textarea>
-          <button type="submit">Submit</button>
+          <div>
+            <label htmlFor="department">Department</label>
+            <select
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+            >
+              <option value="">Select Department</option>
+              <option value="HR">HR</option>
+              <option value="IT">IT</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="purpose">Purpose</label>
+            <select
+              id="purpose"
+              name="purpose"
+              value={formData.purpose}
+              onChange={handleChange}
+            >
+              <option value="">Select Purpose</option>
+              <option value="Equipment Request">Equipment Request</option>
+              <option value="Maintenance">Maintenance</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="startDate">Start Date</label>
+            <input
+              type="date"
+              id="startDate"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="endDate">End Date</label>
+            <input
+              type="date"
+              id="endDate"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="time">Time</label>
+            <input
+              type="time"
+              id="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="reason-container">
+            <label htmlFor="reason">Reason</label>
+            <textarea
+              id="reason"
+              name="reason"
+              placeholder="Enter your reason..."
+              value={formData.reason}
+              onChange={handleChange}
+            ></textarea>
+          </div>
+          <div className="submit-container">
+            <button type="submit">Submit</button>
+          </div>
         </form>
       </div>
     </>

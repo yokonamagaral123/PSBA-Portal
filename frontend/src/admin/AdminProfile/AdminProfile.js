@@ -153,37 +153,50 @@ const AdminProfile = () => {
         </div>
       </div>
 
-      <div className="adminprofile-details">
-        <h3>My Info:</h3>
-        <ul>
-          <li><strong>First Name:</strong> {info.firstName || "N/A"}</li>
-          <li><strong>Middle Name:</strong> {info.middleName || "N/A"}</li>
-          <li><strong>Last Name:</strong> {info.lastName || "N/A"}</li>
-          <li><strong>Date of Birth:</strong> {info.dateOfBirth ? info.dateOfBirth.slice(0,10) : "N/A"}</li>
-          <li><strong>Gender:</strong> {info.gender || "N/A"}</li>
-          <li><strong>Civil Status:</strong> {info.civilStatus || "N/A"}</li>
-          <li><strong>Nationality:</strong> {info.nationality || "N/A"}</li>
-          <li><strong>Campus Branch:</strong> {info.campusBranch || "N/A"}</li>
-          <li><strong>Job Title/Position:</strong> {info.jobTitle || "N/A"}</li>
-          <li><strong>Department:</strong> {info.department || "N/A"}</li>
-          <li><strong>Employee ID:</strong> {info.employeeID || "N/A"}</li>
-          <li><strong>Employment Type:</strong> {info.employmentType || "N/A"}</li>
-          <li><strong>Start Date:</strong> {info.startDate ? info.startDate.slice(0,10) : "N/A"}</li>
-          <li><strong>Employment Status:</strong> {info.employmentStatus || "N/A"}</li>
-          <li><strong>Username:</strong> {info.username || "N/A"}</li>
-        </ul>
-        <h3>Contact:</h3>
-        <ul>
-          <li><strong>Email:</strong> {info.email || "N/A"}</li>
-          <li><strong>Mobile Number:</strong> {info.mobileNumber || "N/A"}</li>
-          <li><strong>Home Address:</strong> {info.homeAddress || "N/A"}</li>
-          <li><strong>Emergency Contact Name:</strong> {info.emergencyContactName || "N/A"}</li>
-          <li><strong>Emergency Contact Number:</strong> {info.emergencyContactNumber || "N/A"}</li>
-          <li><strong>Emergency Contact Relation:</strong> {info.emergencyContactRelation || "N/A"}</li>
-        </ul>
-        <button className="adminedit-button" onClick={openEditModal}>
-          Edit
-        </button>
+      <div className="adminprofile-details compact-layout">
+        <div className="adminprofile-sections-flex align-containers">
+          <div className="adminprofile-section">
+            <h3>Personal Information</h3>
+            <ul>
+              <li><strong>First Name:</strong> {info.firstName || "N/A"}</li>
+              <li><strong>Middle Name:</strong> {info.middleName || "N/A"}</li>
+              <li><strong>Last Name:</strong> {info.lastName || "N/A"}</li>
+              <li><strong>Date of Birth:</strong> {info.dateOfBirth ? info.dateOfBirth.slice(0,10) : "N/A"}</li>
+              <li><strong>Gender:</strong> {info.gender || "N/A"}</li>
+              <li><strong>Civil Status:</strong> {info.civilStatus || "N/A"}</li>
+              <li><strong>Nationality:</strong> {info.nationality || "N/A"}</li>
+            </ul>
+          </div>
+          <div className="adminprofile-section">
+            <h3>Contact Information</h3>
+            <ul>
+              <li><strong>Email:</strong> {info.email || "N/A"}</li>
+              <li><strong>Mobile Number:</strong> {info.mobileNumber || "N/A"}</li>
+              <li><strong>Home Address:</strong> {info.homeAddress || "N/A"}</li>
+              <li><strong>Emergency Contact Name:</strong> {info.emergencyContactName || "N/A"}</li>
+              <li><strong>Emergency Contact Number:</strong> {info.emergencyContactNumber || "N/A"}</li>
+              <li><strong>Emergency Contact Relation:</strong> {info.emergencyContactRelation || "N/A"}</li>
+            </ul>
+          </div>
+          <div className="adminprofile-section">
+            <h3>Employment Details</h3>
+            <ul>
+              <li><strong>Campus Branch:</strong> {info.campusBranch || "N/A"}</li>
+              <li><strong>Job Title/Position:</strong> {info.jobTitle || "N/A"}</li>
+              <li><strong>Department:</strong> {info.department || "N/A"}</li>
+              <li><strong>Employee ID:</strong> {info.employeeID || "N/A"}</li>
+              <li><strong>Employment Type:</strong> {info.employmentType || "N/A"}</li>
+              <li><strong>Start Date:</strong> {info.startDate ? info.startDate.slice(0,10) : "N/A"}</li>
+              <li><strong>Employment Status:</strong> {info.employmentStatus || "N/A"}</li>
+              <li><strong>Username:</strong> {info.username || "N/A"}</li>
+            </ul>
+          </div>
+        </div>
+        <div className="adminprofile-edit-btn-row">
+          <button className="adminedit-button" onClick={openEditModal}>
+            Edit
+          </button>
+        </div>
       </div>
 
       {/* Modal Popup for Editing */}

@@ -553,3 +553,24 @@
     padding: 18px 8px 16px 8px;
   }
 }
+
+/* --- DELETE (CLEAR) BUTTON FOR TO-DO --- */
+.employee-todo-delete-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 1.6em;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.employee-todo-delete-btn:hover {
+  background: #ffeaea;
+  color: #b71c1c;
+}

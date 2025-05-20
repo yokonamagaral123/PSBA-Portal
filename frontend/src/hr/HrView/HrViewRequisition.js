@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-
+import "./HrViewRequisition.css";
 const HrViewRequisition = () => {
   const [requisitions, setRequisitions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editRows, setEditRows] = useState({}); // { [requisitionId]: { status, remarks, loading, error, success } }
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     const fetchRequisitions = async () => {
@@ -68,6 +69,7 @@ const HrViewRequisition = () => {
   };
 
   const filteredRequisitions = requisitions.filter(req => {
+    if (statusFilter !== "all" && req.status !== statusFilter) return false;
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
@@ -90,7 +92,7 @@ const HrViewRequisition = () => {
         <h1 className="dashboard-banner-title">HR VIEW REQUISITION</h1>
       </div>
       <div className="hrviewattendance-container">
-        <div className="hrviewattendance-searchbar">
+        <div className="hrviewattendance-searchbar" style={{ gap: 12 }}>
           <input
             type="text"
             placeholder="Search by Type, Department, Purpose, Status, etc."
@@ -98,15 +100,29 @@ const HrViewRequisition = () => {
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
+          <select
+            className="hrviewattendance-status-filter"
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+            style={{ padding: '10px 16px', borderRadius: 8, border: '1.5px solid #b0bec5', fontSize: '1rem', background: '#f7fafc' }}
+          >
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="declined">Declined</option>
+          </select>
         </div>
         <table className="hrviewattendance-table">
           <thead>
             <tr>
+              <th>Time</th>
               <th>Employee ID</th>
               <th>Type</th>
               <th>Department/Leave Type</th>
               <th>Purpose</th>
               <th>Reason</th>
+              <th>Start Date</th>
+              <th>End Date</th>
               <th>Date Requested</th>
               <th>Requested By</th>
               <th>Status</th>
@@ -121,11 +137,14 @@ const HrViewRequisition = () => {
                 const isEditing = edit.status !== undefined || edit.remarks !== undefined;
                 return (
                   <tr key={req._id}>
+                    <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
                     <td>{req.requestedByEmployeeID || (req.requestedBy && req.requestedBy.employeeID) || ''}</td>
                     <td>{req.type}</td>
                     <td>{req.department || req.leaveType}</td>
                     <td>{req.purpose}</td>
                     <td>{req.reason}</td>
+                    <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
+                    <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>
                     <td>{req.dateRequested ? new Date(req.dateRequested).toLocaleDateString() : ''}</td>
                     <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
                     <td>
@@ -165,7 +184,7 @@ const HrViewRequisition = () => {
               })
             ) : (
               <tr>
-                <td colSpan="10">No requisitions found</td>
+                <td colSpan="13">No requisitions found</td>
               </tr>
             )}
           </tbody>

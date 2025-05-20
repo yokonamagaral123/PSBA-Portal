@@ -83,14 +83,6 @@
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(2px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s cubic-bezier(.4, 2, .6, 1);
-}
-
-.profile-modal-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 /* Modern Modal Box */
@@ -102,15 +94,18 @@
   max-width: 570px;
   width: 100%;
   position: relative;
-  transform: scale(0.97) translateY(40px);
-  opacity: 0;
-  animation: none;
-  transition: transform 0.25s cubic-bezier(.4, 2, .6, 1), opacity 0.25s cubic-bezier(.4, 2, .6, 1);
+  animation: modalPopIn 0.25s cubic-bezier(.4, 2, .6, 1) both;
 }
 
-.profile-modal-overlay.active .profile-modal.modern-modal {
-  transform: scale(1) translateY(0);
-  opacity: 1;
+@keyframes modalPopIn {
+  0% {
+    transform: scale(0.95) translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 .profile-modal-close {
@@ -198,4 +193,88 @@
 .profile-modal .edit-button:hover {
   background: linear-gradient(90deg, #1b6bbf 80%, #2583d8 100%);
   box-shadow: 0 4px 16px rgba(37, 131, 216, 0.18);
+}
+
+/* Profile Sections Modern Layout (copied and adapted from AdminProfile) */
+.profile-details.compact-layout {
+  margin-left: 0;
+  margin-top: 24px;
+  padding: 18px 12px 18px 12px;
+  background: none;
+  box-shadow: none;
+}
+
+.profile-sections-flex {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.profile-sections-flex.align-containers {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.profile-section {
+  flex: 1 1 320px;
+  min-width: 260px;
+  max-width: 370px;
+  margin-bottom: 0;
+  padding: 16px 18px 12px 18px;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  align-self: stretch;
+  min-height: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.profile-section h3 {
+  margin-bottom: 10px;
+  color: #2583d8;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.profile-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-section ul li {
+  margin-bottom: 5px;
+}
+
+.profile-edit-btn-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+@media (max-width: 1100px) {
+  .profile-sections-flex,
+  .profile-sections-flex.align-containers {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .profile-section {
+    max-width: 100%;
+    min-width: 0;
+    height: auto;
+  }
+}
+
+@media (min-width: 1101px) {
+  .profile-section {
+    min-height: 340px;
+  }
 }
