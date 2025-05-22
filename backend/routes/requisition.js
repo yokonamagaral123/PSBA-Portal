@@ -112,6 +112,11 @@ router.put('/update/:id', auth, async (req, res) => {
     if (status) requisition.status = status;
     if (remarks !== undefined) requisition.remarks = remarks;
     if (leavePaymentStatus !== undefined) requisition.leavePaymentStatus = leavePaymentStatus;
+    // Set last modified info
+    const employee = await EmployeeDetails.findOne({ email: user.email });
+    requisition.lastModifiedByEmployeeID = employee ? employee.employeeID : user.employeeID || user.email;
+    requisition.lastModifiedByName = employee ? `${employee.firstName} ${employee.lastName}` : user.name || user.email;
+    requisition.lastModifiedDate = new Date();
     await requisition.save();
     res.status(200).json({ success: true, message: 'Requisition updated', requisition });
   } catch (err) {

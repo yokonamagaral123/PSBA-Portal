@@ -59,7 +59,19 @@ const AdminViewRequisition = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setRequisitions(prev => prev.map(r => r._id === id ? { ...r, status: row.status, remarks: row.remarks, leavePaymentStatus: row.leavePaymentStatus } : r));
+        setRequisitions(prev => prev.map(r =>
+          r._id === id
+            ? {
+                ...r,
+                status: row.status,
+                remarks: row.remarks,
+                leavePaymentStatus: row.leavePaymentStatus,
+                lastModifiedByEmployeeID: data.requisition.lastModifiedByEmployeeID,
+                lastModifiedByName: data.requisition.lastModifiedByName,
+                lastModifiedDate: data.requisition.lastModifiedDate
+              }
+            : r
+        ));
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, success: "Saved!" } }));
       } else {
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, error: data.message || "Failed to update" } }));
@@ -131,6 +143,7 @@ const AdminViewRequisition = () => {
               <th>HR Approval Status</th>
               <th>Admin Approval Status</th>
               <th>Action</th>
+              <th>Last Modified</th>
             </tr>
           </thead>
           <tbody>
@@ -219,12 +232,23 @@ const AdminViewRequisition = () => {
                       {edit.error && <div className="adminview-requisition-error">{edit.error}</div>}
                       {edit.success && <div className="adminview-requisition-success">{edit.success}</div>}
                     </td>
+                    <td style={{ minWidth: 120, fontSize: 16, lineHeight: 1.4, color: '#1a355e', background: '#f7fafc', borderLeft: '1px solid #e3e8ee', padding: '10px 8px' }}>
+                      <div style={{ fontWeight: 700, fontSize: 17 }}>
+                        {req.lastModifiedByEmployeeID || "-"}
+                      </div>
+                      <div style={{ fontSize: 16, color: '#1976d2', fontWeight: 600 }}>
+                        {req.lastModifiedByName || "-"}
+                      </div>
+                      <div style={{ fontSize: 15, color: '#757575', fontWeight: 500 }}>
+                        {req.lastModifiedDate ? new Date(req.lastModifiedDate).toLocaleString() : "-"}
+                      </div>
+                    </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="16">No requisitions found</td>
+                <td colSpan="17">No requisitions found</td>
               </tr>
             )}
           </tbody>

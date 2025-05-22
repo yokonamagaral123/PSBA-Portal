@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./HrSidebar.css";
-import { FaBars, FaTachometerAlt, FaUser, FaCog, FaSignOutAlt, FaClock, FaFileAlt } from "react-icons/fa";
+import { FaBars, FaTachometerAlt, FaUser, FaSignOutAlt, FaClock, FaFileAlt } from "react-icons/fa";
 
 const HrSidebar = ({ isMinimized, toggleSidebar }) => {
   const [isRequisitionOpen, setIsRequisitionOpen] = useState(false);
@@ -107,15 +107,6 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
             </ul>
           )}
-        </li>
-        <li>
-          <Link
-            to="/hr-settings"
-            className={isActive("/hr-settings") ? "active" : ""}
-          >
-            <FaCog />
-            {!isMinimized && <span>Settings</span>}
-          </Link>
         </li>
         <li>
           <Link to="/" className={isActive("/") ? "active" : ""}>

@@ -18,6 +18,9 @@ const requisitionSchema = new mongoose.Schema({
   leavePaymentStatus: { type: String, enum: ['with pay', 'without pay', 'N/A'], default: 'N/A' },
   dayType: { type: String, enum: ['whole day', 'half day', 'N/A'], default: 'N/A' },
   hrApprovalStatus: { type: String, enum: ['pending', 'approved', 'declined'], default: 'pending' }, // Two-step approval status
+  lastModifiedByEmployeeID: { type: String }, // Employee ID of last modifier
+  lastModifiedByName: { type: String }, // Name of last modifier
+  lastModifiedDate: { type: Date }, // Date of last modification
 });
 
 const Requisition = mongoose.model('Requisition', requisitionSchema);

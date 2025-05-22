@@ -62,7 +62,19 @@ const HrViewRequisition = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setRequisitions(prev => prev.map(r => r._id === id ? { ...r, status: row.status, remarks: row.remarks, hrApprovalStatus: row.hrApprovalStatus } : r));
+        setRequisitions(prev => prev.map(r =>
+          r._id === id
+            ? {
+                ...r,
+                status: row.status,
+                remarks: row.remarks,
+                hrApprovalStatus: row.hrApprovalStatus,
+                lastModifiedByEmployeeID: data.requisition.lastModifiedByEmployeeID,
+                lastModifiedByName: data.requisition.lastModifiedByName,
+                lastModifiedDate: data.requisition.lastModifiedDate
+              }
+            : r
+        ));
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, success: "Saved!" } }));
       } else {
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, error: data.message || "Failed to update" } }));
@@ -135,6 +147,7 @@ const HrViewRequisition = () => {
               <th>HR Approval Status</th>
               <th>Admin Approval Status</th>
               <th>Action</th>
+              <th>Last Modified</th>
             </tr>
           </thead>
           <tbody>
@@ -208,21 +221,40 @@ const HrViewRequisition = () => {
                     <td>
                       <button
                         onClick={() => handleSave(req._id)}
-                        disabled={edit.loading || (!isEditing)}
+                        disabled={edit.loading || !isEditing}
                         className="hrviewattendance-save-btn"
-                        style={{ display: isEditing ? undefined : 'none' }}
+                        style={{
+                          background: isEditing ? '#1976d2' : '#b0bec5',
+                          color: isEditing ? '#fff' : '#fff',
+                          cursor: isEditing ? 'pointer' : 'not-allowed',
+                          opacity: edit.loading ? 0.7 : 1,
+                          transition: 'background 0.2s',
+                          display: 'inline-block',
+                          minWidth: 70
+                        }}
                       >
                         {edit.loading ? "Saving..." : "Save"}
                       </button>
                       {edit.error && <div className="hrviewattendance-error">{edit.error}</div>}
                       {edit.success && <div className="hrviewattendance-success">{edit.success}</div>}
                     </td>
+                    <td className="hrviewattendance-lastmodified-cell">
+                      <div className="hrviewattendance-lastmodified-id">
+                        {req.lastModifiedByEmployeeID || "-"}
+                      </div>
+                      <div className="hrviewattendance-lastmodified-name">
+                        {req.lastModifiedByName || "-"}
+                      </div>
+                      <div className="hrviewattendance-lastmodified-date">
+                        {req.lastModifiedDate ? new Date(req.lastModifiedDate).toLocaleString() : "-"}
+                      </div>
+                    </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="16">No requisitions found</td>
+                <td colSpan="17">No requisitions found</td>
               </tr>
             )}
           </tbody>

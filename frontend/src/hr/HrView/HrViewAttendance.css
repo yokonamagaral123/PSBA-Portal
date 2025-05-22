@@ -53,3 +53,28 @@
   border: 1px solid #ccc;
   min-width: 250px;
 }
+
+.hrviewattendance-lastmodified-cell {
+  min-width: 120px;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #1a355e;
+  background: #f7fafc;
+  border-left: 1px solid #e3e8ee;
+  padding: 10px 8px;
+}
+.hrviewattendance-lastmodified-id {
+  font-weight: 700;
+  font-size: 17px;
+  color: #1a355e;
+}
+.hrviewattendance-lastmodified-name {
+  font-size: 16px;
+  color: #1976d2;
+  font-weight: 600;
+}
+.hrviewattendance-lastmodified-date {
+  font-size: 15px;
+  color: #757575;
+  font-weight: 500;
+}

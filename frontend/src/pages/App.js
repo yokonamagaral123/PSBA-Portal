@@ -12,11 +12,10 @@ import GeneralRequest from "../employee/Requisition/GeneralRequest";
 import LeaveRequest from "../employee/Requisition/LeaveRequest";
 import RequisitionHistory from "../employee/Requisition/RequisitionHistory";
 import Payroll from "../employee/Payroll/Payroll";
-import Settings from "../employee/Settings/Settings";
 import AssistBotHelp from "../employee/AssistBotHelp/AssistBotHelp";
 import AdminDashboard from "../admin/AdminDashboard/AdminDashboard";
 import AdminProfile from "../admin/AdminProfile/AdminProfile";
-import AdminSettings from "../admin/AdminSettings/AdminSettings";
+
 import AdminAttendance from "../admin/AdminAttendance/AdminAttendance";
 import AdminGeneralRequest from "../admin/AdminRequisition/AdminGeneralRequest";
 import AdminLeaveRequest from "../admin/AdminRequisition/AdminLeaveRequest";
@@ -33,7 +32,6 @@ import ManageEmployees from "../admin/AdminView/ManageEmployees";
 import HrDashboard from "../hr/HrDashboard/HrDashboard";
 import HrProfile from "../hr/HrProfile/HrProfile";
 import HrSidebar from "../hr/HrSidebar/HrSidebar";
-import HrSettings from "../hr/HrSettings";
 import HrAttendance from "../hr/HrAttendance/HrAttendance";
 import HrRequisitionHistory from "../hr/HrRequisition/HrRequisitionHistory";
 import HrGeneralRequest from "../hr/HrRequisition/HrGeneralRequest";
@@ -94,7 +92,7 @@ const App = () => {
                     <Route path="/requisition/leave" element={<LeaveRequest />} />
                     <Route path="/requisition/history" element={<RequisitionHistory />} />
                     <Route path="/payroll" element={<Payroll />} />
-                    <Route path="/settings" element={<Settings />} />
+                   
                     <Route path="/assistbothelp" element={<AssistBotHelp />} />
                   </Routes>
                 </div>
@@ -113,7 +111,7 @@ const App = () => {
                   <Routes>
                     <Route path="/admin-dashboard" element={<AdminDashboard />} />
                     <Route path="/admin-profile" element={<AdminProfile />} />
-                    <Route path="/admin-settings" element={<AdminSettings />} />
+                   
                     <Route path="/admin-attendance" element={<AdminAttendance />} />
                     <Route path="/admin-general-request" element={<AdminGeneralRequest />} />
                     <Route path="/admin-leave-request" element={<AdminLeaveRequest />} />
@@ -143,7 +141,7 @@ const App = () => {
                   <Routes>
                     <Route path="/hr-dashboard" element={<HrDashboard user={user} />} />
                     <Route path="/hr-profile" element={<HrProfile />} />
-                    <Route path="/hr-settings" element={<HrSettings />} />
+                 
                     <Route path="/hr-attendance" element={<HrAttendance />} />
                     <Route path="/hr-view/payroll" element={<HrViewPayroll />} />
                     <Route path="/hr-view/attendance" element={<HrViewAttendance />} />
