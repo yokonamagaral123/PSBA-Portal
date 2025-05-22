@@ -13,7 +13,7 @@ const AdminRequisitionHistory = () => {
           setRequisitions([]);
           return;
         }
-        const response = await fetch("http://localhost:5000/api/requisitions/all", {
+        const response = await fetch("http://localhost:5000/api/requisitions/admin-hr-history", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
