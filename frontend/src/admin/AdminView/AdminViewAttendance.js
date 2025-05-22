@@ -78,7 +78,7 @@ const AdminViewAttendance = () => {
 
   return (
     <>
-      <div className="admindashboard-banner">
+      <div className="adminviewattendance-banner">
         <h1 className="dashboard-banner-title">ADMIN VIEW ATTENDANCE</h1>
       </div>
       <div className="adminviewattendance-container">

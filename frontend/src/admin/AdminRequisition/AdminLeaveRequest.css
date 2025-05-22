@@ -101,6 +101,38 @@
   transform: scale(1.05);
 }
 
+/* Row and Field Styling */
+.admin-leave-request-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+.admin-leave-request-field {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-leave-request-field label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.admin-leave-request-field select,
+.admin-leave-request-field input[type="date"],
+.admin-leave-request-field input[type="time"] {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .admin-leave-request-banner {
@@ -118,5 +150,15 @@
 
   .submit-container {
     grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-leave-request-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .admin-leave-request-field {
+    min-width: 0;
   }
 }

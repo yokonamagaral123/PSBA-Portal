@@ -1,13 +1,14 @@
 /* Admin Dashboard Banner */
 .admindashboard-banner {
-  background: url("../../assets/blue.png") no-repeat center;
+  background: url("../../assets/school2.png") no-repeat center;
   background-size: cover;
   text-align: center;
   padding: 110px 0;
   color: white;
+  position: relative;
+  margin-left: 40px;
   border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .admindashboard-banner-title {
@@ -15,6 +16,7 @@
   font-weight: bold;
   text-transform: uppercase;
   margin: 0;
+  text-shadow: 0 2px 8px rgba(5, 5, 5, 0.5);
 }
 
 /* Dashboard Widgets Layout */
