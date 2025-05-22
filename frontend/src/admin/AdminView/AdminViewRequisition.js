@@ -117,6 +117,7 @@ const AdminViewRequisition = () => {
             <tr>
               <th>Time</th>
               <th>Employee ID</th>
+              <th>Full Name</th>
               <th>Type</th>
               <th>Department/Leave Type</th>
               <th>Purpose</th>
@@ -124,13 +125,12 @@ const AdminViewRequisition = () => {
               <th>Start Date</th>
               <th>End Date</th>
               <th>Date Requested</th>
-              <th>Requested By</th>
-              <th>HR Approval Status</th>
-              <th>Admin Approval Status</th>
-              <th>Remarks</th>
-              <th>Action</th>
               <th>Day Type</th>
               <th>Leave Payment Status</th>
+              <th>Remarks</th>
+              <th>HR Approval Status</th>
+              <th>Admin Approval Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -142,6 +142,7 @@ const AdminViewRequisition = () => {
                   <tr key={req._id}>
                     <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
                     <td>{req.requestedByEmployeeID || (req.requestedBy && req.requestedBy.employeeID) || ''}</td>
+                    <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
                     <td>{req.type}</td>
                     <td>{req.department || req.leaveType}</td>
                     <td>{req.purpose}</td>
@@ -149,7 +150,28 @@ const AdminViewRequisition = () => {
                     <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
                     <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>
                     <td>{req.dateRequested ? new Date(req.dateRequested).toLocaleDateString() : ''}</td>
-                    <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
+                    <td>{req.dayType || "N/A"}</td>
+                    <td>
+                      <select
+                        value={isEditing ? (edit.leavePaymentStatus ?? req.leavePaymentStatus ?? "N/A") : (req.leavePaymentStatus ?? "N/A")}
+                        onChange={e => handleEditChange(req._id, "leavePaymentStatus", e.target.value)}
+                        disabled={edit.loading}
+                      >
+                        <option value="N/A">N/A</option>
+                        <option value="with pay">With Pay</option>
+                        <option value="without pay">Without Pay</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={isEditing ? edit.remarks ?? "" : req.remarks ?? ""}
+                        onChange={e => handleEditChange(req._id, "remarks", e.target.value)}
+                        disabled={edit.loading}
+                        placeholder="Add remarks"
+                        className="adminview-requisition-remarks-input"
+                      />
+                    </td>
                     <td>
                       {/* HR Approval Status: display only, color-coded */}
                       <span
@@ -187,16 +209,6 @@ const AdminViewRequisition = () => {
                       </select>
                     </td>
                     <td>
-                      <input
-                        type="text"
-                        value={isEditing ? edit.remarks ?? "" : req.remarks ?? ""}
-                        onChange={e => handleEditChange(req._id, "remarks", e.target.value)}
-                        disabled={edit.loading}
-                        placeholder="Add remarks"
-                        className="adminview-requisition-remarks-input"
-                      />
-                    </td>
-                    <td>
                       <button
                         onClick={() => handleSave(req._id)}
                         disabled={edit.loading || (!isEditing)}
@@ -207,24 +219,12 @@ const AdminViewRequisition = () => {
                       {edit.error && <div className="adminview-requisition-error">{edit.error}</div>}
                       {edit.success && <div className="adminview-requisition-success">{edit.success}</div>}
                     </td>
-                    <td>{req.dayType || "N/A"}</td>
-                    <td>
-                      <select
-                        value={isEditing ? (edit.leavePaymentStatus ?? req.leavePaymentStatus ?? "N/A") : (req.leavePaymentStatus ?? "N/A")}
-                        onChange={e => handleEditChange(req._id, "leavePaymentStatus", e.target.value)}
-                        disabled={edit.loading}
-                      >
-                        <option value="N/A">N/A</option>
-                        <option value="with pay">With Pay</option>
-                        <option value="without pay">Without Pay</option>
-                      </select>
-                    </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="13">No requisitions found</td>
+                <td colSpan="16">No requisitions found</td>
               </tr>
             )}
           </tbody>
