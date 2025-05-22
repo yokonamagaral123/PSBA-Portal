@@ -11,7 +11,7 @@ router.post('/create', auth, async (req, res) => {
   console.log("User from token:", req.user);
   // ...rest of your code
   try {
-    const { type, department, leaveType, purpose, startDate, endDate, time, reason } = req.body;
+    const { type, department, leaveType, purpose, startDate, endDate, time, reason, leavePaymentStatus, dayType } = req.body;
     const user = req.user;
 
     if (!user) {
@@ -33,6 +33,8 @@ router.post('/create', auth, async (req, res) => {
       endDate,
       time,
       reason,
+      leavePaymentStatus,
+      dayType,
       requestedBy: user._id,
       requestedByName: requestedByName,
       requestedByEmployeeID: employee ? employee.employeeID : null, // Ensure this is referencing EmployeeDetails
@@ -100,13 +102,14 @@ router.put('/update/:id', auth, async (req, res) => {
     if (!user || (user.role !== 'hr' && user.role !== 'admin')) {
       return res.status(403).json({ success: false, message: 'Forbidden' });
     }
-    const { status, remarks } = req.body;
+    const { status, remarks, leavePaymentStatus } = req.body;
     const requisition = await Requisition.findById(req.params.id);
     if (!requisition) {
       return res.status(404).json({ success: false, message: 'Requisition not found' });
     }
     if (status) requisition.status = status;
     if (remarks !== undefined) requisition.remarks = remarks;
+    if (leavePaymentStatus !== undefined) requisition.leavePaymentStatus = leavePaymentStatus;
     await requisition.save();
     res.status(200).json({ success: true, message: 'Requisition updated', requisition });
   } catch (err) {

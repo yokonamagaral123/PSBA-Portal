@@ -128,6 +128,8 @@ const HrViewRequisition = () => {
               <th>Status</th>
               <th>Remarks</th>
               <th>Action</th>
+              <th>Day Type</th>
+              <th>Leave Payment Status</th>
             </tr>
           </thead>
           <tbody>
@@ -179,12 +181,14 @@ const HrViewRequisition = () => {
                       {edit.error && <div style={{ color: "red", fontSize: 12 }}>{edit.error}</div>}
                       {edit.success && <div style={{ color: "green", fontSize: 12 }}>{edit.success}</div>}
                     </td>
+                    <td>{req.dayType || 'N/A'}</td>
+                    <td>{req.leavePaymentStatus || 'N/A'}</td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="13">No requisitions found</td>
+                <td colSpan="15">No requisitions found</td>
               </tr>
             )}
           </tbody>
