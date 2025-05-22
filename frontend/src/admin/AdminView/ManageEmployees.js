@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./ManageEmployees.css";
@@ -10,10 +10,22 @@ const ManageEmployees = () => {
   const [editForm, setEditForm] = useState({});
   const [loading, setLoading] = useState(false);
   const [removingId, setRemovingId] = useState(null);
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const menuRef = useRef();
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchEmployees();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const fetchEmployees = async () => {
@@ -111,12 +123,23 @@ const ManageEmployees = () => {
                 <td>{emp.firstName} {emp.middleName} {emp.lastName}</td>
                 <td>{emp.employeeID}</td>
                 <td>{emp.department}</td>
-                <td>
-                  <button className="view-btn" onClick={() => openModal(emp, 'view')}>View</button>
-                  <button className="edit-btn" onClick={() => openModal(emp, 'edit')}>Edit</button>
-                  <button className="remove-btn" onClick={() => handleRemove(emp._id)} disabled={removingId === emp._id}>
-                    {removingId === emp._id ? "Removing..." : "Remove"}
+                <td style={{ position: 'relative' }}>
+                  <button
+                    className="menu-btn"
+                    onClick={() => setOpenMenuId(openMenuId === emp._id ? null : emp._id)}
+                    aria-label="Open actions menu"
+                  >
+                    <span style={{ fontSize: 22, letterSpacing: -2, verticalAlign: 'middle' }}>⋮</span>
                   </button>
+                  {openMenuId === emp._id && (
+                    <div className="menu-dropdown" ref={menuRef}>
+                      <button className="view-btn" onClick={() => { openModal(emp, 'view'); setOpenMenuId(null); }}>View</button>
+                      <button className="edit-btn" onClick={() => { openModal(emp, 'edit'); setOpenMenuId(null); }}>Edit</button>
+                      <button className="remove-btn" onClick={() => { handleRemove(emp._id); setOpenMenuId(null); }} disabled={removingId === emp._id}>
+                        {removingId === emp._id ? "Removing..." : "Remove"}
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}

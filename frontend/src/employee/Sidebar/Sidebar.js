@@ -6,7 +6,6 @@ import {
   FaClock,
   FaFileAlt,
   FaMoneyBill,
-  FaCog,
   FaQuestionCircle,
   FaSignOutAlt,
   FaTachometerAlt,
@@ -100,14 +99,6 @@ const Sidebar = ({ isMinimized, toggleSidebar }) => {
             className={isActive("/payroll") ? "active" : ""}
           >
             <FaMoneyBill /> {!isMinimized && <span>Payroll</span>}
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/settings"
-            className={isActive("/settings") ? "active" : ""}
-          >
-            <FaCog /> {!isMinimized && <span>Settings</span>}
           </Link>
         </li>
         <li>

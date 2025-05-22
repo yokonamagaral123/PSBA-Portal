@@ -711,14 +711,14 @@ const AdminDashboard = () => {
       </div>
 
       {/* Admin Overview and Leave Details */}
-      <div className="admindashboard-section-title">Admin Overview</div>
+      <div className="admindashboard-section-title">Overview</div>
       <div className="admindashboard-overview">
         <div className="admindashboard-card">
           <div className="admindashboard-card-icon" style={{ background: "#009688" }}>
             <FaUsers />
           </div>
           <div className="admindashboard-card-content">
-            <div className="admindashboard-card-title">Total Admin Employees</div>
+            <div className="admindashboard-card-title">Employees</div>
             <div className="admindashboard-card-value">{totalEmployees}</div>
           </div>
         </div>
@@ -727,19 +727,19 @@ const AdminDashboard = () => {
             <FaBuilding />
           </div>
           <div className="admindashboard-card-content">
-            <div className="admindashboard-card-title">Total Admin Departments</div>
+            <div className="admindashboard-card-title">Total Departments</div>
             <div className="admindashboard-card-value">{totalDepartments}</div>
           </div>
         </div>
       </div>
-      <div className="admindashboard-section-title">Admin Leave Details</div>
+      <div className="admindashboard-section-title">Leave Details</div>
       <div className="admindashboard-leave-details-cards">
         <div className="admindashboard-leave-card applied">
           <div className="admindashboard-leave-card-icon" style={{ background: "#009688", color: "#fff" }}>
             <FaFileAlt />
           </div>
           <div className="admindashboard-leave-card-content">
-            <div className="admindashboard-leave-card-title">Admin Leave Applied</div>
+            <div className="admindashboard-leave-card-title">Leave Applied</div>
             <div className="admindashboard-leave-card-value">{leaveApplied}</div>
           </div>
         </div>
@@ -748,7 +748,7 @@ const AdminDashboard = () => {
             <FaCheckCircle />
           </div>
           <div className="admindashboard-leave-card-content">
-            <div className="admindashboard-leave-card-title approved">Admin Leave Approved</div>
+            <div className="admindashboard-leave-card-title approved">Leave Approved</div>
             <div className="admindashboard-leave-card-value">{leaveApproved}</div>
           </div>
         </div>
@@ -757,7 +757,7 @@ const AdminDashboard = () => {
             <FaHourglassHalf />
           </div>
           <div className="admindashboard-leave-card-content">
-            <div className="admindashboard-leave-card-title pending">Admin Leave Pending</div>
+            <div className="admindashboard-leave-card-title pending">Leave Pending</div>
             <div className="admindashboard-leave-card-value">{leavePending}</div>
           </div>
         </div>
@@ -766,7 +766,7 @@ const AdminDashboard = () => {
             <FaTimesCircle />
           </div>
           <div className="admindashboard-leave-card-content">
-            <div className="admindashboard-leave-card-title rejected">Admin Leave Rejected</div>
+            <div className="admindashboard-leave-card-title rejected">Leave Rejected</div>
             <div className="admindashboard-leave-card-value">{leaveRejected}</div>
           </div>
         </div>

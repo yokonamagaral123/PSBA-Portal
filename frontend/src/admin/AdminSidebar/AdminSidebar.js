@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./AdminSidebar.css";
-import { FaBars, FaTachometerAlt, FaUser, FaCog, FaSignOutAlt, FaClock, FaFileAlt, FaMoneyBill } from "react-icons/fa";
+import { FaBars, FaTachometerAlt, FaUser, FaSignOutAlt, FaClock, FaFileAlt, FaMoneyBill } from "react-icons/fa";
 
 const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
   const [isRequisitionOpen, setIsRequisitionOpen] = useState(false);
@@ -151,15 +151,6 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
           >
             <FaMoneyBill />
             {!isMinimized && <span>Payroll</span>}
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/admin-settings"
-            className={isActive("/admin-settings") ? "active" : ""}
-          >
-            <FaCog />
-            {!isMinimized && <span>Settings</span>}
           </Link>
         </li>
         <li>
