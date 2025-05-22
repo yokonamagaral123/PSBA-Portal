@@ -1,1 +1,42 @@
 @import '../../employee/Requisition/LeaveRequest.css';
+
+.hr-leave-request-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+.hr-leave-request-field {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hr-leave-request-field label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.hr-leave-request-field select,
+.hr-leave-request-field input[type="date"],
+.hr-leave-request-field input[type="time"] {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .hr-leave-request-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hr-leave-request-field {
+    min-width: 0;
+  }
+}

@@ -103,73 +103,75 @@ const HrLeaveRequest = () => {
           </div>
         </div>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="leaveType">Leave Type</label>
-            <select
-              name="leaveType"
-              id="leaveType"
-              value={formData.leaveType}
-              onChange={handleChange}
-            >
-              <option value="">Leave Type</option>
-              <option value="Sick Leave">Sick Leave</option>
-              <option value="Vacation Leave">Vacation Leave</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="purpose">Purpose</label>
-            <select
-              name="purpose"
-              id="purpose"
-              value={formData.purpose}
-              onChange={handleChange}
-            >
-              <option value="">Purpose</option>
-              <option value="Medical">Medical</option>
-              <option value="Personal">Personal</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="startDate">Start Date</label>
-            <input
-              type="date"
-              name="startDate"
-              id="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="endDate">End Date</label>
-            <input
-              type="date"
-              name="endDate"
-              id="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="time">Time</label>
-            <input
-              type="time"
-              name="time"
-              id="time"
-              value={formData.time}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="dayType">Day Type</label>
-            <select
-              name="dayType"
-              id="dayType"
-              value={formData.dayType}
-              onChange={handleChange}
-            >
-              <option value="whole day">Whole Day</option>
-              <option value="half day">Half Day</option>
-            </select>
+          <div className="hr-leave-request-row">
+            <div className="hr-leave-request-field">
+              <label htmlFor="leaveType">Leave Type</label>
+              <select
+                name="leaveType"
+                id="leaveType"
+                value={formData.leaveType}
+                onChange={handleChange}
+              >
+                <option value="">Leave Type</option>
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Vacation Leave">Vacation Leave</option>
+              </select>
+            </div>
+            <div className="hr-leave-request-field">
+              <label htmlFor="purpose">Purpose</label>
+              <select
+                name="purpose"
+                id="purpose"
+                value={formData.purpose}
+                onChange={handleChange}
+              >
+                <option value="">Purpose</option>
+                <option value="Medical">Medical</option>
+                <option value="Personal">Personal</option>
+              </select>
+            </div>
+            <div className="hr-leave-request-field">
+              <label htmlFor="startDate">Start Date</label>
+              <input
+                type="date"
+                name="startDate"
+                id="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="hr-leave-request-field">
+              <label htmlFor="endDate">End Date</label>
+              <input
+                type="date"
+                name="endDate"
+                id="endDate"
+                value={formData.endDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="hr-leave-request-field">
+              <label htmlFor="time">Time</label>
+              <input
+                type="time"
+                name="time"
+                id="time"
+                value={formData.time}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="hr-leave-request-field">
+              <label htmlFor="dayType">Day Type</label>
+              <select
+                name="dayType"
+                id="dayType"
+                value={formData.dayType}
+                onChange={handleChange}
+              >
+                <option value="whole day">Whole Day</option>
+                <option value="half day">Half Day</option>
+              </select>
+            </div>
           </div>
           <div className="reason-container">
             <label htmlFor="reason">Reason</label>
