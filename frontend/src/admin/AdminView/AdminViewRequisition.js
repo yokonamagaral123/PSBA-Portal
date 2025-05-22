@@ -125,7 +125,8 @@ const AdminViewRequisition = () => {
               <th>End Date</th>
               <th>Date Requested</th>
               <th>Requested By</th>
-              <th>Status</th>
+              <th>HR Approval Status</th>
+              <th>Admin Approval Status</th>
               <th>Remarks</th>
               <th>Action</th>
               <th>Day Type</th>
@@ -150,14 +151,39 @@ const AdminViewRequisition = () => {
                     <td>{req.dateRequested ? new Date(req.dateRequested).toLocaleDateString() : ''}</td>
                     <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
                     <td>
+                      {/* HR Approval Status: display only, color-coded */}
+                      <span
+                        className={
+                          req.hrApprovalStatus === 'approved'
+                            ? 'status-approved'
+                            : req.hrApprovalStatus === 'declined'
+                            ? 'status-declined'
+                            : 'status-pending'
+                        }
+                        style={{ fontWeight: 500 }}
+                      >
+                        {req.hrApprovalStatus
+                          ? req.hrApprovalStatus.charAt(0).toUpperCase() + req.hrApprovalStatus.slice(1)
+                          : 'Pending'}
+                      </span>
+                    </td>
+                    <td>
                       <select
                         value={isEditing ? edit.status : req.status || "pending"}
                         onChange={e => handleEditChange(req._id, "status", e.target.value)}
-                        disabled={edit.loading}
+                        disabled={edit.loading || (isEditing ? (edit.hrApprovalStatus ?? req.hrApprovalStatus) !== "approved" : req.hrApprovalStatus !== "approved")}
+                        className={
+                          (isEditing ? edit.status : req.status) === 'approved'
+                            ? 'status-approved'
+                            : (isEditing ? edit.status : req.status) === 'declined'
+                            ? 'status-declined'
+                            : 'status-pending'
+                        }
+                        style={{ fontWeight: 500 }}
                       >
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                        <option value="declined">Declined</option>
+                        <option value="pending" className="status-pending">Pending</option>
+                        <option value="approved" className="status-approved">Approved</option>
+                        <option value="declined" className="status-declined">Declined</option>
                       </select>
                     </td>
                     <td>

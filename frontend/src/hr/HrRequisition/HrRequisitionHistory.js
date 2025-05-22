@@ -56,7 +56,8 @@ const HrRequisitionHistory = () => {
               <th>Start Date</th>
               <th>End Date</th>
               <th>Date Requested</th>
-              <th>Status</th>
+              <th>HR Approval Status</th>
+              <th>Admin Approval Status</th>
               <th>Remarks</th>
               <th>Day Type</th>
               <th>Leave Payment Status</th>
@@ -69,7 +70,7 @@ const HrRequisitionHistory = () => {
                   <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
                   <td>{req.requestedByName ||
                     (req.requestedBy && req.requestedBy.name) ||
-                    (req.requestedBy && typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}
+                    (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}
                   </td>
                   <td>{req.type}</td>
                   <td>{req.department || req.leaveType}</td>
@@ -77,10 +78,17 @@ const HrRequisitionHistory = () => {
                   <td>{req.reason}</td>
                   <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
                   <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>
-                  <td>{new Date(req.dateRequested).toLocaleDateString()}</td>
-                  <td style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>
-                    {req.status || 'Pending'}
-                  </td>
+                  <td>{req.dateRequested ? new Date(req.dateRequested).toLocaleDateString() : ''}</td>
+                  <td style={{
+                    color: req.hrApprovalStatus === 'approved' ? 'green' : req.hrApprovalStatus === 'declined' ? 'red' : undefined,
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize'
+                  }}>{req.hrApprovalStatus ? req.hrApprovalStatus.charAt(0).toUpperCase() + req.hrApprovalStatus.slice(1) : 'Pending'}</td>
+                  <td style={{
+                    color: req.status === 'approved' ? 'green' : req.status === 'declined' ? 'red' : undefined,
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize'
+                  }}>{req.status ? req.status.charAt(0).toUpperCase() + req.status.slice(1) : 'Pending'}</td>
                   <td>{req.remarks || ''}</td>
                   <td>{req.dayType || 'N/A'}</td>
                   <td>{req.leavePaymentStatus || 'N/A'}</td>
@@ -88,7 +96,7 @@ const HrRequisitionHistory = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="13">No requisitions found</td>
+                <td colSpan="15">No requisitions found</td>
               </tr>
             )}
           </tbody>
