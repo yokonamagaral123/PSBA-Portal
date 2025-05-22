@@ -27,6 +27,13 @@ const AdminProfile = () => {
     startDate: "",
     employmentStatus: "",
     username: "",
+    profileImage: "",
+    spouseFullName: "",
+    numberOfChildren: "",
+    childrenNames: [],
+    motherMaidenName: "",
+    fatherFullName: "",
+    deceasedSpouseName: "",
   });
   const [imagePreview, setImagePreview] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -164,7 +171,49 @@ const AdminProfile = () => {
               <li><strong>Date of Birth:</strong> {info.dateOfBirth ? info.dateOfBirth.slice(0,10) : "N/A"}</li>
               <li><strong>Gender:</strong> {info.gender || "N/A"}</li>
               <li><strong>Civil Status:</strong> {info.civilStatus || "N/A"}</li>
-              <li><strong>Nationality:</strong> {info.nationality || "N/A"}</li>
+              {info.civilStatus === "Married" && (
+                <>
+                  <li><strong>Spouse's Full Name:</strong> {info.spouseFullName || "N/A"}</li>
+                  <li><strong>Number of Children:</strong> {info.numberOfChildren || "N/A"}</li>
+                  {info.childrenNames && info.childrenNames.length > 0 && (
+                    <li>
+                      <strong>Children:</strong>
+                      <ul>
+                        {info.childrenNames.map((name, idx) => (
+                          <li key={idx}>{name}</li>
+                        ))}
+                      </ul>
+                    </li>
+                  )}
+                </>
+              )}
+              {info.civilStatus === "Single" && (
+                <>
+                  <li><strong>Mother’s Maiden Name:</strong> {info.motherMaidenName || "N/A"}</li>
+                  <li><strong>Father’s Full Name:</strong> {info.fatherFullName || "N/A"}</li>
+                </>
+              )}
+              {info.civilStatus === "Widowed" && (
+                <>
+                  <li><strong>Name of Deceased Spouse:</strong> {info.deceasedSpouseName || "N/A"}</li>
+                  <li><strong>Number of Children:</strong> {info.numberOfChildren || "N/A"}</li>
+                  {info.childrenNames && info.childrenNames.length > 0 && (
+                    <li>
+                      <strong>Children:</strong>
+                      <ul>
+                        {info.childrenNames.map((name, idx) => (
+                          <li key={idx}>{name}</li>
+                        ))}
+                      </ul>
+                    </li>
+                  )}
+                </>
+              )}
+              <li><strong>Highest Educational Attainment:</strong> {info.highestEducationalAttainment || "N/A"}</li>
+              <li><strong>Name of School:</strong> {info.schoolName || "N/A"}</li>
+              <li><strong>School Year From:</strong> {info.schoolYearFrom || "N/A"}</li>
+              <li><strong>School Year To:</strong> {info.schoolYearTo || "N/A"}</li>
+              <li><strong>Year Graduated:</strong> {info.yearGraduated || "N/A"}</li>
             </ul>
           </div>
           <div className="adminprofile-section">
@@ -189,6 +238,15 @@ const AdminProfile = () => {
               <li><strong>Start Date:</strong> {info.startDate ? info.startDate.slice(0,10) : "N/A"}</li>
               <li><strong>Employment Status:</strong> {info.employmentStatus || "N/A"}</li>
               <li><strong>Username:</strong> {info.username || "N/A"}</li>
+            </ul>
+          </div>
+          <div className="adminprofile-section">
+            <h3>Government-Mandated Contributions</h3>
+            <ul>
+              <li><strong>SSS Number:</strong> {info.sssNumber || "N/A"}</li>
+              <li><strong>Pag-IBIG MID Number:</strong> {info.pagibigNumber || "N/A"}</li>
+              <li><strong>PhilHealth ID Number:</strong> {info.philhealthNumber || "N/A"}</li>
+              <li><strong>TIN:</strong> {info.tinNumber || "N/A"}</li>
             </ul>
           </div>
         </div>
@@ -224,7 +282,48 @@ const AdminProfile = () => {
                 <label>Last Name:<input name="lastName" value={editForm.lastName} onChange={handleEditFormChange} required /></label>
                 <label>Date of Birth:<input type="date" name="dateOfBirth" value={editForm.dateOfBirth ? editForm.dateOfBirth.slice(0,10) : ""} onChange={handleEditFormChange} required /></label>
                 <label>Gender:<input name="gender" value={editForm.gender} onChange={handleEditFormChange} required /></label>
-                <label>Civil Status:<input name="civilStatus" value={editForm.civilStatus} onChange={handleEditFormChange} /></label>
+                <label>
+                  Civil Status:
+                  <select name="civilStatus" value={editForm.civilStatus} onChange={handleEditFormChange}>
+                    <option value="">Select</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Widowed">Widowed</option>
+                  </select>
+                </label>
+
+                {editForm.civilStatus === "Married" && (
+                  <>
+                    <label>Spouse's Full Name:
+                      <input name="spouseFullName" value={editForm.spouseFullName || ""} onChange={handleEditFormChange} />
+                    </label>
+                    <label>Number of Children:
+                      <input type="number" name="numberOfChildren" value={editForm.numberOfChildren || ""} onChange={handleEditFormChange} />
+                    </label>
+                    {/* Optionally add children names fields */}
+                  </>
+                )}
+                {editForm.civilStatus === "Single" && (
+                  <>
+                    <label>Mother’s Maiden Name:
+                      <input name="motherMaidenName" value={editForm.motherMaidenName || ""} onChange={handleEditFormChange} />
+                    </label>
+                    <label>Father’s Full Name:
+                      <input name="fatherFullName" value={editForm.fatherFullName || ""} onChange={handleEditFormChange} />
+                    </label>
+                  </>
+                )}
+                {editForm.civilStatus === "Widowed" && (
+                  <>
+                    <label>Name of Deceased Spouse:
+                      <input name="deceasedSpouseName" value={editForm.deceasedSpouseName || ""} onChange={handleEditFormChange} />
+                    </label>
+                    <label>Number of Children:
+                      <input type="number" name="numberOfChildren" value={editForm.numberOfChildren || ""} onChange={handleEditFormChange} />
+                    </label>
+                    {/* Optionally add children names fields */}
+                  </>
+                )}
                 <label>Nationality:<input name="nationality" value={editForm.nationality} onChange={handleEditFormChange} /></label>
                 <label>Email:<input type="email" name="email" value={editForm.email} onChange={handleEditFormChange} required /></label>
                 <label>Mobile Number:<input name="mobileNumber" value={editForm.mobileNumber} onChange={handleEditFormChange} required /></label>

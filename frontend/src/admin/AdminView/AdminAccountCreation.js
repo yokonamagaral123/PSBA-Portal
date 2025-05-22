@@ -29,6 +29,21 @@ const AdminAccountCreation = () => {
     confirmPassword: "",
     role: "employee",
     sendCredentials: false,
+    spouseFullName: "",
+    numberOfChildren: "",
+    childrenNames: [""],
+    motherMaidenName: "",
+    fatherFullName: "",
+    deceasedSpouseName: "",
+    sssNumber: "",
+    pagibigNumber: "",
+    philhealthNumber: "",
+    tinNumber: "",
+    highestEducationalAttainment: "",
+    schoolName: "",
+    schoolYearFrom: "",
+    schoolYearTo: "",
+    yearGraduated: "",
   });
   const [modal, setModal] = useState({ open: false, success: true, message: "" });
   const [step, setStep] = useState(1);
@@ -121,6 +136,21 @@ const AdminAccountCreation = () => {
           confirmPassword: "",
           role: "employee",
           sendCredentials: false,
+          spouseFullName: "",
+          numberOfChildren: "",
+          childrenNames: [""],
+          motherMaidenName: "",
+          fatherFullName: "",
+          deceasedSpouseName: "",
+          sssNumber: "",
+          pagibigNumber: "",
+          philhealthNumber: "",
+          tinNumber: "",
+          highestEducationalAttainment: "",
+          schoolName: "",
+          schoolYearFrom: "",
+          schoolYearTo: "",
+          yearGraduated: "",
         });
         setStep(1);
       }
@@ -134,6 +164,23 @@ const AdminAccountCreation = () => {
   };
 
   const closeModal = () => setModal({ ...modal, open: false });
+
+  const handleChildrenNamesChange = (idx, value) => {
+    setFormData((prev) => {
+      const updated = [...prev.childrenNames];
+      updated[idx] = value;
+      return { ...prev, childrenNames: updated };
+    });
+  };
+
+  const handleNumberOfChildrenChange = (e) => {
+    const num = parseInt(e.target.value, 10) || 0;
+    setFormData((prev) => ({
+      ...prev,
+      numberOfChildren: num,
+      childrenNames: Array(num).fill("").map((v, i) => prev.childrenNames[i] || ""),
+    }));
+  };
 
   return (
     <div className="admin-account-creation">
@@ -190,13 +237,97 @@ const AdminAccountCreation = () => {
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
-              <input
-                type="text"
+              <select
                 name="civilStatus"
-                placeholder="Civil Status"
                 value={formData.civilStatus}
                 onChange={handleChange}
-              />
+                required
+              >
+                <option value="">Civil Status</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Widowed">Widowed</option>
+              </select>
+
+              {/* Conditional fields */}
+              {formData.civilStatus === "Married" && (
+                <>
+                  <input
+                    type="text"
+                    name="spouseFullName"
+                    placeholder="Spouse's Full Name"
+                    value={formData.spouseFullName}
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="number"
+                    name="numberOfChildren"
+                    placeholder="Number of Children"
+                    min="0"
+                    value={formData.numberOfChildren}
+                    onChange={handleNumberOfChildrenChange}
+                  />
+                  {formData.numberOfChildren > 0 &&
+                    [...Array(Number(formData.numberOfChildren)).keys()].map((idx) => (
+                      <input
+                        key={idx}
+                        type="text"
+                        placeholder={`Child #${idx + 1} Name`}
+                        value={formData.childrenNames[idx] || ""}
+                        onChange={(e) => handleChildrenNamesChange(idx, e.target.value)}
+                      />
+                    ))}
+                </>
+              )}
+
+              {formData.civilStatus === "Single" && (
+                <>
+                  <input
+                    type="text"
+                    name="motherMaidenName"
+                    placeholder="Mother’s Maiden Name"
+                    value={formData.motherMaidenName}
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="text"
+                    name="fatherFullName"
+                    placeholder="Father’s Full Name"
+                    value={formData.fatherFullName}
+                    onChange={handleChange}
+                  />
+                </>
+              )}
+
+              {formData.civilStatus === "Widowed" && (
+                <>
+                  <input
+                    type="text"
+                    name="deceasedSpouseName"
+                    placeholder="Name of Deceased Spouse"
+                    value={formData.deceasedSpouseName}
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="number"
+                    name="numberOfChildren"
+                    placeholder="Number of Children"
+                    min="0"
+                    value={formData.numberOfChildren}
+                    onChange={handleNumberOfChildrenChange}
+                  />
+                  {formData.numberOfChildren > 0 &&
+                    [...Array(Number(formData.numberOfChildren)).keys()].map((idx) => (
+                      <input
+                        key={idx}
+                        type="text"
+                        placeholder={`Child #${idx + 1} Name`}
+                        value={formData.childrenNames[idx] || ""}
+                        onChange={(e) => handleChildrenNamesChange(idx, e.target.value)}
+                      />
+                    ))}
+                </>
+              )}
               <input
                 type="text"
                 name="nationality"
@@ -357,6 +488,76 @@ const AdminAccountCreation = () => {
                 <option value="Terminated">Terminated</option>
               </select>
             </div>
+
+            {/* Government-Mandated Contributions */}
+            <h3>Government-Mandated Contributions</h3>
+            <input
+              type="text"
+              name="sssNumber"
+              placeholder="SSS Number"
+              value={formData.sssNumber}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="pagibigNumber"
+              placeholder="Pag-IBIG MID Number"
+              value={formData.pagibigNumber}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="philhealthNumber"
+              placeholder="PhilHealth ID Number"
+              value={formData.philhealthNumber}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="tinNumber"
+              placeholder="TIN"
+              value={formData.tinNumber}
+              onChange={handleChange}
+            />
+
+            {/* Educational Background */}
+            <h3>Educational Background</h3>
+            <input
+              type="text"
+              name="highestEducationalAttainment"
+              placeholder="Highest Educational Attainment"
+              value={formData.highestEducationalAttainment}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="schoolName"
+              placeholder="Name of School"
+              value={formData.schoolName}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="schoolYearFrom"
+              placeholder="School Year From"
+              value={formData.schoolYearFrom}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="schoolYearTo"
+              placeholder="School Year To"
+              value={formData.schoolYearTo}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="yearGraduated"
+              placeholder="Year Graduated"
+              value={formData.yearGraduated}
+              onChange={handleChange}
+            />
+
             <h3>Account Credentials</h3>
             <div className="form-group">
               <input
@@ -469,6 +670,44 @@ const AdminAccountCreation = () => {
                 <li><strong>Confirm Password:</strong> {'****'}</li>
                 <li><strong>Role:</strong> {formData.role}</li>
                 <li><strong>Send Credentials:</strong> {formData.sendCredentials ? 'Yes' : 'No'}</li>
+                {formData.civilStatus === "Married" && (
+                  <>
+                    <li><strong>Spouse's Full Name:</strong> {formData.spouseFullName}</li>
+                    <li><strong>Number of Children:</strong> {formData.numberOfChildren}</li>
+                    {formData.childrenNames && formData.childrenNames.length > 0 && (
+                      <li>
+                        <strong>Children:</strong>
+                        <ul>
+                          {formData.childrenNames.map((name, idx) => (
+                            <li key={idx}>{name}</li>
+                          ))}
+                        </ul>
+                      </li>
+                    )}
+                  </>
+                )}
+                {formData.civilStatus === "Single" && (
+                  <>
+                    <li><strong>Mother’s Maiden Name:</strong> {formData.motherMaidenName}</li>
+                    <li><strong>Father’s Full Name:</strong> {formData.fatherFullName}</li>
+                  </>
+                )}
+                {formData.civilStatus === "Widowed" && (
+                  <>
+                    <li><strong>Name of Deceased Spouse:</strong> {formData.deceasedSpouseName}</li>
+                    <li><strong>Number of Children:</strong> {formData.numberOfChildren}</li>
+                    {formData.childrenNames && formData.childrenNames.length > 0 && (
+                      <li>
+                        <strong>Children:</strong>
+                        <ul>
+                          {formData.childrenNames.map((name, idx) => (
+                            <li key={idx}>{name}</li>
+                          ))}
+                        </ul>
+                      </li>
+                    )}
+                  </>
+                )}
               </ul>
             </div>
             <div style={{display:'flex',justifyContent:'flex-end',gap:12}}>

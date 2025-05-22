@@ -24,6 +24,25 @@ const employeeDetailsSchema = new mongoose.Schema({
   employmentStatus: { type: String }, // Active, On Leave, etc.
   username: { type: String, required: true, unique: true }, // Must match the User username
   profileImage: { type: String }, // Cloudinary image URL
+  spouseFullName: { type: String },
+  numberOfChildren: { type: Number },
+  childrenNames: [{ type: String }],
+  motherMaidenName: { type: String },
+  fatherFullName: { type: String },
+  deceasedSpouseName: { type: String },
+
+  // Government-Mandated Contributions
+  sssNumber: { type: String },
+  pagibigNumber: { type: String },
+  philhealthNumber: { type: String },
+  tinNumber: { type: String },
+
+  // Educational Background
+  highestEducationalAttainment: { type: String },
+  schoolName: { type: String },
+  schoolYearFrom: { type: String },
+  schoolYearTo: { type: String },
+  yearGraduated: { type: String },
 });
 
 // Create and export the EmployeeDetails model
