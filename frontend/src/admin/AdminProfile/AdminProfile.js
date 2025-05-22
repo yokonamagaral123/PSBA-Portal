@@ -209,6 +209,12 @@ const AdminProfile = () => {
                   )}
                 </>
               )}
+              <li><strong>Nationality:</strong> {info.nationality || "N/A"}</li>
+            </ul>
+          </div>
+          <div className="adminprofile-section">
+            <h3>Educational Background</h3>
+            <ul>
               <li><strong>Highest Educational Attainment:</strong> {info.highestEducationalAttainment || "N/A"}</li>
               <li><strong>Name of School:</strong> {info.schoolName || "N/A"}</li>
               <li><strong>School Year From:</strong> {info.schoolYearFrom || "N/A"}</li>
