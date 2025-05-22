@@ -18,6 +18,9 @@ router.get("/user-count", async (req, res) => {
 // Create employee route
 router.post("/create-employee", async (req, res) => {
   try {
+    // Debug: Log the incoming request body
+    console.log("Received employee data:", req.body);
+
     const {
       firstName,
       middleName,
@@ -42,6 +45,21 @@ router.post("/create-employee", async (req, res) => {
       username,
       temporaryPassword,
       role,
+      spouseFullName,
+      numberOfChildren,
+      childrenNames,
+      motherMaidenName,
+      fatherFullName,
+      deceasedSpouseName,
+      sssNumber,
+      pagibigNumber,
+      philhealthNumber,
+      tinNumber,
+      highestEducationalAttainment,
+      schoolName,
+      schoolYearFrom,
+      schoolYearTo,
+      yearGraduated,
     } = req.body;
 
     // Validate required fields
@@ -111,7 +129,21 @@ router.post("/create-employee", async (req, res) => {
       startDate,
       employmentStatus,
       username,
-      
+      spouseFullName,
+      numberOfChildren,
+      childrenNames,
+      motherMaidenName,
+      fatherFullName,
+      deceasedSpouseName,
+      sssNumber,
+      pagibigNumber,
+      philhealthNumber,
+      tinNumber,
+      highestEducationalAttainment,
+      schoolName,
+      schoolYearFrom,
+      schoolYearTo,
+      yearGraduated,
     });
     await employeeDetails.save();
 
