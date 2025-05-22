@@ -73,6 +73,26 @@ router.get('/all', auth, async (req, res) => {
   }
 });
 
+// Admin/HR: Get only own requisitions
+router.get('/admin-hr-history', auth, async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    if (user.role === 'admin' || user.role === 'hr') {
+      // Only requisitions requested by this admin or HR
+      const requisitions = await Requisition.find({ requestedBy: user._id });
+      return res.status(200).json({ success: true, requisitions });
+    } else {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+  } catch (err) {
+    console.error('Error fetching admin/hr requisitions:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // HR: Update status and remarks
 router.put('/update/:id', auth, async (req, res) => {
   try {
