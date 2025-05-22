@@ -9,6 +9,7 @@ const AdminLeaveRequest = () => {
     endDate: "",
     time: "",
     reason: "",
+    dayType: "whole day",
   });
 
   // Leave credits state (fetched from backend)
@@ -72,6 +73,7 @@ const AdminLeaveRequest = () => {
           endDate: "",
           time: "",
           reason: "",
+          dayType: "whole day",
         });
       } else {
         alert(data.message || "Failed to submit leave request");
@@ -168,6 +170,20 @@ const AdminLeaveRequest = () => {
               value={formData.reason}
               onChange={handleChange}
             ></textarea>
+          </div>
+
+          {/* Day Type Field */}
+          <div>
+            <label htmlFor="dayType">Day Type</label>
+            <select
+              name="dayType"
+              id="dayType"
+              value={formData.dayType}
+              onChange={handleChange}
+            >
+              <option value="whole day">Whole Day</option>
+              <option value="half day">Half Day</option>
+            </select>
           </div>
 
           {/* Submit Button */}

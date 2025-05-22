@@ -9,21 +9,25 @@ router.get('/leave-credits', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    // Count only approved sick leave requests (status: 'approved')
-    const sickUsed = await Requisition.countDocuments({
+    // Calculate sick leave used (approved, with pay, by dayType)
+    const sickUsedDocs = await Requisition.find({
       requestedBy: user._id,
       leaveType: 'Sick Leave',
       type: 'Leave Request',
-      status: 'approved'
+      status: 'approved',
+      leavePaymentStatus: { $in: ['with pay', undefined, null, 'N/A'] } // Only count with pay or unset
     });
+    const sickUsed = sickUsedDocs.reduce((sum, req) => sum + (req.dayType === 'half day' ? 0.5 : 1), 0);
 
-    // Count only approved vacation leave requests (status: 'approved')
-    const vacationUsed = await Requisition.countDocuments({
+    // Calculate vacation leave used (approved, with pay, by dayType)
+    const vacationUsedDocs = await Requisition.find({
       requestedBy: user._id,
       leaveType: 'Vacation Leave',
       type: 'Leave Request',
-      status: 'approved'
+      status: 'approved',
+      leavePaymentStatus: { $in: ['with pay', undefined, null, 'N/A'] }
     });
+    const vacationUsed = vacationUsedDocs.reduce((sum, req) => sum + (req.dayType === 'half day' ? 0.5 : 1), 0);
 
     // Logger for debugging
     console.log('sickUsed:', sickUsed, 'vacationUsed:', vacationUsed);

@@ -55,11 +55,11 @@ const AdminViewRequisition = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status: row.status, remarks: row.remarks }),
+        body: JSON.stringify({ status: row.status, remarks: row.remarks, leavePaymentStatus: row.leavePaymentStatus }),
       });
       const data = await response.json();
       if (response.ok) {
-        setRequisitions(prev => prev.map(r => r._id === id ? { ...r, status: row.status, remarks: row.remarks } : r));
+        setRequisitions(prev => prev.map(r => r._id === id ? { ...r, status: row.status, remarks: row.remarks, leavePaymentStatus: row.leavePaymentStatus } : r));
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, success: "Saved!" } }));
       } else {
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, error: data.message || "Failed to update" } }));
@@ -128,13 +128,15 @@ const AdminViewRequisition = () => {
               <th>Status</th>
               <th>Remarks</th>
               <th>Action</th>
+              <th>Day Type</th>
+              <th>Leave Payment Status</th>
             </tr>
           </thead>
           <tbody>
             {filteredRequisitions.length > 0 ? (
               filteredRequisitions.map((req, index) => {
                 const edit = editRows[req._id] || {};
-                const isEditing = edit.status !== undefined || edit.remarks !== undefined;
+                const isEditing = edit.status !== undefined || edit.remarks !== undefined || edit.leavePaymentStatus !== undefined;
                 return (
                   <tr key={req._id}>
                     <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
@@ -178,6 +180,18 @@ const AdminViewRequisition = () => {
                       </button>
                       {edit.error && <div className="adminview-requisition-error">{edit.error}</div>}
                       {edit.success && <div className="adminview-requisition-success">{edit.success}</div>}
+                    </td>
+                    <td>{req.dayType || "N/A"}</td>
+                    <td>
+                      <select
+                        value={isEditing ? (edit.leavePaymentStatus ?? req.leavePaymentStatus ?? "N/A") : (req.leavePaymentStatus ?? "N/A")}
+                        onChange={e => handleEditChange(req._id, "leavePaymentStatus", e.target.value)}
+                        disabled={edit.loading}
+                      >
+                        <option value="N/A">N/A</option>
+                        <option value="with pay">With Pay</option>
+                        <option value="without pay">Without Pay</option>
+                      </select>
                     </td>
                   </tr>
                 );

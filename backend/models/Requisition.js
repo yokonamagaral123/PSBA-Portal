@@ -13,8 +13,10 @@ const requisitionSchema = new mongoose.Schema({
   requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   requestedByName: { type: String, required: true }, // Name of the requester
   requestedByEmployeeID: { type: String }, // Employee ID of the requester
-  remarks: { type: String }, // New field for remarks
+  remarks: { type: String, default: 'N/A' }, // New field for remarks
   status: { type: String },  // New field for status
+  leavePaymentStatus: { type: String, enum: ['with pay', 'without pay', 'N/A'], default: 'N/A' },
+  dayType: { type: String, enum: ['whole day', 'half day', 'N/A'], default: 'N/A' },
 });
 
 const Requisition = mongoose.model('Requisition', requisitionSchema);

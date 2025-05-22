@@ -58,6 +58,8 @@ const RequisitionHistory = () => {
               <th>Date Requested</th>
               <th>Status</th>
               <th>Remarks</th>
+              <th>Day Type</th>
+              <th>Leave Payment Status</th>
             </tr>
           </thead>
           <tbody>
@@ -81,11 +83,13 @@ const RequisitionHistory = () => {
                     {req.status || 'Pending'}
                   </td>
                   <td>{req.remarks || ''}</td>
+                  <td>{req.dayType || 'N/A'}</td>
+                  <td>{req.leavePaymentStatus || 'N/A'}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="11">No requisitions found</td>
+                <td colSpan="13">No requisitions found</td>
               </tr>
             )}
           </tbody>
