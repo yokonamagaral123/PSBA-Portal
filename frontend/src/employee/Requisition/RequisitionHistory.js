@@ -56,7 +56,8 @@ const RequisitionHistory = () => {
               <th>Start Date</th>
               <th>End Date</th>
               <th>Date Requested</th>
-              <th>Status</th>
+              <th>HR Approval Status</th>
+              <th>Admin Approval Status</th>
               <th>Remarks</th>
               <th>Day Type</th>
               <th>Leave Payment Status</th>
@@ -79,9 +80,16 @@ const RequisitionHistory = () => {
                   <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
                   <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>
                   <td>{new Date(req.dateRequested).toLocaleDateString()}</td>
-                  <td style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>
-                    {req.status || 'Pending'}
-                  </td>
+                  <td style={{
+                    color: req.hrApprovalStatus === 'approved' ? 'green' : req.hrApprovalStatus === 'declined' ? 'red' : undefined,
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize'
+                  }}>{req.hrApprovalStatus ? req.hrApprovalStatus.charAt(0).toUpperCase() + req.hrApprovalStatus.slice(1) : 'Pending'}</td>
+                  <td style={{
+                    color: req.status === 'approved' ? 'green' : req.status === 'declined' ? 'red' : undefined,
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize'
+                  }}>{req.status ? req.status.charAt(0).toUpperCase() + req.status.slice(1) : 'Pending'}</td>
                   <td>{req.remarks || ''}</td>
                   <td>{req.dayType || 'N/A'}</td>
                   <td>{req.leavePaymentStatus || 'N/A'}</td>

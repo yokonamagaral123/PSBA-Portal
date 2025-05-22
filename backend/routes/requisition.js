@@ -39,6 +39,7 @@ router.post('/create', auth, async (req, res) => {
       requestedByName: requestedByName,
       requestedByEmployeeID: employee ? employee.employeeID : null, // Ensure this is referencing EmployeeDetails
       status: 'pending', // Set default status
+      hrApprovalStatus: 'pending', // Set default HR approval status
     });
 
     await requisition.save();
@@ -102,11 +103,12 @@ router.put('/update/:id', auth, async (req, res) => {
     if (!user || (user.role !== 'hr' && user.role !== 'admin')) {
       return res.status(403).json({ success: false, message: 'Forbidden' });
     }
-    const { status, remarks, leavePaymentStatus } = req.body;
+    const { status, remarks, leavePaymentStatus, hrApprovalStatus } = req.body;
     const requisition = await Requisition.findById(req.params.id);
     if (!requisition) {
       return res.status(404).json({ success: false, message: 'Requisition not found' });
     }
+    if (hrApprovalStatus) requisition.hrApprovalStatus = hrApprovalStatus;
     if (status) requisition.status = status;
     if (remarks !== undefined) requisition.remarks = remarks;
     if (leavePaymentStatus !== undefined) requisition.leavePaymentStatus = leavePaymentStatus;

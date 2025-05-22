@@ -17,6 +17,7 @@ const requisitionSchema = new mongoose.Schema({
   status: { type: String },  // New field for status
   leavePaymentStatus: { type: String, enum: ['with pay', 'without pay', 'N/A'], default: 'N/A' },
   dayType: { type: String, enum: ['whole day', 'half day', 'N/A'], default: 'N/A' },
+  hrApprovalStatus: { type: String, enum: ['pending', 'approved', 'declined'], default: 'pending' }, // Two-step approval status
 });
 
 const Requisition = mongoose.model('Requisition', requisitionSchema);

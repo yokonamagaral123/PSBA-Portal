@@ -54,11 +54,15 @@ const HrViewRequisition = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status: row.status, remarks: row.remarks }),
+        body: JSON.stringify({
+          status: row.status,
+          remarks: row.remarks,
+          hrApprovalStatus: row.hrApprovalStatus // <-- ensure this is sent
+        }),
       });
       const data = await response.json();
       if (response.ok) {
-        setRequisitions(prev => prev.map(r => r._id === id ? { ...r, status: row.status, remarks: row.remarks } : r));
+        setRequisitions(prev => prev.map(r => r._id === id ? { ...r, status: row.status, remarks: row.remarks, hrApprovalStatus: row.hrApprovalStatus } : r));
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, success: "Saved!" } }));
       } else {
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, error: data.message || "Failed to update" } }));
@@ -125,7 +129,8 @@ const HrViewRequisition = () => {
               <th>End Date</th>
               <th>Date Requested</th>
               <th>Requested By</th>
-              <th>Status</th>
+              <th>HR Approval Status</th>
+              <th>Admin Approval Status</th>
               <th>Remarks</th>
               <th>Action</th>
               <th>Day Type</th>
@@ -136,7 +141,14 @@ const HrViewRequisition = () => {
             {filteredRequisitions.length > 0 ? (
               filteredRequisitions.map((req, index) => {
                 const edit = editRows[req._id] || {};
-                const isEditing = edit.status !== undefined || edit.remarks !== undefined;
+                const isEditing = edit.status !== undefined || edit.remarks !== undefined || edit.hrApprovalStatus !== undefined;
+                // Color coding for statuses
+                const getStatusClass = (status) => {
+                  if (!status || status === 'pending') return 'status-pending';
+                  if (status === 'approved') return 'status-approved';
+                  if (status === 'declined') return 'status-declined';
+                  return '';
+                };
                 return (
                   <tr key={req._id}>
                     <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
@@ -151,14 +163,25 @@ const HrViewRequisition = () => {
                     <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
                     <td>
                       <select
-                        value={isEditing ? edit.status : req.status || "pending"}
-                        onChange={e => handleEditChange(req._id, "status", e.target.value)}
+                        value={isEditing ? edit.hrApprovalStatus ?? req.hrApprovalStatus ?? "pending" : req.hrApprovalStatus ?? "pending"}
+                        onChange={e => handleEditChange(req._id, "hrApprovalStatus", e.target.value)}
                         disabled={edit.loading}
+                        className={getStatusClass(isEditing ? edit.hrApprovalStatus ?? req.hrApprovalStatus : req.hrApprovalStatus)}
+                        style={{ fontWeight: 500 }}
                       >
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                        <option value="declined">Declined</option>
+                        <option value="pending" className="status-pending">Pending</option>
+                        <option value="approved" className="status-approved">Approved</option>
+                        <option value="declined" className="status-declined">Declined</option>
                       </select>
+                    </td>
+                    <td>
+                      {/* Admin Approval Status: view only, color-coded */}
+                      <span
+                        className={getStatusClass(req.status)}
+                        style={{ fontWeight: 500 }}
+                      >
+                        {req.status ? req.status.charAt(0).toUpperCase() + req.status.slice(1) : 'Pending'}
+                      </span>
                     </td>
                     <td>
                       <input
@@ -167,19 +190,20 @@ const HrViewRequisition = () => {
                         onChange={e => handleEditChange(req._id, "remarks", e.target.value)}
                         disabled={edit.loading}
                         placeholder="Add remarks"
-                        style={{ width: "120px" }}
+                        className="hrviewattendance-remarks-input"
                       />
                     </td>
                     <td>
                       <button
                         onClick={() => handleSave(req._id)}
                         disabled={edit.loading || (!isEditing)}
-                        style={{ minWidth: 60 }}
+                        className="hrviewattendance-save-btn"
+                        style={{ display: isEditing ? undefined : 'none' }}
                       >
                         {edit.loading ? "Saving..." : "Save"}
                       </button>
-                      {edit.error && <div style={{ color: "red", fontSize: 12 }}>{edit.error}</div>}
-                      {edit.success && <div style={{ color: "green", fontSize: 12 }}>{edit.success}</div>}
+                      {edit.error && <div className="hrviewattendance-error">{edit.error}</div>}
+                      {edit.success && <div className="hrviewattendance-success">{edit.success}</div>}
                     </td>
                     <td>{req.dayType || 'N/A'}</td>
                     <td>{req.leavePaymentStatus || 'N/A'}</td>

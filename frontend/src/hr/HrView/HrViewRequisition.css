@@ -118,3 +118,16 @@
   border: 1.5px solid #1976d2;
   outline: none;
 }
+
+.status-approved {
+  color: #219653 !important; /* green */
+  font-weight: 600;
+}
+.status-declined {
+  color: #d32f2f !important; /* red */
+  font-weight: 600;
+}
+.status-pending {
+  color: #757575 !important; /* neutral gray */
+  font-weight: 600;
+}
