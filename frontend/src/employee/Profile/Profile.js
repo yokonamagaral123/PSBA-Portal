@@ -4,7 +4,6 @@ import "./Profile.css";
 import profileImage from "../../assets/profile.png";
 
 const Profile = () => {
-  const [showModal, setShowModal] = useState(false);
   const [info, setInfo] = useState({
     firstName: "",
     middleName: "",
@@ -44,29 +43,26 @@ const Profile = () => {
     philhealthNumber: "",
     tinNumber: ""
   });
-  const [editForm, setEditForm] = useState({ ...info });
   const [imagePreview, setImagePreview] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [imageError, setImageError] = useState("");
 
   useEffect(() => {
     const fetchEmployeeDetails = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get token from localStorage
-
+        const token = localStorage.getItem("token");
         if (!token) {
           console.error("Authorization token is missing.");
           return;
         }
-
         const response = await axios.get("http://localhost:5000/api/employee/details", {
-          headers: { Authorization: `Bearer ${token}` }, // Send token in the Authorization header
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         if (response.data.success) {
           setInfo(response.data.employee);
-          setEditForm(response.data.employee);
         } else {
           console.error("Failed to fetch employee details:", response.data.message);
         }
@@ -74,31 +70,30 @@ const Profile = () => {
         console.error("Error fetching employee details:", error);
       }
     };
-
     fetchEmployeeDetails();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const openEditModal = () => {
-    setEditForm(info);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-  // Add this function for Cloudinary upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+      const maxSize = 15 * 1024 * 1024; // 15MB
+      if (!validTypes.includes(file.type)) {
+        setImageError("Only .jpg, .jpeg, .png files are allowed.");
+        setImageFile(null);
+        setImagePreview("");
+        return;
+      }
+      if (file.size > maxSize) {
+        setImageError("File size must be 15MB or less.");
+        setImageFile(null);
+        setImagePreview("");
+        return;
+      }
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
-      setUploadedImageUrl(""); // Reset uploaded image URL
+      setUploadedImageUrl("");
+      setImageError("");
     }
   };
 
@@ -112,47 +107,28 @@ const Profile = () => {
       const formData = new FormData();
       formData.append("file", imageFile);
       formData.append("upload_preset", "psba-portal-upload");
-      formData.append("folder", "employee-profiles"); // Upload to 'employee-profiles' folder
+      formData.append("folder", "employee-profiles");
       const cloudinaryRes = await axios.post(
         "https://api.cloudinary.com/v1_1/dlnvuvomj/image/upload",
         formData
       );
       setUploadedImageUrl(cloudinaryRes.data.secure_url);
-      alert("Image uploaded successfully!");
+      // Update profile image in backend
+      const token = localStorage.getItem("token");
+      await axios.put(
+        "http://localhost:5000/api/employee/details",
+        { ...info, profileImage: cloudinaryRes.data.secure_url },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setInfo((prev) => ({ ...prev, profileImage: cloudinaryRes.data.secure_url }));
+      alert("Profile picture updated successfully!");
+      setImageFile(null);
+      setImagePreview("");
+      setShowModal(false);
     } catch (error) {
       alert("Image upload failed.");
     } finally {
       setUploading(false);
-    }
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    try {
-      let finalImageUrl = uploadedImageUrl || info.profileImage;
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Authorization token is missing.");
-        return;
-      }
-      const response = await axios.put(
-        "http://localhost:5000/api/employee/details",
-        { ...editForm, profileImage: finalImageUrl },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (response.data.success) {
-        setInfo({ ...editForm, profileImage: finalImageUrl });
-        setShowModal(false);
-        setImageFile(null);
-        setImagePreview("");
-        setUploadedImageUrl("");
-        alert("Profile updated successfully!");
-      } else {
-        alert(response.data.message || "Failed to update profile");
-      }
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Error updating profile");
     }
   };
 
@@ -170,7 +146,92 @@ const Profile = () => {
           </h2>
           <p>{info.location || "Philippine School of Business and Administration"}</p>
         </div>
+        <div className="profile-picture-edit-row">
+          <button
+            type="button"
+            className="modern-profile-img-btn"
+            onClick={() => setShowModal(true)}
+            disabled={uploading}
+          >
+            <span className="profile-img-btn-icon">
+              <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <rect x="3" y="7" width="18" height="14" rx="3" fill="#eaf2fb" stroke="#235390" strokeWidth="2"/>
+                <circle cx="12" cy="12" r="3.5" stroke="#235390" strokeWidth="2" fill="#fff"/>
+                <path d="M12 10.5v3M13.5 12H12" stroke="#235390" strokeWidth="1.5" strokeLinecap="round"/>
+                <rect x="8" y="3" width="8" height="4" rx="2" fill="#235390"/>
+              </svg>
+            </span>
+            <span className="profile-img-btn-text">Update Photo</span>
+          </button>
+        </div>
       </div>
+
+      {/* Modal for changing profile picture */}
+      {showModal && (
+        <div className="modal-blur-overlay">
+          <div className="modal-popup-window modern-profile-modal">
+            <button className="modal-close" onClick={() => {
+              setShowModal(false);
+              setImageFile(null);
+              setImagePreview("");
+              setImageError("");
+            }}>&times;</button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+              <img
+                src={imagePreview || info.profileImage || profileImage}
+                alt="Preview"
+                style={{ width: 110, height: 110, borderRadius: "50%", objectFit: "cover", marginBottom: 10, border: '3px solid #235390', boxShadow: '0 2px 12px rgba(79,140,255,0.10)' }}
+              />
+              <h2 style={{margin: '10px 0 0 0', color: '#235390', fontWeight: 700, fontSize: '1.3rem'}}>Change Profile Picture</h2>
+              <div style={{ color: '#666', fontSize: '1rem', marginBottom: 10, marginTop: 2, textAlign: 'center' }}>
+                {info.firstName} {info.middleName} {info.lastName}<br/>
+                <span style={{ fontSize: '0.95rem', color: '#888' }}>{info.email}</span>
+              </div>
+              <div style={{ color: '#888', fontSize: '0.95rem', marginBottom: 10 }}>
+                Only .jpg, .jpeg, .png files are allowed. Max size: 15MB.
+              </div>
+              {imageError && (
+                <div style={{ color: 'red', fontSize: '0.97rem', marginBottom: 8 }}>{imageError}</div>
+              )}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+                id="profile-image-input-modal"
+              />
+              <button
+                type="button"
+                className="modern-profile-btn"
+                onClick={() => document.getElementById('profile-image-input-modal').click()}
+                disabled={uploading}
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{marginRight: 7}}>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-2.828 1.172H7v-2a4 4 0 011.172-2.828z" />
+                </svg>
+                {imageFile ? "Change Selected Image" : "Select Image"}
+              </button>
+              {imageFile && !uploading && (
+                <button
+                  type="button"
+                  className="modern-profile-btn upload-btn"
+                  onClick={handleImageUpload}
+                  style={{ marginTop: 10 }}
+                >
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{marginRight: 6}}>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" />
+                  </svg>
+                  Upload
+                </button>
+              )}
+              {uploading && <div style={{ marginTop: 10, color: '#235390', fontWeight: 500 }}>Uploading...</div>}
+              {uploadedImageUrl && (
+                <div style={{ color: 'green', marginTop: 6 }}>Image uploaded!</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="profile-details compact-layout">
         <div className="profile-sections-flex align-containers">
@@ -268,100 +329,7 @@ const Profile = () => {
             </ul>
           </div>
         </div>
-        <div className="profile-edit-btn-row">
-          <button className="edit-button" type="button" onClick={openEditModal}>
-            Edit
-          </button>
-        </div>
       </div>
-
-      {/* Modal Popup for Editing */}
-      {showModal && (
-        <div className="profile-modal-overlay active">
-          <div className="profile-modal modern-modal">
-            <button className="profile-modal-close" type="button" onClick={closeModal}>&times;</button>
-            <h2>Edit Profile</h2>
-            <form className="profile-edit-form" onSubmit={handleSave}>
-              <div className="profile-edit-grid">
-                <label>Profile Image:
-                  <input type="file" accept="image/*" onChange={handleImageChange} />
-                  <button type="button" className="edit-button" onClick={handleImageUpload} disabled={!imageFile || uploading} style={{marginLeft:8}}>
-                    {uploading ? "Uploading..." : "Upload"}
-                  </button>
-                  {imagePreview && (
-                    <img src={imagePreview} alt="Preview" style={{ width: 80, height: 80, borderRadius: "50%", marginTop: 8 }} />
-                  )}
-                  {uploadedImageUrl && (
-                    <div style={{color:'green',marginTop:4}}>Image uploaded!</div>
-                  )}
-                </label>
-                <label>First Name:<input name="firstName" value={editForm.firstName} onChange={handleChange} required /></label>
-                <label>Middle Name:<input name="middleName" value={editForm.middleName} onChange={handleChange} /></label>
-                <label>Last Name:<input name="lastName" value={editForm.lastName} onChange={handleChange} required /></label>
-                <label>Date of Birth:<input type="date" name="dateOfBirth" value={editForm.dateOfBirth ? editForm.dateOfBirth.slice(0,10) : ""} onChange={handleChange} required /></label>
-                <label>Gender:<input name="gender" value={editForm.gender} onChange={handleChange} required /></label>
-                <label>
-                  Civil Status:
-                  <select name="civilStatus" value={editForm.civilStatus} onChange={handleChange}>
-                    <option value="">Select</option>
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Widowed">Widowed</option>
-                  </select>
-                </label>
-                {editForm.civilStatus === "Married" && (
-                  <>
-                    <label>Spouse's Full Name:
-                      <input name="spouseFullName" value={editForm.spouseFullName || ""} onChange={handleChange} />
-                    </label>
-                    <label>Number of Children:
-                      <input type="number" name="numberOfChildren" value={editForm.numberOfChildren || ""} onChange={handleChange} />
-                    </label>
-                    {/* Optionally add children names fields */}
-                  </>
-                )}
-                {editForm.civilStatus === "Single" && (
-                  <>
-                    <label>Mother’s Maiden Name:
-                      <input name="motherMaidenName" value={editForm.motherMaidenName || ""} onChange={handleChange} />
-                    </label>
-                    <label>Father’s Full Name:
-                      <input name="fatherFullName" value={editForm.fatherFullName || ""} onChange={handleChange} />
-                    </label>
-                  </>
-                )}
-                {editForm.civilStatus === "Widowed" && (
-                  <>
-                    <label>Name of Deceased Spouse:
-                      <input name="deceasedSpouseName" value={editForm.deceasedSpouseName || ""} onChange={handleChange} />
-                    </label>
-                    <label>Number of Children:
-                      <input type="number" name="numberOfChildren" value={editForm.numberOfChildren || ""} onChange={handleChange} />
-                    </label>
-                    {/* Optionally add children names fields */}
-                  </>
-                )}
-                <label>Nationality:<input name="nationality" value={editForm.nationality} onChange={handleChange} /></label>
-                {/* Educational Background */}
-                <label>Highest Educational Attainment:<input name="highestEducationalAttainment" value={editForm.highestEducationalAttainment} onChange={handleChange} /></label>
-                <label>Name of School:<input name="schoolName" value={editForm.schoolName} onChange={handleChange} /></label>
-                <label>School Year From:<input name="schoolYearFrom" value={editForm.schoolYearFrom} onChange={handleChange} /></label>
-                <label>School Year To:<input name="schoolYearTo" value={editForm.schoolYearTo} onChange={handleChange} /></label>
-                <label>Year Graduated:<input name="yearGraduated" value={editForm.yearGraduated} onChange={handleChange} /></label>
-                {/* Government IDs */}
-                <label>SSS Number:<input name="sssNumber" value={editForm.sssNumber} onChange={handleChange} /></label>
-                <label>Pag-IBIG MID Number:<input name="pagibigNumber" value={editForm.pagibigNumber} onChange={handleChange} /></label>
-                <label>PhilHealth ID Number:<input name="philhealthNumber" value={editForm.philhealthNumber} onChange={handleChange} /></label>
-                <label>TIN:<input name="tinNumber" value={editForm.tinNumber} onChange={handleChange} /></label>
-              </div>
-              <div className="profile-modal-actions">
-                <button type="submit" className="edit-button">Save</button>
-                <button type="button" className="edit-button" onClick={closeModal} style={{background:'#ccc',color:'#222'}}>Cancel</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
