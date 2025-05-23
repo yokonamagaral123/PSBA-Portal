@@ -105,7 +105,7 @@ const HrViewRequisition = () => {
   return (
     <>
       <div className="dashboard-banner">
-        <h1 className="dashboard-banner-title">HR VIEW REQUISITION</h1>
+        <h1 className="dashboard-banner-title">SUPERVISOR VIEW REQUISITION</h1>
       </div>
       <div className="hrviewattendance-container">
         <div className="hrviewattendance-searchbar" style={{ gap: 12 }}>

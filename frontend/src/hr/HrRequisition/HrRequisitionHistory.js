@@ -38,7 +38,7 @@ const HrRequisitionHistory = () => {
     <>
       {/* HR Requisition History Banner */}
       <div className="requisition-history-banner">
-        <h1 className="requisition-history-banner-title">HR REQUISITION HISTORY</h1>
+        <h1 className="requisition-history-banner-title">REQUISITION HISTORY</h1>
       </div>
 
       {/* HR Requisition History Content */}

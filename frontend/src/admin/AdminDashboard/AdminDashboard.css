@@ -40,7 +40,7 @@ display: grid;
   position: relative;
 }
 
-/* Admin Dashboard Image Carousel (copied and adapted from HR Dashboard) */
+/* Admin Dashboard Image Carousel */
 .admindashboard-image-carousel {
   position: relative;
   width: 100%;

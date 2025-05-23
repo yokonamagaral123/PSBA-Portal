@@ -479,7 +479,7 @@ const HrDashboard = () => {
     <>
       {/* Dashboard Banner */}
       <div className="hrdashboard-banner">
-        <h1 className="hrdashboard-banner-title">HR DASHBOARD</h1>
+        <h1 className="hrdashboard-banner-title">Supervisor DASHBOARD</h1>
       </div>
 
       {/* Dashboard Content */}

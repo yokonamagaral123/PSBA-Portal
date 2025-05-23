@@ -88,7 +88,7 @@ const HrLeaveRequest = () => {
     <>
       {/* HR Leave Request Banner */}
       <div className="leave-request-banner">
-        <h1 className="leave-request-banner-title">HR LEAVE REQUEST</h1>
+        <h1 className="leave-request-banner-title">LEAVE REQUEST</h1>
       </div>
       <div className="admin-leave-request-content">
         <h1>HR Leave Request</h1>
