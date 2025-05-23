@@ -18,6 +18,9 @@ const AdminLeaveRequest = () => {
     "Vacation Leave": 0,
   });
 
+  // Business rule warning state
+  const [warning, setWarning] = useState("");
+
   // Fetch leave credits from backend
   const fetchCredits = async () => {
     const token = localStorage.getItem('token');
@@ -39,6 +42,22 @@ const AdminLeaveRequest = () => {
     fetchCredits();
   }, []);
 
+  // Validate vacation leave rule
+  useEffect(() => {
+    let warn = "";
+    if (formData.leaveType === "Vacation Leave" && formData.startDate) {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const start = new Date(formData.startDate);
+      start.setHours(0,0,0,0);
+      const diffDays = Math.round((start - today) / (1000 * 60 * 60 * 24));
+      if (diffDays < 3) {
+        warn = "Vacation Leave must be filed at least 3 days in advance.";
+      }
+    }
+    setWarning(warn);
+  }, [formData.leaveType, formData.startDate]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -46,6 +65,11 @@ const AdminLeaveRequest = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Prevent submit if vacation leave rule is violated
+    if (warning) {
+      alert(warning);
+      return;
+    }
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -102,6 +126,12 @@ const AdminLeaveRequest = () => {
             <span>Sick Leave: <b>{leaveCredits["Sick Leave"]}</b></span>
           </div>
         </div>
+        {/* Business Rule Warning */}
+        {warning && (
+          <div className="admin-leave-warning" style={{ color: '#d32f2f', fontWeight: 'bold', marginBottom: 16, fontSize: 16, border: '1px solid #d32f2f', background: '#fff6f6', padding: 10, borderRadius: 6 }}>
+            {warning}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="admin-leave-request-row">
             <div className="admin-leave-request-field">
