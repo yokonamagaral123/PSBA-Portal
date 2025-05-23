@@ -30,10 +30,7 @@
 
 /* Form Styling */
 .content form {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  align-items: start;
+  display: block;
 }
 
 .content form label {
@@ -99,6 +96,35 @@
 .submit-container button:hover {
   background-color: #1c5a80;
   transform: scale(1.05);
+}
+
+/* Leave Request Row Styling */
+.leave-request-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 18px;
+  align-items: flex-end;
+}
+
+.leave-request-field {
+  flex: 1 1 180px;
+  min-width: 160px;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .leave-request-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .leave-request-field {
+    max-width: 100%;
+    min-width: 0;
+  }
 }
 
 /* Responsive Adjustments */
