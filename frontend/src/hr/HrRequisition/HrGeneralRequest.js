@@ -56,7 +56,7 @@ const HrGeneralRequest = () => {
   return (
     <>
       <div className="general-request-banner">
-        <h1 className="general-request-banner-title">HR GENERAL REQUEST</h1>
+        <h1 className="general-request-banner-title">GENERAL REQUEST</h1>
       </div>
       <div className="admin-general-request-content">
         <h1>HR General Request</h1>

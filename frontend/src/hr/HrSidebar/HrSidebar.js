@@ -18,7 +18,7 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
   return (
     <div className={`hrsidebar${isMinimized ? " minimized" : ""}`}>
       <div className="hrsidebar-header">
-        {!isMinimized && <h2>HR Portal</h2>}
+        {!isMinimized && <h2>Supervisor Portal</h2>}
         <span className="hr-menu-icon" onClick={toggleSidebar}>
           <FaBars />
         </span>
@@ -89,7 +89,7 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
         <li className="hr-dropdown">
           <span onClick={() => setIsHrViewOpen(!isHrViewOpen)} className="hr-dropdown-toggle">
             <FaUser />
-            {!isMinimized && <span>HR View ▼</span>}
+            {!isMinimized && <span>Supervisor View ▼</span>}
           </span>
           {!isMinimized && isHrViewOpen && (
             <ul className="hr-dropdown-menu">
