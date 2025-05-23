@@ -33,6 +33,7 @@ import HrDashboard from "../hr/HrDashboard/HrDashboard";
 import HrProfile from "../hr/HrProfile/HrProfile";
 import HrSidebar from "../hr/HrSidebar/HrSidebar";
 import HrAttendance from "../hr/HrAttendance/HrAttendance";
+import HrSchedule from "../hr/HrSchedule/HrSchedule";
 import HrPayslip from "../hr/HrPayslip/HrPayslip";
 import HrRequisitionHistory from "../hr/HrRequisition/HrRequisitionHistory";
 import HrGeneralRequest from "../hr/HrRequisition/HrGeneralRequest";
@@ -140,6 +141,7 @@ const App = () => {
                     <Route path="/hr-dashboard" element={<HrDashboard user={user} />} />
                     <Route path="/hr-profile" element={<HrProfile />} />
                     <Route path="/hr-attendance" element={<HrAttendance />} />
+                    <Route path="/hr-schedule" element={<HrSchedule />} />
                     <Route path="/hr-payslip" element={<HrPayslip />} /> 
                     <Route path="/hr-view/requisition" element={<HrViewRequisition />} />
                     <Route path="*" element={<Navigate to="/hr-dashboard" />} />

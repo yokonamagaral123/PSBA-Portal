@@ -1,0 +1,94 @@
+.hr-schedule-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0;
+  color: white;
+  position: relative;
+  margin-left: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hr-schedule-banner-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.hr-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the group horizontally */
+  margin-bottom: 1rem;
+  gap: 0.75rem;
+}
+
+.hr-calendar-header button {
+  background: #3a7bd5;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0 8px;
+}
+
+.hr-calendar-header button:hover {
+  background: #005fa3;
+}
+
+.hr-calendar-header span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 160px;
+  text-align: center;
+  display: inline-block;
+}
+
+.hr-calendar-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 700px;
+}
+
+.hr-calendar-row {
+  display: flex;
+}
+
+.hr-calendar-cell {
+  flex: 1;
+  min-width: 90px;
+  min-height: 70px;
+  border: 1px solid #eee;
+  padding: 4px;
+  box-sizing: border-box;
+  position: relative;
+  background: #fafbfc;
+}
+
+.hr-calendar-days .hr-calendar-cell {
+  background: #f0f0f0;
+  font-weight: bold;
+  text-align: center;
+  min-height: 30px;
+}
+
+.hr-calendar-date-number {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.hr-calendar-times {
+  min-height: 32px; /* Space for schedule times */
+  /* You can add more styling here */
+}
