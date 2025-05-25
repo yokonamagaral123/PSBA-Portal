@@ -252,19 +252,24 @@ const AdminDashboard = () => {
         style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
         title={holiday ? `${holiday.localName} (${holiday.type || ''})` : undefined}
       >
-        <span style={{ fontWeight: 400, fontSize: 20 }}>{day}</span>
-        {isToday && (
-          <span style={{
-            display: 'inline-block',
-            width: 14,
-            height: 14,
-            backgroundColor: '#2583d8',
-            borderRadius: '50%',
-            margin: '0 auto',
-            position: 'relative',
-            top: 4,
-          }}></span>
-        )}
+        <span style={{ fontWeight: 400, fontSize: 20, position: 'relative', display: 'inline-block', width: 28, height: 28 }}>
+          {day}
+          {isToday && (
+            <span style={{
+              position: 'absolute',
+              top: '-3px',
+              right: '-8px',
+              width: '10px',
+              height: '10px',
+              background: '#2583d8',
+              borderRadius: '50%',
+              zIndex: 2,
+              boxShadow: '0 0 2px #2583d8',
+              pointerEvents: 'none',
+              display: 'inline-block',
+            }}></span>
+          )}
+        </span>
         {holiday && (
           <div style={{
             fontSize: 12,
