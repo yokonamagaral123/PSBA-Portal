@@ -23,6 +23,7 @@ const employeeRoutes = require("./routes/employee");
 const announcementsRoutes = require("./routes/announcements"); 
 const todoRoutes = require("./routes/todo");
 const userRoutes = require("./routes/user"); // <-- Add this line
+const holidayRoutes = require('./routes/holiday');
 
 app.use("/api", authRoutes);
 app.use("/api/requisitions", requisitionRoutes);
@@ -31,6 +32,7 @@ app.use("/api/employee", employeeRoutes);
 app.use("/api/announcements", announcementsRoutes); 
 app.use("/api/todos", todoRoutes);
 app.use("/api/user", userRoutes); // <-- Add this line
+app.use('/api/holidays', holidayRoutes);
 
 // Test route
 app.get("/test", (req, res) => {

@@ -13,6 +13,7 @@ const monthNames = [
 const AdminDashboard = () => {
   const [employees, setEmployees] = useState([]); // Add employees state
   const [requisitions, setRequisitions] = useState([]);
+  const [holidays, setHolidays] = useState([]);
 
   // Carousel state
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -42,6 +43,51 @@ const AdminDashboard = () => {
   const [announcementDate, setAnnouncementDate] = useState("");
   const [announcementTime, setAnnouncementTime] = useState("");
   const [announcements, setAnnouncements] = useState([]);
+
+  // Add Holiday modal state
+  const [showAddHolidayModal, setShowAddHolidayModal] = useState(false);
+  const [holidayName, setHolidayName] = useState("");
+  const [holidayDate, setHolidayDate] = useState("");
+  const [holidayType, setHolidayType] = useState("Regular Holiday");
+
+  // Fetch holidays from Nager.Date API and custom holidays from backend for the selected year
+  const fetchAllHolidays = async (year) => {
+    let apiHolidays = [];
+    let customHolidays = [];
+    try {
+      // Fetch API holidays
+      const apiRes = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/PH`);
+      const apiData = await apiRes.json();
+      apiHolidays = apiData.map(h => ({
+        localName: h.localName,
+        date: h.date,
+        type: h.type,
+      }));
+    } catch (err) {
+      console.error("Error fetching API holidays:", err);
+    }
+    try {
+      // Fetch custom holidays from backend
+      const customRes = await fetch(`http://localhost:5000/api/holidays/${year}`);
+      const customData = await customRes.json();
+      customHolidays = (customData.holidays || []).map(h => ({
+        localName: h.name,
+        date: h.date,
+        type: h.type,
+        isCustom: true
+      }));
+    } catch (err) {
+      console.error("Error fetching custom holidays:", err);
+    }
+    // Merge, avoiding duplicates (by date)
+    const allHolidays = [...apiHolidays];
+    customHolidays.forEach(custom => {
+      if (!allHolidays.some(api => new Date(api.date).toDateString() === new Date(custom.date).toDateString())) {
+        allHolidays.push(custom);
+      }
+    });
+    setHolidays(allHolidays);
+  };
 
   useEffect(() => {
     // Fetch all employees (for count and departments)
@@ -112,7 +158,10 @@ const AdminDashboard = () => {
         })
         .catch(err => console.error("Failed to fetch todos:", err));
     }
-  }, []);
+
+    // Fetch holidays from Nager.Date API and custom holidays from backend for the selected year
+    fetchAllHolidays(calendar.year);
+  }, [calendar.year]);
 
   // Carousel auto-advance
   useEffect(() => {
@@ -182,14 +231,42 @@ const AdminDashboard = () => {
     else if (isToday) tdClass = "admindashboard-today";
     else if (hasDue && allDone) tdClass = "admindashboard-done-task";
     else if (anyPending) tdClass = "admindashboard-due-task";
+    // Check if this day is a holiday (parse as local date for correct matching)
+    const holiday = holidays.find(h => {
+      const hDate = new Date(h.date);
+      return (
+        hDate.getDate() === day &&
+        hDate.getMonth() === calendar.month &&
+        hDate.getFullYear() === calendar.year
+      );
+    });
     cells.push(
       <td
         key={day}
-        className={tdClass}
+        className={
+          tdClass +
+          (holiday ? " admindashboard-holiday-red" : "") +
+          (holiday ? " admindashboard-holiday-highlight" : "")
+        }
         onClick={() => handleCalendarDayClick(day)}
-        style={{ cursor: hasDue ? "pointer" : "default" }}
+        style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
+        title={holiday ? `${holiday.localName} (${holiday.type || holiday.holidayType || ''})` : undefined}
       >
-        {day}
+        <span
+          style={holiday ? {
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            background: '#e74c3c',
+            color: '#fff',
+            borderRadius: '10px', // Remove rounding for full cell
+            fontWeight: 700,
+            fontSize: 20,
+            lineHeight: '38px',
+            textAlign: 'center',
+            margin: 0
+          } : {}}>{day}</span>
+        {/* Remove holiday name and label below the day */}
       </td>
     );
     if ((cells.length) % 7 === 0 || day === daysInMonth) {
@@ -348,6 +425,35 @@ const AdminDashboard = () => {
     }
   };
 
+  // Holiday handlers
+  const handleAddHoliday = async () => {
+    if (!holidayName || !holidayDate) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:5000/api/holidays", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: holidayName, date: holidayDate, type: holidayType })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        alert(data.message || "Failed to add holiday.");
+        return;
+      }
+      // After adding, fetch all holidays again to update the calendar
+      await fetchAllHolidays(calendar.year);
+    } catch (err) {
+      console.error("Failed to add holiday:", err);
+    }
+    setShowAddHolidayModal(false);
+    setHolidayName("");
+    setHolidayDate("");
+    setHolidayType("Regular Holiday");
+  };
+
   // Calendar day click handler
   const handleCalendarDayClick = (day) => {
     const dateObj = new Date(calendar.year, calendar.month, day);
@@ -437,12 +543,19 @@ const AdminDashboard = () => {
 
         {/* Calendar */}
         <div className="admindashboard-calendar">
-          <div className="admindashboard-calendar-header">
+          <div className="admindashboard-calendar-header" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
             <button onClick={prevMonth}>&lt;</button>
             <h3 style={{ display: "inline", margin: "0 10px" }}>
               {monthNames[calendar.month]} {calendar.year}
             </h3>
             <button onClick={nextMonth}>&gt;</button>
+            <button
+              className="admindashboard-add-holiday-btn"
+              style={{ position: 'absolute', right: 0, top: 0, height: 40, minWidth: 130, background: '#2583d8', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(37, 131, 216, 0.10)' }}
+              onClick={() => setShowAddHolidayModal(true)}
+            >
+              Add Holiday
+            </button>
           </div>
           <table>
             <thead>
@@ -469,6 +582,41 @@ const AdminDashboard = () => {
               <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 12 }}>
                 Task for {selectedDayDate}
               </div>
+              {/* Holidays for the selected day */}
+              {(() => {
+                const selectedDate = new Date(selectedDayDate);
+                const holidaysForDay = holidays.filter(h => {
+                  const hDate = new Date(h.date);
+                  return (
+                    hDate.getDate() === selectedDate.getDate() &&
+                    hDate.getMonth() === selectedDate.getMonth() &&
+                    hDate.getFullYear() === selectedDate.getFullYear()
+                  );
+                });
+                return holidaysForDay.length > 0 ? (
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ fontWeight: 600, color: '#e74c3c', marginBottom: 4 }}>Holiday(s):</div>
+                    <div>
+                      {holidaysForDay.map((h, idx) => (
+                        <div key={idx} style={{
+                          background: '#ffeaea',
+                          color: '#e74c3c',
+                          fontWeight: 600,
+                          borderRadius: 6,
+                          padding: '6px 8px',
+                          marginBottom: 6,
+                          display: 'inline-block',
+                          fontSize: 15
+                        }}>
+                          {h.localName} {h.type ? `(${h.type})` : ''}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+              {/* To-Do(s) for the selected day */}
+              <div style={{ fontWeight: 600, color: '#2583d8', marginBottom: 4 }}>To-Do(s):</div>
               <ul style={{ paddingLeft: 0, marginBottom: 0 }}>
                 {selectedDayTasks.length === 0 && (
                   <li>No tasks due on this day.</li>
@@ -771,6 +919,47 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal for Add Holiday */}
+      {showAddHolidayModal && (
+        <div className="admindashboard-modal-overlay">
+          <div className="admindashboard-modal">
+            <button className="admindashboard-modal-close" onClick={() => setShowAddHolidayModal(false)}>&times;</button>
+            <h2 style={{ marginBottom: 16 }}>Add Holiday</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <label style={{ fontWeight: 500 }}>Holiday Name</label>
+              <input
+                type="text"
+                value={holidayName}
+                onChange={e => setHolidayName(e.target.value)}
+                placeholder="e.g. Independence Day"
+                style={{ fontSize: 16, padding: 8 }}
+              />
+              <label style={{ fontWeight: 500 }}>Date</label>
+              <input
+                type="date"
+                value={holidayDate}
+                onChange={e => setHolidayDate(e.target.value)}
+                style={{ fontSize: 16, padding: 8 }}
+              />
+              <label style={{ fontWeight: 500 }}>Type</label>
+              <select
+                value={holidayType}
+                onChange={e => setHolidayType(e.target.value)}
+                style={{ fontSize: 16, padding: 8 }}
+              >
+                <option value="Regular Holiday">Regular Holiday</option>
+                <option value="Special Non-Working Holiday">Special Non-Working Holiday</option>
+              </select>
+              <button
+                className="admindashboard-modal-submit"
+                style={{ marginTop: 16, padding: '10px 0', fontWeight: 600, fontSize: 16, background: '#2583d8', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
+                onClick={handleAddHoliday}
+              >Add Holiday</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
