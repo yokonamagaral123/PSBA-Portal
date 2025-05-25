@@ -235,20 +235,14 @@
   margin-top: 2px;
 }
 .employee-todo-mark-done-btn {
-  background: #fff;
-  border: 2px solid #3bb77e;
-  color: #3bb77e;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 1.2em;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border 0.15s;
-  box-shadow: none;
-  margin-left: 10px;
+  transition: filter 0.2s;
 }
 .employee-todo-mark-done-btn:disabled {
   opacity: 0.7;
@@ -302,15 +296,19 @@
   font-weight: bold;
 }
 .employee-dashboard-due-task {
-  background: #ffe066 !important;
-  color: #333;
+  background: #fbff1c !important;
+  color: #00080f;
+  border-radius: 10px;
   font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
 }
+
 .employee-dashboard-done-task {
   background: #7be495 !important;
   color: #fff;
-  border-radius: 50%;
+  border-radius: 10px;
   font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
 }
 
 .employee-announcements h3,
@@ -481,22 +479,22 @@
 .employee-modal-task-status.done {
   color: #3bb77e;
 }
-.employee-modal-task-check {
-  background: #fff;
-  border: 2px solid #e6b800;
-  color: #e6b800;
-  border-radius: 50%;
-  width: 22px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border 0.15s;
-  box-shadow: none;
-  margin-left: 10px;
-}
+  .employee-modal-task-check {
+    background: #fff;
+    border: 2px solid #e6b800;
+    color: #e6b800;
+    border-radius: 50%;
+    width: 22px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border 0.15s;
+    box-shadow: none;
+    margin-left: 10px;
+  }
 .employee-modal-task-check:disabled {
   cursor: default;
   opacity: 0.7;
