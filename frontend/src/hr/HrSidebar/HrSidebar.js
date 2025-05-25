@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./HrSidebar.css";
-import { FaBars, FaTachometerAlt, FaUser, FaSignOutAlt, FaClock, FaFileAlt } from "react-icons/fa";
+import { FaBars, FaTachometerAlt, FaUser, FaSignOutAlt, FaClock,FaMoneyBill, FaFileAlt, FaCalendarAlt } from "react-icons/fa";
 
 const HrSidebar = ({ isMinimized, toggleSidebar }) => {
   const [isRequisitionOpen, setIsRequisitionOpen] = useState(false);
@@ -52,6 +52,24 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
             {!isMinimized && <span>Attendance</span>}
           </Link>
         </li>
+        <li>
+          <Link
+            to="/hr-schedule"
+            className={isActive("/hr-schedule") ? "active" : ""}
+          >
+            <FaCalendarAlt />
+            {!isMinimized && <span>Schedule</span>}
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/hr-payslip"
+            className={isActive("/hr-payslip") ? "active" : ""}
+          >
+            <FaMoneyBill />
+            {!isMinimized && <span>Payslip</span>}
+          </Link>
+        </li>
         <li className="hr-dropdown">
           <span onClick={toggleRequisition} className="hr-dropdown-toggle">
             <FaFileAlt />
@@ -94,16 +112,7 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
           {!isMinimized && isHrViewOpen && (
             <ul className="hr-dropdown-menu">
               <li>
-                <Link to="/hr-view/payroll" className={isActive("/hr-view/payroll") ? "active" : ""}>Payroll</Link>
-              </li>
-              <li>
-                <Link to="/hr-view/attendance" className={isActive("/hr-view/attendance") ? "active" : ""}>Attendance</Link>
-              </li>
-              <li>
                 <Link to="/hr-view/requisition" className={isActive("/hr-view/requisition") ? "active" : ""}>Requisition</Link>
-              </li>
-              <li>
-                <Link to="/hr-view/documents" className={isActive("/hr-view/documents") ? "active" : ""}>Documents</Link>
               </li>
             </ul>
           )}
