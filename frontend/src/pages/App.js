@@ -28,18 +28,17 @@ import AdminViewDocuments from "../admin/AdminView/AdminViewDocuments";
 import AdminAccountCreation from "../admin/AdminView/AdminAccountCreation";
 import ManageEmployees from "../admin/AdminView/ManageEmployees";
 
-// Import HR components
+
 import HrDashboard from "../hr/HrDashboard/HrDashboard";
 import HrProfile from "../hr/HrProfile/HrProfile";
 import HrSidebar from "../hr/HrSidebar/HrSidebar";
 import HrAttendance from "../hr/HrAttendance/HrAttendance";
+import HrSchedule from "../hr/HrSchedule/HrSchedule";
+import HrPayslip from "../hr/HrPayslip/HrPayslip";
 import HrRequisitionHistory from "../hr/HrRequisition/HrRequisitionHistory";
 import HrGeneralRequest from "../hr/HrRequisition/HrGeneralRequest";
 import HrLeaveRequest from "../hr/HrRequisition/HrLeaveRequest";
-import HrViewPayroll from "../hr/HrView/HrViewPayroll";
-import HrViewAttendance from "../hr/HrView/HrViewAttendance";
 import HrViewRequisition from "../hr/HrView/HrViewRequisition";
-import HrViewDocuments from "../hr/HrView/HrViewDocuments";
 import "./App.css";
 
 const App = () => {
@@ -141,12 +140,10 @@ const App = () => {
                   <Routes>
                     <Route path="/hr-dashboard" element={<HrDashboard user={user} />} />
                     <Route path="/hr-profile" element={<HrProfile />} />
-                 
                     <Route path="/hr-attendance" element={<HrAttendance />} />
-                    <Route path="/hr-view/payroll" element={<HrViewPayroll />} />
-                    <Route path="/hr-view/attendance" element={<HrViewAttendance />} />
+                    <Route path="/hr-schedule" element={<HrSchedule />} />
+                    <Route path="/hr-payslip" element={<HrPayslip />} /> 
                     <Route path="/hr-view/requisition" element={<HrViewRequisition />} />
-                    <Route path="/hr-view/documents" element={<HrViewDocuments />} />
                     <Route path="*" element={<Navigate to="/hr-dashboard" />} />
                     <Route path="/hr-requisition-history" element={<HrRequisitionHistory />} />
                     <Route path="/hr-general-request" element={<HrGeneralRequest />} />
