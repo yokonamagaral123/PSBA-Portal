@@ -247,3 +247,51 @@
 .scheduler-submit-btn:hover {
   background: #1565c0;
 }
+
+.scheduler-copy-label {
+  width: 50px;
+  color: #1976d2;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  display: inline-block;
+}
+
+.scheduler-copy-checkbox {
+  margin-left: 8px;
+  width: 18px;
+  height: 18px;
+  accent-color: #1976d2;
+  cursor: pointer;
+}
+
+.scheduler-copy-btn {
+  background: #e3f2fd;
+  border: 1px solid #b3c6e0;
+  border-radius: 4px;
+  color: #1976d2;
+  font-size: 1.1rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  vertical-align: middle;
+}
+.scheduler-copy-btn:hover {
+  background: #1976d2;
+  color: #fff;
+}
+
+.scheduler-reset-btn {
+  background: none;
+  border: none;
+  color: #d32f2f;
+  font-size: 1.1em;
+  cursor: pointer;
+  margin-left: 4px;
+  padding: 0 4px;
+  vertical-align: middle;
+  transition: color 0.18s;
+}
+.scheduler-reset-btn:hover {
+  color: #b71c1c;
+}
