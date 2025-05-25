@@ -4,8 +4,8 @@ const todoSchema = new mongoose.Schema({
   email: { type: String, required: true }, 
   task: { type: String, required: true },
   dueDate: { type: Date },
-  time: { type: String }, // Store as HH:mm (24-hour), optional
-  done: { type: Boolean, default: false }, // <-- Add this line
+  time: { type: String }, 
+  done: { type: Boolean, default: false }, 
   createdAt: { type: Date, default: Date.now }
 });
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./AdminSidebar.css";
-import { FaBars, FaTachometerAlt, FaUser, FaSignOutAlt, FaClock, FaFileAlt, FaMoneyBill } from "react-icons/fa";
+import { FaBars, FaTachometerAlt, FaUser, FaSignOutAlt, FaClock, FaFileAlt, FaMoneyBill, FaCalendarAlt } from "react-icons/fa";
 
 const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
   const [isRequisitionOpen, setIsRequisitionOpen] = useState(false);
@@ -50,6 +50,24 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
           >
             <FaClock />
             {!isMinimized && <span>Attendance</span>}
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/admin-schedule"
+            className={isActive("/admin-schedule") ? "active" : ""}
+          >
+            <FaCalendarAlt />
+            {!isMinimized && <span>Schedule</span>}
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/admin-payroll"
+            className={isActive("/admin-payroll") ? "active" : ""}
+          >
+            <FaMoneyBill />
+            {!isMinimized && <span>Payslip</span>}
           </Link>
         </li>
         <li className="dropdown">
@@ -103,6 +121,14 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
               <li>
                 <Link
+                  to="/admin-view/scheduler"
+                  className={isActive("/admin-view/scheduler") ? "active" : ""}
+                >
+                  Scheduler
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/admin-view/documents"
                   className={isActive("/admin-view/documents") ? "active" : ""}
                 >
@@ -143,15 +169,6 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
             </ul>
           )}
-        </li>
-        <li>
-          <Link
-            to="/admin-payroll"
-            className={isActive("/admin-payroll") ? "active" : ""}
-          >
-            <FaMoneyBill />
-            {!isMinimized && <span>Payroll</span>}
-          </Link>
         </li>
         <li>
           <Link to="/" className={isActive("/") ? "active" : ""}>

@@ -1,6 +1,6 @@
 import React from "react";
 
-const AdminPayroll = () => {
+const HrPayslip = () => {
   return (
     <div className="content">
       <h1>Payslip</h1>
@@ -10,4 +10,4 @@ const AdminPayroll = () => {
   );
 };
 
-export default AdminPayroll;
+export default HrPayslip;
