@@ -59,7 +59,7 @@ const AdminDashboard = () => {
       const apiRes = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/PH`);
       const apiData = await apiRes.json();
       apiHolidays = apiData.map(h => ({
-        localName: h.localName,
+        localName: h.name || h.localName, // Use English name if available
         date: h.date,
         type: h.type,
       }));
@@ -226,47 +226,56 @@ const AdminDashboard = () => {
     const allDone = hasDue && tasksForDay.every(t => t.done);
     const anyPending = hasDue && tasksForDay.some(t => !t.done);
     let tdClass = "";
-    if (isToday && hasDue && allDone) tdClass = "admindashboard-today admindashboard-done-task";
-    else if (isToday && anyPending) tdClass = "admindashboard-today admindashboard-due-task";
-    else if (isToday) tdClass = "admindashboard-today";
+    if (isToday) tdClass = "admindashboard-today-dot";
     else if (hasDue && allDone) tdClass = "admindashboard-done-task";
     else if (anyPending) tdClass = "admindashboard-due-task";
-    // Check if this day is a holiday (parse as local date for correct matching)
+
+    // Add logic to determine the holiday for the current day
     const holiday = holidays.find(h => {
-      const hDate = new Date(h.date);
+      const holidayDate = new Date(h.date);
       return (
-        hDate.getDate() === day &&
-        hDate.getMonth() === calendar.month &&
-        hDate.getFullYear() === calendar.year
+        holidayDate.getDate() === day &&
+        holidayDate.getMonth() === calendar.month &&
+        holidayDate.getFullYear() === calendar.year
       );
     });
+
+    // Update the tdClass logic to remove the box styling for today's date
+    if (isToday) tdClass = "admindashboard-today-dot";
+
+    // Add a span for the dot styling
     cells.push(
       <td
         key={day}
-        className={
-          tdClass +
-          (holiday ? " admindashboard-holiday-red" : "") +
-          (holiday ? " admindashboard-holiday-highlight" : "")
-        }
+        className={tdClass}
         onClick={() => handleCalendarDayClick(day)}
         style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
-        title={holiday ? `${holiday.localName} (${holiday.type || holiday.holidayType || ''})` : undefined}
+        title={holiday ? `${holiday.localName} (${holiday.type || ''})` : undefined}
       >
-        <span
-          style={holiday ? {
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            background: '#e74c3c',
-            color: '#fff',
-            borderRadius: '10px', // Remove rounding for full cell
-            fontWeight: 700,
-            fontSize: 20,
-            lineHeight: '38px',
-            textAlign: 'center',
-            margin: 0
-          } : {}}>{day}</span>
-        {/* Remove holiday name and label below the day */}
+        <span style={{ fontWeight: 400, fontSize: 20 }}>{day}</span>
+        {isToday && (
+          <span style={{
+            display: 'inline-block',
+            width: 14,
+            height: 14,
+            backgroundColor: '#2583d8',
+            borderRadius: '50%',
+            margin: '0 auto',
+            position: 'relative',
+            top: 4,
+          }}></span>
+        )}
+        {holiday && (
+          <div style={{
+            fontSize: 12,
+            color: '#e74c3c',
+            fontWeight: 600,
+            marginTop: 2,
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
+            lineHeight: 1.2
+          }}>{holiday.localName}</div>
+        )}
       </td>
     );
     if ((cells.length) % 7 === 0 || day === daysInMonth) {
