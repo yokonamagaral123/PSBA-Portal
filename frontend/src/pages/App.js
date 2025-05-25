@@ -17,11 +17,13 @@ import AdminDashboard from "../admin/AdminDashboard/AdminDashboard";
 import AdminProfile from "../admin/AdminProfile/AdminProfile";
 
 import AdminAttendance from "../admin/AdminAttendance/AdminAttendance";
+import AdminSchedule from "../admin/AdminSchedule/AdminSchedule";
 import AdminGeneralRequest from "../admin/AdminRequisition/AdminGeneralRequest";
 import AdminLeaveRequest from "../admin/AdminRequisition/AdminLeaveRequest";
 import AdminRequisitionHistory from "../admin/AdminRequisition/AdminRequisitionHistory";
 import AdminPayroll from "../admin/AdminPayroll/AdminPayroll";
 import AdminViewAttendance from "../admin/AdminView/AdminViewAttendance";
+import AdminScheduler from "../admin/AdminView/AdminScheduler";
 import AdminViewPayroll from "../admin/AdminView/AdminViewPayroll";
 import AdminViewRequisition from "../admin/AdminView/AdminViewRequisition";
 import AdminViewDocuments from "../admin/AdminView/AdminViewDocuments";
@@ -110,13 +112,14 @@ const App = () => {
                   <Routes>
                     <Route path="/admin-dashboard" element={<AdminDashboard />} />
                     <Route path="/admin-profile" element={<AdminProfile />} />
-                   
                     <Route path="/admin-attendance" element={<AdminAttendance />} />
+                    <Route path="/admin-schedule" element={<AdminSchedule />} />
                     <Route path="/admin-general-request" element={<AdminGeneralRequest />} />
                     <Route path="/admin-leave-request" element={<AdminLeaveRequest />} />
                     <Route path="/admin-requisition-history" element={<AdminRequisitionHistory />} />
                     <Route path="/admin-payroll" element={<AdminPayroll />} />
                     <Route path="/admin-view/attendance" element={<AdminViewAttendance />} />
+                    <Route path="/admin-view/scheduler" element={<AdminScheduler />} />
                     <Route path="/admin-view/payroll" element={<AdminViewPayroll />} />
                     <Route path="/admin-view/requisition" element={<AdminViewRequisition />} />
                     <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
