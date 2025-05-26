@@ -7,15 +7,16 @@ import Login from "../employee/Login/Login";
 import Dashboard from "../employee/Dashboard/Dashboard";
 import Profile from "../employee/Profile/Profile";
 import Attendance from "../employee/Attendance/Attendance";
+import Schedule from "../employee/Schedule/Schedule";
 import ForgotPassword from "./ForgotPassword";
 import GeneralRequest from "../employee/Requisition/GeneralRequest";
 import LeaveRequest from "../employee/Requisition/LeaveRequest";
 import RequisitionHistory from "../employee/Requisition/RequisitionHistory";
 import Payroll from "../employee/Payroll/Payroll";
 import AssistBotHelp from "../employee/AssistBotHelp/AssistBotHelp";
+
 import AdminDashboard from "../admin/AdminDashboard/AdminDashboard";
 import AdminProfile from "../admin/AdminProfile/AdminProfile";
-
 import AdminAttendance from "../admin/AdminAttendance/AdminAttendance";
 import AdminSchedule from "../admin/AdminSchedule/AdminSchedule";
 import AdminGeneralRequest from "../admin/AdminRequisition/AdminGeneralRequest";
@@ -89,6 +90,7 @@ const App = () => {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/attendance" element={<Attendance />} />
+                    <Route path="/schedule" element={<Schedule />} />
                     <Route path="/requisition/general" element={<GeneralRequest />} />
                     <Route path="/requisition/leave" element={<LeaveRequest />} />
                     <Route path="/requisition/history" element={<RequisitionHistory />} />

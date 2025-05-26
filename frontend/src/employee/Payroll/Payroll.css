@@ -3,12 +3,12 @@
   background: url("../../assets/blue.png") no-repeat center;
   background-size: cover;
   text-align: center;
-  padding: 110px 0; /* Adjust padding for height */
+  padding: 110px 0;
   color: white;
   position: relative;
-  margin-left: 40px; /* Align with the rest of the content */
-  border-radius: 10px; /* Optional: Add rounded corners */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+  margin-left: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .payroll-banner-title {
@@ -18,31 +18,14 @@
   margin: 0;
 }
 
-/* Payroll Container */
-.payroll-container {
+/* Main Content */
+.payroll-main {
   padding: 20px;
-  font-family: Arial, sans-serif;
   margin-left: 40px;
 }
 
-/* Payroll Table */
-.payroll-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.payroll-table th,
-.payroll-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: left;
-}
-
-.payroll-table th {
-  background-color: #f5f5f5;
-}
-
-.payroll-table td strong {
+.payroll-title {
+  font-size: 24px;
   font-weight: bold;
+  margin-bottom: 20px;
 }

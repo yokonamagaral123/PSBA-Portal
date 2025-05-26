@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./HrSchedule.css";
+import "./Schedule.css";
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -18,18 +18,17 @@ const calendarDayToScheduleDay = {
   6: "Saturday",
 };
 
-const HrSchedule = () => {
+const Schedule = () => {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [schedule, setSchedule] = useState({});
 
-  // Fetch the schedule for the current user (HR)
+  // Fetch the schedule for the current user (employee)
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
         const token = localStorage.getItem("token");
-        // Use the correct endpoint for EmployeeDetails
         const res = await axios.get(
           "http://localhost:5000/api/employee/details",
           { headers: { Authorization: `Bearer ${token}` } }
@@ -83,24 +82,24 @@ const HrSchedule = () => {
   return (
     <>
       {/* Schedule Banner */}
-      <div className="hr-schedule-banner">
-        <h1 className="hr-schedule-banner-title">SCHEDULE</h1>
+      <div className="schedule-banner">
+        <h1 className="schedule-banner-title">SCHEDULE</h1>
       </div>
 
       <div className="content">
-        <div className="hr-calendar-header">
+        <div className="schedule-calendar-header">
           <button onClick={prevMonth}>&lt;</button>
           <span>
             {monthNames[currentMonth]} {currentYear}
           </span>
           <button onClick={nextMonth}>&gt;</button>
         </div>
-        <div className="hr-calendar-table">
-          <div className="hr-calendar-row hr-calendar-days">
+        <div className="schedule-calendar-table">
+          <div className="schedule-calendar-row schedule-calendar-days">
             {/* Calendar header: SUN, MON, ... */}
             {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((d, idx) => (
               <div
-                className="hr-calendar-cell hr-calendar-day"
+                className="schedule-calendar-cell schedule-calendar-day"
                 key={d}
                 data-daylabel={calendarDayToScheduleDay[idx]}
               >
@@ -109,14 +108,14 @@ const HrSchedule = () => {
             ))}
           </div>
           {weeks.map((week, i) => (
-            <div className="hr-calendar-row" key={i}>
+            <div className="schedule-calendar-row" key={i}>
               {week.map((date, j) => (
-                <div className="hr-calendar-cell hr-calendar-date" key={j}>
+                <div className="schedule-calendar-cell schedule-calendar-date" key={j}>
                   {date && (
-                    <div className="hr-calendar-date-number">{date}</div>
+                    <div className="schedule-calendar-date-number">{date}</div>
                   )}
                   {/* Show schedule time for this day of week */}
-                  <div className="hr-calendar-times">
+                  <div className="schedule-calendar-times">
                     {date &&
                       schedule &&
                       schedule[calendarDayToScheduleDay[j]] &&
@@ -137,4 +136,4 @@ const HrSchedule = () => {
   );
 };
 
-export default HrSchedule;
+export default Schedule;
