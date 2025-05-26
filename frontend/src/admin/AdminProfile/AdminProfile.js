@@ -26,7 +26,6 @@ const AdminProfile = () => {
     employmentType: "",
     startDate: "",
     employmentStatus: "",
-    username: "",
     profileImage: "",
     spouseFullName: "",
     numberOfChildren: "",
@@ -34,6 +33,15 @@ const AdminProfile = () => {
     motherMaidenName: "",
     fatherFullName: "",
     deceasedSpouseName: "",
+    highestEducationalAttainment: "",
+    schoolName: "",
+    schoolYearFrom: "",
+    schoolYearTo: "",
+    yearGraduated: "",
+    sssNumber: "",
+    pagibigNumber: "",
+    philhealthNumber: "",
+    tinNumber: ""
   });
   const [imagePreview, setImagePreview] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -243,7 +251,6 @@ const AdminProfile = () => {
               <li><strong>Employment Type:</strong> {info.employmentType || "N/A"}</li>
               <li><strong>Start Date:</strong> {info.startDate ? info.startDate.slice(0,10) : "N/A"}</li>
               <li><strong>Employment Status:</strong> {info.employmentStatus || "N/A"}</li>
-              <li><strong>Username:</strong> {info.username || "N/A"}</li>
             </ul>
           </div>
           <div className="adminprofile-section">
@@ -343,7 +350,6 @@ const AdminProfile = () => {
                 <label>Employment Type:<input name="employmentType" value={editForm.employmentType} onChange={handleEditFormChange} /></label>
                 <label>Start Date:<input type="date" name="startDate" value={editForm.startDate ? editForm.startDate.slice(0,10) : ""} onChange={handleEditFormChange} /></label>
                 <label>Employment Status:<input name="employmentStatus" value={editForm.employmentStatus} onChange={handleEditFormChange} /></label>
-                <label>Username:<input name="username" value={editForm.username} onChange={handleEditFormChange} required /></label>
               </div>
               <div className="adminprofile-modal-actions">
                 <button type="submit" className="adminedit-button">Save</button>

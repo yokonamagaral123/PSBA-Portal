@@ -50,18 +50,42 @@ const AdminAccountCreation = () => {
   const [reviewModal, setReviewModal] = useState(false);
   const [stepTouched, setStepTouched] = useState({ 1: false, 2: false, 3: false });
   const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const [formError, setFormError] = useState("");
 
   // Validation for each step
   const isStep1Valid = formData.firstName && formData.lastName && formData.dateOfBirth && formData.gender;
   const isStep2Valid = formData.email && formData.mobileNumber;
-  const isStep3Valid = formData.employeeID && formData.username && formData.temporaryPassword && formData.confirmPassword && (formData.temporaryPassword === formData.confirmPassword);
+  const isStep3Valid = formData.employeeID && formData.temporaryPassword && formData.confirmPassword && (formData.temporaryPassword === formData.confirmPassword);
+
+  const stringFields = [
+    "firstName", "middleName", "lastName", "nationality", "homeAddress", "emergencyContactName", "emergencyContactRelation", "jobTitle", "department", "campusBranch", "spouseFullName", "motherMaidenName", "fatherFullName", "deceasedSpouseName", "highestEducationalAttainment", "schoolName"
+  ];
+  const numberFields = ["mobileNumber", "emergencyContactNumber", "numberOfChildren", "sssNumber", "pagibigNumber", "philhealthNumber", "tinNumber", "schoolYearFrom", "schoolYearTo", "yearGraduated"];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    // String fields: allow only letters, spaces, hyphens, apostrophes
+    if (stringFields.includes(name)) {
+      if (value && !/^[a-zA-Z\s\-'.]*$/.test(value)) {
+        setFormError(`${name.replace(/([A-Z])/g, ' $1')} must contain only letters, spaces, hyphens, or apostrophes.`);
+        return;
+      }
+      setFormError("");
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      return;
+    }
+    // Number fields: allow only digits
+    if (numberFields.includes(name)) {
+      if (value && !/^\d*$/.test(value)) {
+        setFormError(`${name.replace(/([A-Z])/g, ' $1')} must contain digits only.`);
+        return;
+      }
+      setFormError("");
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      return;
+    }
+    setFormError("");
+    setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
   const handleNext = () => {
@@ -348,6 +372,7 @@ const AdminAccountCreation = () => {
             {stepTouched[1] && !isStep1Valid && (
               <div className="account-creation-warning">Please fill in all required fields to continue.</div>
             )}
+            {formError && <div className="account-creation-warning" style={{color:'red',marginBottom:10}}>{formError}</div>}
           </>
         )}
         {step === 2 && (
@@ -420,6 +445,7 @@ const AdminAccountCreation = () => {
             {stepTouched[2] && !isStep2Valid && (
               <div className="account-creation-warning">Please fill in all required fields to continue.</div>
             )}
+            {formError && <div className="account-creation-warning" style={{color:'red',marginBottom:10}}>{formError}</div>}
           </>
         )}
         {step === 3 && (
@@ -561,14 +587,6 @@ const AdminAccountCreation = () => {
             <h3>Account Credentials</h3>
             <div className="form-group">
               <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-              />
-              <input
                 type="password"
                 name="temporaryPassword"
                 placeholder="Temporary Password"
@@ -627,6 +645,7 @@ const AdminAccountCreation = () => {
             {stepTouched[3] && !isStep3Valid && (
               <div className="account-creation-warning">Please fill in all required fields to continue.</div>
             )}
+            {formError && <div className="account-creation-warning" style={{color:'red',marginBottom:10}}>{formError}</div>}
           </>
         )}
       </form>
@@ -665,7 +684,6 @@ const AdminAccountCreation = () => {
                 <li><strong>Employment Type:</strong> {formData.employmentType}</li>
                 <li><strong>Start Date:</strong> {formData.startDate}</li>
                 <li><strong>Employment Status:</strong> {formData.employmentStatus}</li>
-                <li><strong>Username:</strong> {formData.username}</li>
                 <li><strong>Temporary Password:</strong> {'****'}</li>
                 <li><strong>Confirm Password:</strong> {'****'}</li>
                 <li><strong>Role:</strong> {formData.role}</li>

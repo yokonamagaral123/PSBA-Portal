@@ -25,7 +25,6 @@ const Profile = () => {
     employmentType: "",
     startDate: "",
     employmentStatus: "",
-    username: "",
     profileImage: "",
     spouseFullName: "",
     numberOfChildren: "",
@@ -77,7 +76,7 @@ const Profile = () => {
     const file = e.target.files[0];
     if (file) {
       const validTypes = ["image/jpeg", "image/png", "image/jpg"];
-      const maxSize = 15 * 1024 * 1024; // 15MB
+      const maxSize = 5 * 1024 * 1024; // 5MB
       if (!validTypes.includes(file.type)) {
         setImageError("Only .jpg, .jpeg, .png files are allowed.");
         setImageFile(null);
@@ -85,7 +84,7 @@ const Profile = () => {
         return;
       }
       if (file.size > maxSize) {
-        setImageError("File size must be 15MB or less.");
+        setImageError("File size must be 5MB or less.");
         setImageFile(null);
         setImagePreview("");
         return;
@@ -188,7 +187,7 @@ const Profile = () => {
                 <span style={{ fontSize: '0.95rem', color: '#888' }}>{info.email}</span>
               </div>
               <div style={{ color: '#888', fontSize: '0.95rem', marginBottom: 10 }}>
-                Only .jpg, .jpeg, .png files are allowed. Max size: 15MB.
+                Only .jpg, .jpeg, .png files are allowed. Max size: 5MB.
               </div>
               {imageError && (
                 <div style={{ color: 'red', fontSize: '0.97rem', marginBottom: 8 }}>{imageError}</div>
@@ -306,7 +305,6 @@ const Profile = () => {
               <li><strong>Employment Type:</strong> {info.employmentType || "N/A"}</li>
               <li><strong>Start Date:</strong> {info.startDate ? info.startDate.slice(0,10) : "N/A"}</li>
               <li><strong>Employment Status:</strong> {info.employmentStatus || "N/A"}</li>
-              <li><strong>Username:</strong> {info.username || "N/A"}</li>
             </ul>
           </div>
           <div className="profile-section">
