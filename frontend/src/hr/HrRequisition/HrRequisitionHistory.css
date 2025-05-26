@@ -1,1 +1,50 @@
 @import '../../employee/Requisition/RequisitionHistory.css';
+
+/* HR Requisition History Banner */
+.hr-requisition-history-banner {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0;
+  color: white;
+  position: relative;
+  margin-left: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hr-requisition-history-banner-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Main Content */
+.hr-requisition-history-content {
+  margin-left: 40px;
+  padding: 20px;
+}
+
+/* Table Styling */
+.hr-requisition-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.hr-requisition-history-table th,
+.hr-requisition-history-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.hr-requisition-history-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.hr-requisition-history-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}

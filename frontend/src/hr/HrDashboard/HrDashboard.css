@@ -347,16 +347,61 @@
 /* Task Status Highlighting */
 .hrdashboard-due-task {
   background: #ffe066 !important; /* yellow for pending */
-  color: #333;
-  border-radius: 50%;
+  color: #00080f;
+  border-radius: 10px;
   font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
 }
 
 .hrdashboard-done-task {
   background: #7be495 !important; /* green for done */
-  color: #fff;
-  border-radius: 50%;
+ color: #00080f;
+  border-radius: 10px;
   font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
+}
+
+/* Ensure calendar cell highlights for tasks override holiday and today backgrounds */
+.hrdashboard-calendar td.hrdashboard-due-task {
+  background: #ffe066 !important; /* yellow for pending */
+  color: #00080f !important;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
+  position: relative;
+  z-index: 2;
+}
+.hrdashboard-calendar td.hrdashboard-done-task {
+  background: #7be495 !important; /* green for done */
+  color: #00080f !important;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
+  position: relative;
+  z-index: 2;
+}
+/* If both holiday and task, task highlight wins */
+.hrdashboard-calendar td.hrdashboard-holiday.hrdashboard-due-task {
+  background: #ffe066 !important;
+}
+.hrdashboard-calendar td.hrdashboard-holiday.hrdashboard-done-task {
+  background: #7be495 !important;
+}
+/* Today blue dot should always be visible above, but not override task highlight */
+.hrdashboard-calendar td .hrdashboard-today-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 12px;
+  height: 12px;
+  background: #2583d8;
+  border-radius: 50%;
+  z-index: 3;
+  display: inline-block;
+  pointer-events: none;
+}
+.hrdashboard-calendar td {
+  position: relative;
 }
 
 /* Add modal styles for announcement modal */
@@ -597,27 +642,7 @@
 }
 
 /* --- BLUE BOXES FOR CALENDAR CELLS --- */
-.hrdashboard-calendar td.hrdashboard-today {
-  background: #fbff1c !important;
-  color: #000000;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
-}
-.hrdashboard-calendar td.hrdashboard-due-task {
-  background: #91f868 !important;
-  color: #000102;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
-}
-.hrdashboard-calendar td.hrdashboard-done-task {
-  background: #b3e5fc !important;
-  color: #2583d8;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 0 0 2px #2583d833, 0 2px 8px #2583d822;
-}
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {

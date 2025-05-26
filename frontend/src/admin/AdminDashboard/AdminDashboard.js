@@ -10,6 +10,35 @@ const monthNames = [
   "July", "August", "September", "October", "November", "December"
 ];
 
+// Map of PH holidays to their types
+const holidayTypeMap = {
+  "New Year's Day": "Regular Holiday",
+  "Maundy Thursday": "Regular Holiday",
+  "Good Friday": "Regular Holiday",
+  "Araw ng Kagitingan": "Regular Holiday",
+  "Labor Day": "Regular Holiday",
+  "Independence Day": "Regular Holiday",
+  "National Heroes Day": "Regular Holiday",
+  "Bonifacio Day": "Regular Holiday",
+  "Christmas Day": "Regular Holiday",
+  "Rizal Day": "Regular Holiday",
+  "Feast of Ramadhan": "Regular Holiday",
+  "Day of Valor": "Regular Holiday",
+  "Last day of the year": "Regular Holiday",
+
+  "Black Saturday": "Special Non-Working Holiday",
+  "Ninoy Aquino Day": "Special Non-Working Holiday",
+  "All Saints' Day Eve": "Special Non-Working Holiday",
+  "All Saints' Day": "Special Non-Working Holiday",
+  "Christmas Eve": "Special Non-Working Holiday",
+  "New Year's Eve": "Special Non-Working Holiday",
+  "Holy Saturday": "Special Non-Working Holiday",
+  "Chinese New Year": "Special Non-Working Holiday",
+  "Feast of the Immaculate Conception of the Blessed Virgin Mary": "Special Non-Working Holiday",
+
+  // Add more as needed
+};
+
 const AdminDashboard = () => {
   const [employees, setEmployees] = useState([]); // Add employees state
   const [requisitions, setRequisitions] = useState([]);
@@ -62,6 +91,7 @@ const AdminDashboard = () => {
         localName: h.name || h.localName, // Use English name if available
         date: h.date,
         type: h.type,
+        note: holidayTypeMap[h.name || h.localName] || "Holiday"
       }));
     } catch (err) {
       console.error("Error fetching API holidays:", err);
@@ -74,7 +104,8 @@ const AdminDashboard = () => {
         localName: h.name,
         date: h.date,
         type: h.type,
-        isCustom: true
+        isCustom: true,
+        note: h.type // Ensure note is set for custom holidays
       }));
     } catch (err) {
       console.error("Error fetching custom holidays:", err);
@@ -226,11 +257,10 @@ const AdminDashboard = () => {
     const allDone = hasDue && tasksForDay.every(t => t.done);
     const anyPending = hasDue && tasksForDay.some(t => !t.done);
     let tdClass = "";
-    if (isToday) tdClass = "admindashboard-today-dot";
-    else if (hasDue && allDone) tdClass = "admindashboard-done-task";
+    if (hasDue && allDone) tdClass = "admindashboard-done-task";
     else if (anyPending) tdClass = "admindashboard-due-task";
+    if (isToday) tdClass += (tdClass ? " " : "") + "admindashboard-today-dot";
 
-    // Add logic to determine the holiday for the current day
     const holiday = holidays.find(h => {
       const holidayDate = new Date(h.date);
       return (
@@ -240,10 +270,6 @@ const AdminDashboard = () => {
       );
     });
 
-    // Update the tdClass logic to remove the box styling for today's date
-    if (isToday) tdClass = "admindashboard-today-dot";
-
-    // Add a span for the dot styling
     cells.push(
       <td
         key={day}
@@ -252,24 +278,12 @@ const AdminDashboard = () => {
         style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
         title={holiday ? `${holiday.localName} (${holiday.type || ''})` : undefined}
       >
-        <span style={{ fontWeight: 400, fontSize: 20, position: 'relative', display: 'inline-block', width: 28, height: 28 }}>
+        <span style={{ fontWeight: 400, fontSize: 20, display: 'inline-block', width: 28, height: 28 }}>
           {day}
-          {isToday && (
-            <span style={{
-              position: 'absolute',
-              top: '-3px',
-              right: '-8px',
-              width: '10px',
-              height: '10px',
-              background: '#2583d8',
-              borderRadius: '50%',
-              zIndex: 2,
-              boxShadow: '0 0 2px #2583d8',
-              pointerEvents: 'none',
-              display: 'inline-block',
-            }}></span>
-          )}
         </span>
+        {isToday && (
+          <span className="admindashboard-today-dot"></span>
+        )}
         {holiday && (
           <div style={{
             fontSize: 12,
@@ -279,7 +293,14 @@ const AdminDashboard = () => {
             whiteSpace: 'normal',
             wordBreak: 'break-word',
             lineHeight: 1.2
-          }}>{holiday.localName}</div>
+          }}>
+            {holiday.localName}
+            {holiday.note && (
+              <span style={{ fontWeight: 400, color: '#b71c1c', fontSize: 11, display: 'block' }}>
+                {holiday.note}
+              </span>
+            )}
+          </div>
         )}
       </td>
     );
@@ -309,8 +330,10 @@ const AdminDashboard = () => {
 
   // To-Do handlers
   const handleAddClick = () => {
+    // Pre-fill due date with today
+    const todayStr = new Date().toISOString().slice(0, 10);
     setShowTodoModal(true);
-    setDueDate("");
+    setDueDate(todayStr);
     setTodoInput("");
     setTodoTime("");
   };
@@ -336,13 +359,19 @@ const AdminDashboard = () => {
       return;
     }
     if (!todoInput.trim()) return;
+    // Default dueDate to today if empty
+    let due = dueDate;
+    if (!due) {
+      due = new Date().toISOString().slice(0, 10);
+      setDueDate(due);
+    }
     fetch("http://localhost:5000/api/todos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ task: todoInput.trim(), dueDate: dueDate || null, time: todoTime || undefined })
+      body: JSON.stringify({ task: todoInput.trim(), dueDate: due || null, time: todoTime || undefined })
     })
       .then(res => res.json())
       .then(data => {
@@ -622,7 +651,10 @@ const AdminDashboard = () => {
                           display: 'inline-block',
                           fontSize: 15
                         }}>
-                          {h.localName} {h.type ? `(${h.type})` : ''}
+                          {h.localName}
+                          <span style={{ fontWeight: 400, color: '#b71c1c', fontSize: 12, display: 'block', marginTop: 2 }}>
+                            {h.note || h.type || 'Holiday'}
+                          </span>
                         </div>
                       ))}
                     </div>

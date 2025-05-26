@@ -19,30 +19,30 @@
 }
 
 /* Main Content */
-.content {
+.requisition-history-content {
   margin-left: 40px; /* Adjust content slightly to the right */
   padding: 20px;
 }
 
 /* Table Styling */
-table {
+.requisition-history-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-table th,
-table td {
+.requisition-history-table th,
+.requisition-history-table td {
   padding: 10px;
   text-align: left;
   border: 1px solid #ddd;
 }
 
-table th {
+.requisition-history-table th {
   background-color: #f4f4f4;
   font-weight: bold;
 }
 
-table tr:nth-child(even) {
+.requisition-history-table tr:nth-child(even) {
   background-color: #f9f9f9;
 }

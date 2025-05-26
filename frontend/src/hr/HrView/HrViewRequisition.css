@@ -1,17 +1,17 @@
-/* Dashboard Banner */
-.dashboard-banner {
+/* HR View Dashboard Banner */
+.hrviewrequisition-dashboard-banner {
   background: url("../../assets/blue.png") no-repeat center;
   background-size: cover;
   text-align: center;
-  padding: 110px 0; /* Adjust padding for height */
+  padding: 110px 0;
   color: white;
   position: relative;
-  margin-left: 40px; /* Align with the rest of the content */
-  border-radius: 10px; /* Optional: Add rounded corners */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+  margin-left: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.hrviewattendance-table {
+.hrviewrequisition-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -20,38 +20,37 @@
   border-radius: 12px;
   overflow: hidden;
   margin-top: 24px;
-  margin-left: 20px
-
+  margin-left: 20px;
 }
 
-.hrviewattendance-table th, .hrviewattendance-table td {
+.hrviewrequisition-table th, .hrviewrequisition-table td {
   padding: 14px 16px;
   text-align: left;
   font-size: 1rem;
 }
 
-.hrviewattendance-table th {
+.hrviewrequisition-table th {
   background: #f4f8fb;
   color: #1a355e;
   font-weight: 600;
   border-bottom: 2px solid #e3e8ee;
 }
 
-.hrviewattendance-table tr {
+.hrviewrequisition-table tr {
   transition: background 0.15s;
 }
 
-.hrviewattendance-table tbody tr:hover {
+.hrviewrequisition-table tbody tr:hover {
   background: #f0f6fa;
 }
 
-.hrviewattendance-table td {
+.hrviewrequisition-table td {
   border-bottom: 1px solid #e3e8ee;
   vertical-align: middle;
 }
 
-.hrviewattendance-table td select,
-.hrviewattendance-table td input[type="text"] {
+.hrviewrequisition-table td select,
+.hrviewrequisition-table td input[type="text"] {
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #cfd8dc;
@@ -60,13 +59,13 @@
   transition: border 0.2s;
 }
 
-.hrviewattendance-table td select:focus,
-.hrviewattendance-table td input[type="text"]:focus {
+.hrviewrequisition-table td select:focus,
+.hrviewrequisition-table td input[type="text"]:focus {
   border: 1.5px solid #1976d2;
   outline: none;
 }
 
-.hrviewattendance-table button {
+.hrviewrequisition-table button {
   background: #1976d2;
   color: #fff;
   border: none;
@@ -77,34 +76,35 @@
   transition: background 0.2s;
 }
 
-.hrviewattendance-table button:disabled {
+.hrviewrequisition-table button:disabled {
   background: #b0bec5;
   cursor: not-allowed;
 }
 
-.hrviewattendance-table .success {
+.hrviewrequisition-table .hrviewrequisition-success {
   color: #2e7d32;
   font-weight: 500;
 }
 
-.hrviewattendance-table .error {
+.hrviewrequisition-table .hrviewrequisition-error {
   color: #c62828;
   font-weight: 500;
 }
 
-.hrviewattendance-container {
+.hrviewrequisition-container {
   max-width: 98vw;
   margin: 0 auto;
   padding: 0 18px 32px 18px;
 }
 
-.hrviewattendance-searchbar {
+.hrviewrequisition-searchbar {
   margin-bottom: 18px;
   display: flex;
   justify-content: flex-end;
+  margin-top: 32px;
 }
 
-.hrviewattendance-input {
+.hrviewrequisition-input {
   padding: 10px 16px;
   border-radius: 8px;
   border: 1.5px solid #b0bec5;
@@ -114,20 +114,75 @@
   transition: border 0.2s;
 }
 
-.hrviewattendance-input:focus {
+.hrviewrequisition-input:focus {
   border: 1.5px solid #1976d2;
   outline: none;
 }
 
-.status-approved {
-  color: #219653 !important; /* green */
+.hrviewrequisition-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 18px;
+  margin-top: 32px;
+}
+
+.hrviewrequisition-status-filter {
+  width: 140px;
+  min-width: 0;
+  
+}
+
+.hrviewrequisition-remarks-input {
+  width: 120px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cfd8dc;
+  font-size: 1rem;
+  background: #f9fbfc;
+  transition: border 0.2s;
+}
+.hrviewrequisition-remarks-input:focus {
+  border: 1.5px solid #1976d2;
+  outline: none;
+}
+
+.hrviewrequisition-save-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 60px;
+}
+.hrviewrequisition-save-btn:disabled {
+  background: #b0bec5;
+  cursor: not-allowed;
+}
+
+.hrviewrequisition-success {
+  color: #2e7d32;
+  font-weight: 500;
+  font-size: 12px;
+}
+.hrviewrequisition-error {
+  color: #c62828;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+/* Status Color Coding */
+.hrstatus-approved {
+  color: #219653 !important;
   font-weight: 600;
 }
-.status-declined {
-  color: #d32f2f !important; /* red */
+.hrstatus-declined {
+  color: #d32f2f !important;
   font-weight: 600;
 }
-.status-pending {
-  color: #757575 !important; /* neutral gray */
+.hrstatus-pending {
+  color: #757575 !important;
   font-weight: 600;
 }

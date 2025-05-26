@@ -56,18 +56,19 @@ const AdminViewPayroll = () => {
         <h2>Employee List</h2>
         <div className="filters">
           <input
+            className="adminviewpayroll-input"
             type="text"
             placeholder="Search by name or ID..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
-          <select value={filterDept} onChange={e => setFilterDept(e.target.value)}>
+          <select className="adminviewpayroll-select" value={filterDept} onChange={e => setFilterDept(e.target.value)}>
             <option value="">All Departments</option>
             {departments.map((dept, idx) => (
               <option key={idx} value={dept}>{dept}</option>
             ))}
           </select>
-          <select value={filterPosition} onChange={e => setFilterPosition(e.target.value)}>
+          <select className="adminviewpayroll-select" value={filterPosition} onChange={e => setFilterPosition(e.target.value)}>
             <option value="">All Positions</option>
             {positions.map((pos, idx) => (
               <option key={idx} value={pos}>{pos}</option>

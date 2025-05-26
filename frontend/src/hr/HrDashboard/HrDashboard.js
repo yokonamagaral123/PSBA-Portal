@@ -62,6 +62,9 @@ const HrDashboard = () => {
   const [leavePending, setLeavePending] = useState(0);
   const [leaveRejected, setLeaveRejected] = useState(0);
 
+  // Holidays state
+  const [holidays, setHolidays] = useState([]);
+
   useEffect(() => {
     // Fetch employees for overview
     const fetchEmployees = async () => {
@@ -135,6 +138,48 @@ const HrDashboard = () => {
         .catch(err => console.error("Failed to fetch todos:", err));
     }
   }, []);
+
+  // Fetch holidays from Nager.Date API and custom holidays from backend for the selected year
+  useEffect(() => {
+    const fetchAllHolidays = async (year) => {
+      let apiHolidays = [];
+      let customHolidays = [];
+      try {
+        // Fetch API holidays
+        const apiRes = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/PH`);
+        const apiData = await apiRes.json();
+        apiHolidays = apiData.map(h => ({
+          localName: h.name || h.localName,
+          date: h.date,
+          type: h.type,
+        }));
+      } catch (err) {
+        console.error("Error fetching API holidays:", err);
+      }
+      try {
+        // Fetch custom holidays from backend
+        const customRes = await fetch(`http://localhost:5000/api/holidays/${year}`);
+        const customData = await customRes.json();
+        customHolidays = (customData.holidays || []).map(h => ({
+          localName: h.name,
+          date: h.date.length > 10 ? h.date.slice(0, 10) : h.date,
+          type: h.type,
+          isCustom: true
+        }));
+      } catch (err) {
+        console.error("Error fetching custom holidays:", err);
+      }
+      // Merge, avoiding duplicates (by date)
+      const allHolidays = [...apiHolidays];
+      customHolidays.forEach(custom => {
+        if (!allHolidays.some(api => new Date(api.date).toDateString() === new Date(custom.date).toDateString())) {
+          allHolidays.push(custom);
+        }
+      });
+      setHolidays(allHolidays);
+    };
+    fetchAllHolidays(calendar.year);
+  }, [calendar.year]);
 
   // Remove unused HR-specific state
 
@@ -230,22 +275,45 @@ const HrDashboard = () => {
     const allDone = hasDue && tasksForDay.every(t => t.done);
     const anyPending = hasDue && tasksForDay.some(t => !t.done);
 
-    // Class logic: green if all done, yellow if any not done, blue if today only
+    // Find holiday for this day
+    const holiday = holidays.find(h => {
+      const hDate = new Date(h.date);
+      return hDate.getFullYear() === calendar.year && hDate.getMonth() === calendar.month && hDate.getDate() === day;
+    });
+
+    // Class logic: green if all done, yellow if any not done, red if holiday
     let tdClass = "";
-    if (isToday && hasDue && allDone) tdClass = "hrdashboard-today hrdashboard-done-task";
-    else if (isToday && anyPending) tdClass = "hrdashboard-today hrdashboard-due-task";
-    else if (isToday) tdClass = "hrdashboard-today";
-    else if (hasDue && allDone) tdClass = "hrdashboard-done-task";
+    if (hasDue && allDone) tdClass = "hrdashboard-done-task";
     else if (anyPending) tdClass = "hrdashboard-due-task";
+    else if (holiday) tdClass = "hrdashboard-holiday";
 
     cells.push(
       <td
         key={day}
         className={tdClass}
         onClick={() => handleCalendarDayClick(day)}
-        style={{ cursor: hasDue ? "pointer" : "default" }}
+        style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
+        title={holiday ? `${holiday.localName} (${holiday.type || ''})` : undefined}
       >
-        {day}
+        <span style={{ fontWeight: 400, fontSize: 20, position: 'relative', display: 'inline-block', width: 28, height: 28 }}>
+          {day}
+          {isToday && (
+            <span style={{
+              position: 'absolute',
+              top: '-3px',
+              right: '-8px',
+              width: '10px',
+              height: '10px',
+              background: '#2583d8',
+              borderRadius: '50%',
+              zIndex: 2,
+              boxShadow: '0 0 2px #2583d8',
+              pointerEvents: 'none',
+              display: 'inline-block',
+            }}></span>
+          )}
+        </span>
+        {holiday && <div className="hrdashboard-holiday-name" style={{ color: '#e74c3c', fontWeight: 600, fontSize: 13 }}>{holiday.localName || holiday.name}</div>}
       </td>
     );
     if ((cells.length) % 7 === 0 || day === daysInMonth) {

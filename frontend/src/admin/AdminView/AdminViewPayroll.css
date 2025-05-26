@@ -34,14 +34,15 @@
 }
 
 /* Input and dropdown styles */
-input[type="text"], select {
+.adminviewpayroll-input,
+.adminviewpayroll-select {
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
   min-width: 220px;
 }
 
-select {
+.adminviewpayroll-select {
   background: #f5faff;
 }
 

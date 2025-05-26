@@ -28,6 +28,7 @@ const EmployeeDashboard = () => {
     month: today.getMonth(),
     year: today.getFullYear(),
   });
+  const [holidays, setHolidays] = useState([]);
 
   // To-Do state
   const [todoInput, setTodoInput] = useState("");
@@ -38,8 +39,7 @@ const EmployeeDashboard = () => {
 
   // Overlay state for calendar day details
   const [overlayOpen, setOverlayOpen] = useState(false);
-  const [selectedDayDate, setSelectedDayDate] = useState("");
-  const [selectedDayTasks, setSelectedDayTasks] = useState([]);
+  const [selectedDayDate, setSelectedDayDate] = useState(""); // Reintroduced state
 
   // Announcements state
   const [announcements, setAnnouncements] = useState([]);
@@ -101,6 +101,48 @@ const EmployeeDashboard = () => {
         .catch(err => console.error("Failed to fetch todos:", err));
     }
   }, []);
+
+  // Fetch holidays from Nager.Date API and custom holidays from backend for the selected year
+  useEffect(() => {
+    const fetchAllHolidays = async (year) => {
+      let apiHolidays = [];
+      let customHolidays = [];
+      try {
+        // Fetch API holidays
+        const apiRes = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/PH`);
+        const apiData = await apiRes.json();
+        apiHolidays = apiData.map(h => ({
+          localName: h.name || h.localName,
+          date: h.date,
+          type: h.type,
+        }));
+      } catch (err) {
+        console.error("Error fetching API holidays:", err);
+      }
+      try {
+        // Fetch custom holidays from backend
+        const customRes = await fetch(`http://localhost:5000/api/holidays/${year}`);
+        const customData = await customRes.json();
+        customHolidays = (customData.holidays || []).map(h => ({
+          localName: h.name,
+          date: h.date.length > 10 ? h.date.slice(0, 10) : h.date,
+          type: h.type,
+          isCustom: true
+        }));
+      } catch (err) {
+        console.error("Error fetching custom holidays:", err);
+      }
+      // Merge, avoiding duplicates (by date)
+      const allHolidays = [...apiHolidays];
+      customHolidays.forEach(custom => {
+        if (!allHolidays.some(api => new Date(api.date).toDateString() === new Date(custom.date).toDateString())) {
+          allHolidays.push(custom);
+        }
+      });
+      setHolidays(allHolidays);
+    };
+    fetchAllHolidays(calendar.year);
+  }, [calendar.year]);
 
   // Carousel auto-advance
   useEffect(() => {
@@ -243,64 +285,96 @@ const EmployeeDashboard = () => {
   };
 
   // Overlay for calendar day details
-  const handleCalendarDayClick = (day) => {
-    const dateStr = `${calendar.year}-${String(calendar.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    // Match both YYYY-MM-DD and YYYY-MM-DDTHH:MM:SSZ formats
-    const tasks = todos.filter(t => {
-      if (!t.dueDate) return false;
-      // Some dueDate may be in ISO format, so compare only the date part
-      const tDate = t.dueDate.length > 10 ? t.dueDate.slice(0, 10) : t.dueDate;
-      return tDate === dateStr;
-    });
-    setSelectedDayDate(dateStr);
-    setSelectedDayTasks(tasks);
-    setOverlayOpen(true);
-  };
   const handleOverlayClose = () => setOverlayOpen(false);
 
-  // Highlight days with due tasks (green if all done, orange if any not done)
+  // Highlight days with due tasks (green if all done, yellow if any not done)
   const dueDaysMap = {};
   todos.forEach(item => {
     if (!item.dueDate) return;
-    // Always use only the date part for the map key
-    const dateKey = item.dueDate.length > 10 ? item.dueDate.slice(0, 10) : item.dueDate;
-    if (!dueDaysMap[dateKey]) dueDaysMap[dateKey] = { done: 0, total: 0 };
-    dueDaysMap[dateKey].total++;
-    if (item.done) dueDaysMap[dateKey].done++;
+    const date = new Date(item.dueDate);
+    if (
+      date.getMonth() === calendar.month &&
+      date.getFullYear() === calendar.year
+    ) {
+      const day = date.getDate();
+      if (!dueDaysMap[day]) dueDaysMap[day] = [];
+      dueDaysMap[day].push(item);
+    }
   });
 
-  // Build calendar grid
+  // Helper: Get tasks for a specific day
+  const getTasksForDay = (day) => {
+    return todos.filter(item => {
+      if (!item.dueDate) return false;
+      const date = new Date(item.dueDate);
+      return (
+        date.getDate() === day &&
+        date.getMonth() === calendar.month &&
+        date.getFullYear() === calendar.year
+      );
+    });
+  };
+
+  // Build calendar grid (with today dot, holiday, and task highlights)
   const daysInMonth = getDaysInMonth(calendar.month, calendar.year);
   const firstDayOfWeek = getFirstDayOfWeek(calendar.month, calendar.year);
   const calendarRows = [];
   let cells = [];
   for (let i = 0; i < firstDayOfWeek; i++) {
-    cells.push(<td key={`empty-${i}`}></td>);
+    cells.push(<td key={`empty-start-${i}`}></td>);
   }
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${calendar.year}-${String(calendar.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    let cellClass = "employee-calendar-cell";
-    if (dueDaysMap[dateStr]) {
-      if (dueDaysMap[dateStr].done === dueDaysMap[dateStr].total) cellClass += " employee-dashboard-done-task";
-      else cellClass += " employee-dashboard-due-task";
-    }
     const isToday =
       day === today.getDate() &&
       calendar.month === today.getMonth() &&
       calendar.year === today.getFullYear();
-    const isSelected = selectedDayDate === dateStr;
-    if (isSelected) cellClass += " employee-calendar-selected";
+    const tasksForDay = dueDaysMap[day] || [];
+    const hasDue = tasksForDay.length > 0;
+    const allDone = hasDue && tasksForDay.every(t => t.done);
+    const anyPending = hasDue && tasksForDay.some(t => !t.done);
+    // Find holiday for this day
+    const holiday = holidays.find(h => {
+      const hDate = new Date(h.date);
+      return hDate.getFullYear() === calendar.year && hDate.getMonth() === calendar.month && hDate.getDate() === day;
+    });
+    // Class logic: green if all done, yellow if any not done, red if holiday
+    let tdClass = "";
+    if (hasDue && allDone) tdClass = "employee-dashboard-done-task";
+    else if (anyPending) tdClass = "employee-dashboard-due-task";
+    else if (holiday) tdClass = "employee-dashboard-holiday";
     cells.push(
       <td
         key={day}
-        className={cellClass.trim()}
-        style={{ cursor: 'pointer', position: 'relative' }}
-        onClick={() => handleCalendarDayClick(day)}
+        className={tdClass}
+        onClick={() => {
+          if (hasDue || holiday) {
+            const dateObj = new Date(calendar.year, calendar.month, day);
+            setSelectedDayDate(dateObj.toLocaleDateString());
+            setOverlayOpen(true);
+          }
+        }}
+        style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
+        title={holiday ? `${holiday.localName} (${holiday.type || ''})` : undefined}
       >
-        {day}
-        {isToday && (
-          <span className="employee-calendar-today-dot"></span>
-        )}
+        <span style={{ fontWeight: 400, fontSize: 20, position: 'relative', display: 'inline-block', width: 28, height: 28 }}>
+          {day}
+          {isToday && (
+            <span style={{
+              position: 'absolute',
+              top: '-3px',
+              right: '-8px',
+              width: '10px',
+              height: '10px',
+              background: '#2583d8',
+              borderRadius: '50%',
+              zIndex: 2,
+              boxShadow: '0 0 2px #2583d8',
+              pointerEvents: 'none',
+              display: 'inline-block',
+            }}></span>
+          )}
+        </span>
+        {holiday && <div className="holiday-name" style={{ color: '#e74c3c', fontWeight: 600, fontSize: 13 }}>{holiday.localName || holiday.name}</div>}
       </td>
     );
     if ((cells.length) % 7 === 0 || day === daysInMonth) {
@@ -504,47 +578,44 @@ const EmployeeDashboard = () => {
                 Task for {selectedDayDate}
               </h2>
               <ul className="employee-modal-task-list">
-                {selectedDayTasks.length === 0 && <li className="employee-modal-task-empty">No tasks for this day.</li>}
-                {selectedDayTasks.map((item, idx) => {
-                  const isPending = !item.done;
-                  return (
-                    <li
-                      key={item._id || item.id || idx}
-                      className={`employee-modal-task-card${isPending ? ' pending' : ' done'}`}
-                    >
-                      <div className="employee-modal-task-main">
-                        <span className="employee-modal-task-title">{item.task || item.title}</span>
-                        {(item.time || item.dueTime) && (
-                          <span className="employee-modal-task-time">
-                            | Time: {item.time ? new Date(`1970-01-01T${item.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : item.dueTime}
-                          </span>
-                        )}
-                        <span className={`employee-modal-task-status${isPending ? ' pending' : ' done'}`}>
-                          {isPending ? 'Pending' : 'Done'}
-                        </span>
-                      </div>
-                      <button
-                        className="employee-modal-task-check"
-                        disabled={!isPending}
-                        title={isPending ? 'Mark as done' : 'Done'}
-                        onClick={async () => {
-                          if (!isPending) return;
-                          await handleMarkAsDone(item._id || item.id);
-                          // Refresh modal tasks after marking as done
-                          const dateStr = selectedDayDate;
-                          const updatedTasks = todos.filter(t => {
-                            if (!t.dueDate) return false;
-                            const tDate = t.dueDate.length > 10 ? t.dueDate.slice(0, 10) : t.dueDate;
-                            return tDate === dateStr;
-                          });
-                          setSelectedDayTasks(updatedTasks);
-                        }}
+                {(() => {
+                  const dateObj = new Date(selectedDayDate);
+                  const day = dateObj.getDate();
+                  const tasks = getTasksForDay(day);
+                  if (tasks.length === 0) return <li className="employee-modal-task-empty">No tasks for this day.</li>;
+                  return tasks.map((item, idx) => {
+                    const isPending = !item.done;
+                    return (
+                      <li
+                        key={item._id || item.id || idx}
+                        className={`employee-modal-task-card${isPending ? ' pending' : ' done'}`}
                       >
-                        <FaCheckCircle />
-                      </button>
-                    </li>
-                  );
-                })}
+                        <div className="employee-modal-task-main">
+                          <span className="employee-modal-task-title">{item.task || item.title}</span>
+                          {(item.time || item.dueTime) && (
+                            <span className="employee-modal-task-time">
+                              | Time: {item.time ? new Date(`1970-01-01T${item.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : item.dueTime}
+                            </span>
+                          )}
+                          <span className={`employee-modal-task-status${isPending ? ' pending' : ' done'}`}>
+                            {isPending ? 'Pending' : 'Done'}
+                          </span>
+                        </div>
+                        <button
+                          className="employee-modal-task-check"
+                          disabled={!isPending}
+                          title={isPending ? 'Mark as done' : 'Done'}
+                          onClick={async () => {
+                            if (!isPending) return;
+                            await handleMarkAsDone(item._id || item.id);
+                          }}
+                        >
+                          <FaCheckCircle style={{ color: "#218838", background: 'none' }} />
+                        </button>
+                      </li>
+                    );
+                  });
+                })()}
               </ul>
             </div>
           </div>

@@ -42,9 +42,9 @@ const RequisitionHistory = () => {
       </div>
 
       {/* Requisition History Content */}
-      <div className="content">
+      <div className="requisition-history-content">
         <h1>Requisition History</h1>
-        <table>
+        <table className="requisition-history-table">
           <thead>
             <tr>
               <th>Time</th>

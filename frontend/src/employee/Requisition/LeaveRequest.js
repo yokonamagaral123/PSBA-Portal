@@ -87,7 +87,7 @@ const LeaveRequest = () => {
       </div>
 
       {/* Leave Request Content */}
-      <div className="content">
+      <div className="leave-request-content">
         <h1>Leave Request</h1>
         {/* Leave Credits Icons BELOW the heading */}
         <div style={{ display: "flex", gap: "30px", margin: "20px 0" }}>
@@ -171,7 +171,7 @@ const LeaveRequest = () => {
               </select>
             </div>
           </div>
-          <div className="reason-container">
+          <div className="leave-request-reason-container">
             <label htmlFor="reason">Reason</label>
             <textarea
               name="reason"
@@ -181,7 +181,7 @@ const LeaveRequest = () => {
               onChange={handleChange}
             ></textarea>
           </div>
-          <div className="submit-container">
+          <div className="leave-request-submit-container">
             <button type="submit">Submit</button>
           </div>
         </form>
