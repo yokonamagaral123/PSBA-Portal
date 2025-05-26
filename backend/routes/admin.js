@@ -42,7 +42,6 @@ router.post("/create-employee", async (req, res) => {
       employmentType,
       startDate,
       employmentStatus,
-      username,
       temporaryPassword,
       role,
       spouseFullName,
@@ -71,7 +70,6 @@ router.post("/create-employee", async (req, res) => {
       !email ||
       !mobileNumber ||
       !employeeID ||
-      !username ||
       !temporaryPassword
     ) {
       return res.status(400).json({ message: "All required fields must be provided." });
@@ -79,11 +77,11 @@ router.post("/create-employee", async (req, res) => {
 
     // Check for duplicate keys in EmployeeDetails
     const existingEmployee = await EmployeeDetails.findOne({
-      $or: [{ email }, { employeeID }, { username }],
+      $or: [{ email }, { employeeID }],
     });
     if (existingEmployee) {
       return res.status(400).json({
-        message: "Employee with the same email, employee ID, or username already exists.",
+        message: "Employee with the same email or employee ID already exists.",
       });
     }
 
@@ -128,7 +126,6 @@ router.post("/create-employee", async (req, res) => {
       employmentType,
       startDate,
       employmentStatus,
-      username,
       spouseFullName,
       numberOfChildren,
       childrenNames,

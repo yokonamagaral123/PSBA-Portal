@@ -26,7 +26,6 @@ const HrProfile = () => {
     employmentType: "",
     startDate: "",
     employmentStatus: "",
-    username: "",
     profileImage: "",
     spouseFullName: "",
     numberOfChildren: "",
@@ -248,7 +247,6 @@ const HrProfile = () => {
               <li><strong>Employment Type:</strong> {info.employmentType || "N/A"}</li>
               <li><strong>Start Date:</strong> {info.startDate ? info.startDate.slice(0,10) : "N/A"}</li>
               <li><strong>Employment Status:</strong> {info.employmentStatus || "N/A"}</li>
-              <li><strong>Username:</strong> {info.username || "N/A"}</li>
             </ul>
           </div>
           <div className="hrprofile-section">

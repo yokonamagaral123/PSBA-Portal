@@ -33,7 +33,6 @@ const employeeDetailsSchema = new mongoose.Schema({
   employmentType: { type: String },
   startDate: { type: Date },
   employmentStatus: { type: String },
-  username: { type: String, required: true, unique: true },
   profileImage: { type: String },
   spouseFullName: { type: String },
   numberOfChildren: { type: Number },
