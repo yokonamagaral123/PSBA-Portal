@@ -31,7 +31,6 @@ import AdminViewDocuments from "../admin/AdminView/AdminViewDocuments";
 import AdminAccountCreation from "../admin/AdminView/AdminAccountCreation";
 import ManageEmployees from "../admin/AdminView/ManageEmployees";
 
-
 import HrDashboard from "../hr/HrDashboard/HrDashboard";
 import HrProfile from "../hr/HrProfile/HrProfile";
 import HrSidebar from "../hr/HrSidebar/HrSidebar";
@@ -43,6 +42,9 @@ import HrGeneralRequest from "../hr/HrRequisition/HrGeneralRequest";
 import HrLeaveRequest from "../hr/HrRequisition/HrLeaveRequest";
 import HrViewRequisition from "../hr/HrView/HrViewRequisition";
 import "./App.css";
+import BasicSalary from "../admin/AdminView/PayrollManagement/BasicSalary";
+import PayrollComputation from "../admin/AdminView/PayrollManagement/PayrollComputation";
+import PayrollRecord from "../admin/AdminView/PayrollManagement/PayrollRecord";
 
 const App = () => {
   const [isMinimized, setIsMinimized] = useState(false);
@@ -127,6 +129,10 @@ const App = () => {
                     <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
                     <Route path="/admin-view/account-creation" element={<AdminAccountCreation />} />
                     <Route path="/admin-view/manage-employees" element={<ManageEmployees />} />
+                  
+                    <Route path="/payroll-management/basic-salary" element={<BasicSalary />} />
+                    <Route path="/payroll-management/payroll-computation" element={<PayrollComputation />} />
+                    <Route path="/payroll-management/payroll-record" element={<PayrollRecord />} />
                     <Route path="*" element={<Navigate to="/admin-dashboard" />} />
                   </Routes>
                 </div>

@@ -418,7 +418,9 @@ const EmployeeDashboard = () => {
                   )}
                 </div>
                 {!item.done && (
-                  <button className="employee-todo-mark-done-btn" onClick={() => handleMarkAsDone(item._id || item.id)} title="Mark as done">✔</button>
+                  <button className="employee-todo-mark-done-btn" onClick={() => handleMarkAsDone(item._id || item.id)} title="Mark as done">
+                    <FaCheckCircle style={{ color: "#218838", background: 'none' }} />
+                  </button>
                 )}
                 {/* Add clear (delete) button for all todos */}
                 <button

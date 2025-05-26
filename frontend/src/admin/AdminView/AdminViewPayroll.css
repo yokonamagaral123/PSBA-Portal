@@ -1,0 +1,98 @@
+/* AdminViewPayroll.css */
+
+/* General styles for the content */
+.content {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+/* Header styles */
+.adminviewpayroll-header {
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 110px 0; /* Adjust padding for height */
+  color: white;
+  position: relative;
+  margin-left: 40px; /* Align with the rest of the content */
+  border-radius: 10px; /* Optional: Add rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+}
+
+/* Section styles */
+.payroll-section {
+  box-shadow: none;
+  margin-left: 40px;
+}
+
+.payroll-section h2 {
+  font-weight: 700;
+  font-size: 22px;
+  color: #2583d8;
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
+}
+
+/* Input and dropdown styles */
+input[type="text"], select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  min-width: 220px;
+}
+
+select {
+  background: #f5faff;
+}
+
+/* Table styles */
+.payroll-employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fafdff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(227, 242, 253, 0.22);
+  overflow: hidden;
+}
+
+.payroll-employee-table thead tr {
+  background: #e3f2fd;
+  color: #1a237e;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.payroll-employee-table th, .payroll-employee-table td {
+  padding: 14px 10px;
+  text-align: left;
+}
+
+.payroll-employee-table tbody tr {
+  transition: background 0.2s;
+}
+
+.payroll-employee-table tbody tr:nth-child(even) {
+  background: #fafdff;
+}
+
+.payroll-employee-table tbody tr:nth-child(odd) {
+  background: #f0f6fa;
+}
+
+.payroll-employee-table tbody tr:hover {
+  background: #e3f2fd;
+}
+
+/* Loading and empty state styles */
+.loading {
+  font-size: 18px;
+  color: #2583d8;
+  font-weight: 600;
+  padding: 24px;
+}
+
+.no-employees {
+  text-align: center;
+  padding: 24px;
+  color: #888;
+}

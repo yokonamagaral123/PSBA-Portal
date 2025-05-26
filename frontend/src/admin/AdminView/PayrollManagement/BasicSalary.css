@@ -1,0 +1,65 @@
+.payroll-management-layout {
+  padding: 32px;
+}
+
+.payroll-management-content {
+  padding: 24px;
+}
+
+.employee-info-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.employee-info-separator {
+  color: #888;
+  font-weight: bold;
+  margin: 0 8px;
+  user-select: none;
+}
+
+.salary-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.salary-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  color: #333;
+}
+
+.salary-form input {
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.salary-form button {
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.salary-form button:hover {
+  background-color: #0056b3;
+}
