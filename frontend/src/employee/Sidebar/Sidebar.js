@@ -1,16 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
-import {
-  FaUser,
-  FaClock,
-  FaFileAlt,
-  FaMoneyBill,
-  FaQuestionCircle,
-  FaSignOutAlt,
-  FaTachometerAlt,
-  FaBars,
-} from "react-icons/fa";
+import { FaUser, FaClock, FaFileAlt, FaMoneyBill, FaQuestionCircle, FaSignOutAlt, FaTachometerAlt, FaBars, FaCalendarAlt } from "react-icons/fa";
 
 const Sidebar = ({ isMinimized, toggleSidebar }) => {
   const [isRequisitionOpen, setIsRequisitionOpen] = useState(false);
@@ -56,6 +47,22 @@ const Sidebar = ({ isMinimized, toggleSidebar }) => {
             <FaClock /> {!isMinimized && <span>Attendance</span>}
           </Link>
         </li>
+        <li>
+          <Link
+            to="/schedule"
+            className={isActive("/schedule") ? "active" : ""}
+          >
+            <FaCalendarAlt /> {!isMinimized && <span>Schedule</span>}
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/payroll"
+            className={isActive("/payroll") ? "active" : ""}
+          >
+            <FaMoneyBill /> {!isMinimized && <span>Payslip</span>}
+          </Link>
+        </li>
         <li className="dropdown">
           <span onClick={toggleRequisition} className="dropdown-toggle">
             <FaFileAlt /> {!isMinimized && <span>Requisition ▼</span>}
@@ -92,14 +99,6 @@ const Sidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
             </ul>
           )}
-        </li>
-        <li>
-          <Link
-            to="/payroll"
-            className={isActive("/payroll") ? "active" : ""}
-          >
-            <FaMoneyBill /> {!isMinimized && <span>Payroll</span>}
-          </Link>
         </li>
         <li>
           <Link
