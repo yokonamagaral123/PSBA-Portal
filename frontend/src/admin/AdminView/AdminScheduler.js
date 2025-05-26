@@ -171,12 +171,12 @@ const AdminScheduler = () => {
 
   return (
     <>
-      <div className="admin-attendance-banner">
-        <h1 className="admin-attendance-banner-title">SCHEDULER</h1>
+      <div className="admin-scheduler-banner">
+        <h1 className="admin-scheduler-banner-title">SCHEDULER</h1>
       </div>
 
-      <div className="admin-attendance-main">
-        <h1 className="admin-attendance-title">Select Employee to Set Schedule</h1>
+      <div className="admin-scheduler-main">
+        <h1 className="admin-scheduler-title">Select Employee to Set Schedule</h1>
         <div className="scheduler-filter-bar">
           <input
             className="scheduler-filter-input"
