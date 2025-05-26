@@ -104,20 +104,20 @@ const HrViewRequisition = () => {
 
   return (
     <>
-      <div className="dashboard-banner">
-        <h1 className="dashboard-banner-title">SUPERVISOR VIEW REQUISITION</h1>
+      <div className="hrviewrequisition-dashboard-banner">
+        <h1 className="hrviewrequisition-dashboard-banner-title">SUPERVISOR VIEW REQUISITION</h1>
       </div>
-      <div className="hrviewattendance-container">
-        <div className="hrviewattendance-searchbar" style={{ gap: 12 }}>
+      <div className="hrviewrequisition-container">
+        <div className="hrviewrequisition-searchbar" style={{ gap: 12 }}>
           <input
             type="text"
             placeholder="Search by Type, Department, Purpose, Status, etc."
-            className="hrviewattendance-input"
+            className="hrviewrequisition-input"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
           <select
-            className="hrviewattendance-status-filter"
+            className="hrviewrequisition-status-filter"
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             style={{ padding: '10px 16px', borderRadius: 8, border: '1.5px solid #b0bec5', fontSize: '1rem', background: '#f7fafc' }}
@@ -128,7 +128,7 @@ const HrViewRequisition = () => {
             <option value="declined">Declined</option>
           </select>
         </div>
-        <table className="hrviewattendance-table">
+        <table className="hrviewrequisition-table">
           <thead>
             <tr>
               <th>Time</th>
@@ -157,9 +157,9 @@ const HrViewRequisition = () => {
                 const isEditing = edit.status !== undefined || edit.remarks !== undefined || edit.hrApprovalStatus !== undefined;
                 // Color coding for statuses
                 const getStatusClass = (status) => {
-                  if (!status || status === 'pending') return 'status-pending';
-                  if (status === 'approved') return 'status-approved';
-                  if (status === 'declined') return 'status-declined';
+                  if (!status || status === 'pending') return 'hrstatus-pending';
+                  if (status === 'approved') return 'hrstatus-approved';
+                  if (status === 'declined') return 'hrstatus-declined';
                   return '';
                 };
                 return (
@@ -193,7 +193,7 @@ const HrViewRequisition = () => {
                         onChange={e => handleEditChange(req._id, "remarks", e.target.value)}
                         disabled={edit.loading}
                         placeholder="Add remarks"
-                        className="hrviewattendance-remarks-input"
+                        className="hrviewrequisition-remarks-input"
                       />
                     </td>
                     <td>
@@ -204,9 +204,9 @@ const HrViewRequisition = () => {
                         className={getStatusClass(isEditing ? edit.hrApprovalStatus ?? req.hrApprovalStatus : req.hrApprovalStatus)}
                         style={{ fontWeight: 500 }}
                       >
-                        <option value="pending" className="status-pending">Pending</option>
-                        <option value="approved" className="status-approved">Approved</option>
-                        <option value="declined" className="status-declined">Declined</option>
+                        <option value="pending" className="hrstatus-pending">Pending</option>
+                        <option value="approved" className="hrstatus-approved">Approved</option>
+                        <option value="declined" className="hrstatus-declined">Declined</option>
                       </select>
                     </td>
                     <td>
@@ -222,7 +222,7 @@ const HrViewRequisition = () => {
                       <button
                         onClick={() => handleSave(req._id)}
                         disabled={edit.loading || !isEditing}
-                        className="hrviewattendance-save-btn"
+                        className="hrviewrequisition-save-btn"
                         style={{
                           background: isEditing ? '#1976d2' : '#b0bec5',
                           color: isEditing ? '#fff' : '#fff',
@@ -235,17 +235,17 @@ const HrViewRequisition = () => {
                       >
                         {edit.loading ? "Saving..." : "Save"}
                       </button>
-                      {edit.error && <div className="hrviewattendance-error">{edit.error}</div>}
-                      {edit.success && <div className="hrviewattendance-success">{edit.success}</div>}
+                      {edit.error && <div className="hrviewrequisition-error">{edit.error}</div>}
+                      {edit.success && <div className="hrviewrequisition-success">{edit.success}</div>}
                     </td>
-                    <td className="hrviewattendance-lastmodified-cell">
-                      <div className="hrviewattendance-lastmodified-id">
+                    <td style={{ minWidth: 120, fontSize: 16, lineHeight: 1.4, color: '#1a355e', background: '#f7fafc', borderLeft: '1px solid #e3e8ee', padding: '10px 8px' }}>
+                      <div style={{ fontWeight: 700, fontSize: 17 }}>
                         {req.lastModifiedByEmployeeID || "-"}
                       </div>
-                      <div className="hrviewattendance-lastmodified-name">
+                      <div style={{ fontSize: 16, color: '#1976d2', fontWeight: 600 }}>
                         {req.lastModifiedByName || "-"}
                       </div>
-                      <div className="hrviewattendance-lastmodified-date">
+                      <div style={{ fontSize: 15, color: '#757575', fontWeight: 500 }}>
                         {req.lastModifiedDate ? new Date(req.lastModifiedDate).toLocaleString() : "-"}
                       </div>
                     </td>

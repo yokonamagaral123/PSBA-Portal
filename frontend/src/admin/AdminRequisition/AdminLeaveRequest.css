@@ -46,7 +46,7 @@
 
 .admin-leave-request-content form select,
 .admin-leave-request-content form input {
-  padding: 12px;
+  padding: px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 5px;

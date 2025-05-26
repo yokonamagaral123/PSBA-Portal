@@ -19,12 +19,40 @@
 
 .adminviewattendance-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 24px;
 }
 
 .adminviewattendance-table th,
 .adminviewattendance-table td {
-  border: 1px solid #d1d5db;
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 1rem;
+  border-bottom: 1px solid #e3e8ee;
+}
+
+.adminviewattendance-table th {
+  background: #f4f8fb;
+  color: #1a355e;
+  font-weight: 600;
+  border-bottom: 2px solid #e3e8ee;
+}
+
+.adminviewattendance-table tr {
+  transition: background 0.15s;
+}
+
+.adminviewattendance-table tbody tr:hover {
+  background: #f0f6fa;
+}
+
+.adminviewattendance-table td {
+  vertical-align: middle;
 }
 
 .adminviewattendance-table th .adminviewattendance-header-content {
@@ -45,5 +73,10 @@
   margin-top: 24px;
   display: flex;
   justify-content: flex-end;
+}
+
+.adminviewattendance-import-btn-container {
+  margin: 20px 0;
+  margin-left: 40px;
 }
 

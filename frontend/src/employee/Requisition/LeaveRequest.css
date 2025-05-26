@@ -20,7 +20,7 @@
 }
 
 /* Main Content Styling */
-.content {
+.leave-request-content {
   margin: 20px 40px;
   padding: 30px;
   background-color: #ffffff;
@@ -29,11 +29,11 @@
 }
 
 /* Form Styling */
-.content form {
+.leave-request-content form {
   display: block;
 }
 
-.content form label {
+.leave-request-content form label {
   font-weight: bold;
   font-size: 14px;
   color: #333;
@@ -41,8 +41,8 @@
   display: block;
 }
 
-.content form select,
-.content form input {
+.leave-request-content form select,
+.leave-request-content form input {
   padding: 12px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -52,17 +52,17 @@
 }
 
 /* Reason Field Styling */
-.reason-container {
+.leave-request-reason-container {
   grid-column: 1 / -1;
 }
 
-.reason-container label {
+.leave-request-reason-container label {
   font-size: 16px;
   margin-bottom: 5px;
   display: block;
 }
 
-.reason-container textarea {
+.leave-request-reason-container textarea {
   height: 200px;
   width: 100%;
   padding: 20px;
@@ -74,13 +74,13 @@
 }
 
 /* Submit Button Styling */
-.submit-container {
+.leave-request-submit-container {
   grid-column: 1 / 2;
   text-align: left;
   margin-top: -10px;
 }
 
-.submit-container button {
+.leave-request-submit-container button {
   background-color: #2583d8;
   color: white;
   border: none;
@@ -93,7 +93,7 @@
   width: fit-content;
 }
 
-.submit-container button:hover {
+.leave-request-submit-container button:hover {
   background-color: #1c5a80;
   transform: scale(1.05);
 }
@@ -133,16 +133,16 @@
     margin: 10px;
   }
 
-  .content {
+  .leave-request-content {
     margin: 10px;
     padding: 20px;
   }
 
-  .reason-container textarea {
+  .leave-request-reason-container textarea {
     height: 150px;
   }
 
-  .submit-container {
+  .leave-request-submit-container {
     grid-column: 1 / -1;
   }
 }

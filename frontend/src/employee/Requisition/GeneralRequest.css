@@ -1,60 +1,124 @@
-/* General Request Banner */
+/* Banner Styling */
 .general-request-banner {
-    background: url("../../assets/blue.png") no-repeat center;
-    background-size: cover;
-    text-align: center;
-    padding: 110px 0; /* Adjust padding for height */
-    color: white;
-    position: relative;
-    margin-left: 40px; /* Align with the rest of the content */
-    border-radius: 10px; /* Optional: Add rounded corners */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+  background: url("../../assets/blue.png") no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 100px 0;
+  color: white;
+  position: relative;
+  margin: 20px 40px;
+  border-radius: 15px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 .general-request-banner-title {
-    font-size: 36px;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin: 0;
+  font-size: 40px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: 2px;
 }
 
-/* Main Content */
-.content {
-    margin-left: 40px; /* Adjust content slightly to the right */
-    padding: 20px;
+/* Main Content Styling */
+.general-request-content {
+  margin: 20px 40px;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Form Styling */
-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
+.general-request-content .general-request-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  align-items: start;
 }
 
-form select,
-form input,
-form textarea,
-form button {
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+.general-request-content .general-request-form label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  font-size: 14px;
+  color: #333;
 }
 
-form textarea {
-    width: 100%;
-    height: 100px;
-    resize: none;
+.general-request-content .general-request-form select,
+.general-request-content .general-request-form input,
+.general-request-content .general-request-form textarea,
+.general-request-content .general-request-form button {
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-form button {
-    background-color: #2583d8;
-    color: white;
-    border: none;
-    cursor: pointer;
+/* Reason Field Styling */
+.general-request-reason-container {
+  grid-column: 1 / -1; /* Full width */
 }
 
-form button:hover {
-    background-color: #1c5a80;
+.general-request-reason-container label {
+  font-size: 16px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.general-request-reason-container textarea {
+  height: 200px;
+  width: 100%;
+  padding: 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+/* Submit Button Styling */
+.general-request-submit-container {
+  grid-column: 1 / 2; /* Left side */
+  text-align: left;
+  margin-top: -10px;
+}
+
+.general-request-submit-container button {
+  background-color: #2583d8;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  width: fit-content;
+}
+
+.general-request-submit-container button:hover {
+  background-color: #1c5a80;
+  transform: scale(1.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .general-request-banner {
+    margin: 10px;
+  }
+
+  .general-request-content {
+    margin: 10px;
+    padding: 20px;
+  }
+
+  .general-request-reason-container textarea {
+    height: 150px;
+  }
+
+  .general-request-submit-container {
+    grid-column: 1 / -1;
+  }
 }

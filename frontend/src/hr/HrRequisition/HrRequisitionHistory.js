@@ -37,14 +37,14 @@ const HrRequisitionHistory = () => {
   return (
     <>
       {/* HR Requisition History Banner */}
-      <div className="requisition-history-banner">
-        <h1 className="requisition-history-banner-title">REQUISITION HISTORY</h1>
+      <div className="hr-requisition-history-banner">
+        <h1 className="hr-requisition-history-banner-title">REQUISITION HISTORY</h1>
       </div>
 
       {/* HR Requisition History Content */}
-      <div className="content">
+      <div className="hr-requisition-history-content">
         <h1>Requisition History</h1>
-        <table>
+        <table className="hr-requisition-history-table">
           <thead>
             <tr>
               <th>Time</th>

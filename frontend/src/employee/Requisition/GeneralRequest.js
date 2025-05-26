@@ -58,9 +58,9 @@ const GeneralRequest = () => {
       <div className="general-request-banner">
         <h1 className="general-request-banner-title">GENERAL REQUEST</h1>
       </div>
-      <div className="content">
+      <div className="general-request-content">
         <h1>General Request</h1>
-        <form onSubmit={handleSubmit}>
+        <form className="general-request-form" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="department">Department</label>
             <select
@@ -118,7 +118,7 @@ const GeneralRequest = () => {
             />
           </div>
           {/* Reason Field */}
-          <div className="reason-container">
+          <div className="general-request-reason-container">
             <label htmlFor="reason">Reason</label>
             <textarea
               id="reason"
@@ -129,7 +129,7 @@ const GeneralRequest = () => {
             ></textarea>
           </div>
           {/* Submit Button */}
-          <div className="submit-container">
+          <div className="general-request-submit-container">
             <button type="submit">Submit</button>
           </div>
         </form>
