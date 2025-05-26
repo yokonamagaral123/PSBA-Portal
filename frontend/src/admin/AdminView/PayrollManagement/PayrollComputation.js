@@ -200,10 +200,6 @@ const PayrollComputation = () => {
     }
   }, [basicPay]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
   // Pay period options for filter
   const payPeriodOptions = [
     'May 1–15, 2025',
@@ -253,7 +249,7 @@ const PayrollComputation = () => {
         <div className="payslip-card">
           <div className="payslip-row">
             <span>Monthly Basic Pay</span>
-            <span><input type="number" name="basicPay" value={form.basicPay} onChange={handleChange} className="payslip-input" /></span>
+            <span><input type="number" name="basicPay" value={form.basicPay} readOnly className="payslip-input" /></span>
           </div>
           <div className="payslip-row payslip-section-title">Government Deductions</div>
           <div className="payslip-row">
@@ -295,7 +291,7 @@ const PayrollComputation = () => {
           <div className="payslip-row payslip-section-title">Tax Computation</div>
           <div className="payslip-row">
             <span>Withholding Tax</span>
-            <span><input type="number" name="withholdingTax" value={form.withholdingTax} onChange={handleChange} className="payslip-input" /></span>
+            <span><input type="number" name="withholdingTax" value={form.withholdingTax} readOnly className="payslip-input" /></span>
           </div>
           <div className="payslip-row payslip-total">
             <span>Total Deduction</span>
