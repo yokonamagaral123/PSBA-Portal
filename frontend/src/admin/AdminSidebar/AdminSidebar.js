@@ -113,6 +113,14 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
             <ul className="dropdown-menu">
               <li>
                 <Link
+                  to="/admin-view/account-creation"
+                  className={isActive("/admin-view/account-creation") ? "active" : ""}
+                >
+                  Account Creation
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/admin-view/attendance"
                   className={isActive("/admin-view/attendance") ? "active" : ""}
                 >
@@ -121,18 +129,18 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
               <li>
                 <Link
-                  to="/admin-view/scheduler"
-                  className={isActive("/admin-view/scheduler") ? "active" : ""}
-                >
-                  Scheduler
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/admin-view/documents"
                   className={isActive("/admin-view/documents") ? "active" : ""}
                 >
                   Documents
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/admin-view/manage-employees"
+                  className={isActive("/admin-view/manage-employees") ? "active" : ""}
+                >
+                  Manage Employees
                 </Link>
               </li>
               <li>
@@ -153,18 +161,10 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
               <li>
                 <Link
-                  to="/admin-view/account-creation"
-                  className={isActive("/admin-view/account-creation") ? "active" : ""}
+                  to="/admin-view/scheduler"
+                  className={isActive("/admin-view/scheduler") ? "active" : ""}
                 >
-                  Account Creation
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/admin-view/manage-employees"
-                  className={isActive("/admin-view/manage-employees") ? "active" : ""}
-                >
-                  Manage Employees
+                  Scheduler
                 </Link>
               </li>
             </ul>
