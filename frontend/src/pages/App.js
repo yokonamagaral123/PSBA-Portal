@@ -45,6 +45,7 @@ import "./App.css";
 import BasicSalary from "../admin/AdminView/PayrollManagement/BasicSalary";
 import PayrollComputation from "../admin/AdminView/PayrollManagement/PayrollComputation";
 import PayrollRecord from "../admin/AdminView/PayrollManagement/PayrollRecord";
+import { AdminDataProvider } from "../admin/AdminDataContext";
 
 const App = () => {
   const [isMinimized, setIsMinimized] = useState(false);
@@ -73,100 +74,102 @@ const App = () => {
   // setUser(userObject);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login setUserRole={setUserRole} setUser={setUser} />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+    <AdminDataProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login setUserRole={setUserRole} setUser={setUser} />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {userRole === "employee" && (
-          <Route
-            path="/*"
-            element={
-              <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
-                <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
-                <div className="top-bar">
-                  <NotificationBell />
+          {userRole === "employee" && (
+            <Route
+              path="/*"
+              element={
+                <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
+                  <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
+                  <div className="top-bar">
+                    <NotificationBell />
+                  </div>
+                  <div className="page-content">
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/attendance" element={<Attendance />} />
+                      <Route path="/schedule" element={<Schedule />} />
+                      <Route path="/requisition/general" element={<GeneralRequest />} />
+                      <Route path="/requisition/leave" element={<LeaveRequest />} />
+                      <Route path="/requisition/history" element={<RequisitionHistory />} />
+                      <Route path="/payroll" element={<Payroll />} />
+                     
+                      <Route path="/assistbothelp" element={<AssistBotHelp />} />
+                    </Routes>
+                  </div>
                 </div>
-                <div className="page-content">
-                  <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/attendance" element={<Attendance />} />
-                    <Route path="/schedule" element={<Schedule />} />
-                    <Route path="/requisition/general" element={<GeneralRequest />} />
-                    <Route path="/requisition/leave" element={<LeaveRequest />} />
-                    <Route path="/requisition/history" element={<RequisitionHistory />} />
-                    <Route path="/payroll" element={<Payroll />} />
-                   
-                    <Route path="/assistbothelp" element={<AssistBotHelp />} />
-                  </Routes>
-                </div>
-              </div>
-            }
-          />
-        )}
+              }
+            />
+          )}
 
-        {userRole === "admin" && (
-          <Route
-            path="/*"
-            element={
-              <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
-                <AdminSidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
-                <div className="page-content">
-                  <Routes>
-                    <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                    <Route path="/admin-profile" element={<AdminProfile />} />
-                    <Route path="/admin-attendance" element={<AdminAttendance />} />
-                    <Route path="/admin-schedule" element={<AdminSchedule />} />
-                    <Route path="/admin-general-request" element={<AdminGeneralRequest />} />
-                    <Route path="/admin-leave-request" element={<AdminLeaveRequest />} />
-                    <Route path="/admin-requisition-history" element={<AdminRequisitionHistory />} />
-                    <Route path="/admin-payroll" element={<AdminPayroll />} />
-                    <Route path="/admin-view/attendance" element={<AdminViewAttendance />} />
-                    <Route path="/admin-view/scheduler" element={<AdminScheduler />} />
-                    <Route path="/admin-view/payroll" element={<AdminViewPayroll />} />
-                    <Route path="/admin-view/requisition" element={<AdminViewRequisition />} />
-                    <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
-                    <Route path="/admin-view/account-creation" element={<AdminAccountCreation />} />
-                    <Route path="/admin-view/manage-employees" element={<ManageEmployees />} />
-                  
-                    <Route path="/payroll-management/basic-salary" element={<BasicSalary />} />
-                    <Route path="/payroll-management/payroll-computation" element={<PayrollComputation />} />
-                    <Route path="/payroll-management/payroll-record" element={<PayrollRecord />} />
-                    <Route path="*" element={<Navigate to="/admin-dashboard" />} />
-                  </Routes>
+          {userRole === "admin" && (
+            <Route
+              path="/*"
+              element={
+                <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
+                  <AdminSidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
+                  <div className="page-content">
+                    <Routes>
+                      <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                      <Route path="/admin-profile" element={<AdminProfile />} />
+                      <Route path="/admin-attendance" element={<AdminAttendance />} />
+                      <Route path="/admin-schedule" element={<AdminSchedule />} />
+                      <Route path="/admin-general-request" element={<AdminGeneralRequest />} />
+                      <Route path="/admin-leave-request" element={<AdminLeaveRequest />} />
+                      <Route path="/admin-requisition-history" element={<AdminRequisitionHistory />} />
+                      <Route path="/admin-payroll" element={<AdminPayroll />} />
+                      <Route path="/admin-view/attendance" element={<AdminViewAttendance />} />
+                      <Route path="/admin-view/scheduler" element={<AdminScheduler />} />
+                      <Route path="/admin-view/payroll" element={<AdminViewPayroll />} />
+                      <Route path="/admin-view/requisition" element={<AdminViewRequisition />} />
+                      <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
+                      <Route path="/admin-view/account-creation" element={<AdminAccountCreation />} />
+                      <Route path="/admin-view/manage-employees" element={<ManageEmployees />} />
+                    
+                      <Route path="/payroll-management/basic-salary" element={<BasicSalary />} />
+                      <Route path="/payroll-management/payroll-computation" element={<PayrollComputation />} />
+                      <Route path="/payroll-management/payroll-record" element={<PayrollRecord />} />
+                      <Route path="*" element={<Navigate to="/admin-dashboard" />} />
+                    </Routes>
+                  </div>
                 </div>
-              </div>
-            }
-          />
-        )}
+              }
+            />
+          )}
 
-        {userRole === "hr" && (
-          <Route
-            path="/*"
-            element={
-              <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
-                <HrSidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
-                <div className="page-content">
-                  <Routes>
-                    <Route path="/hr-dashboard" element={<HrDashboard user={user} />} />
-                    <Route path="/hr-profile" element={<HrProfile />} />
-                    <Route path="/hr-attendance" element={<HrAttendance />} />
-                    <Route path="/hr-schedule" element={<HrSchedule />} />
-                    <Route path="/hr-payslip" element={<HrPayslip />} /> 
-                    <Route path="/hr-view/requisition" element={<HrViewRequisition />} />
-                    <Route path="*" element={<Navigate to="/hr-dashboard" />} />
-                    <Route path="/hr-requisition-history" element={<HrRequisitionHistory />} />
-                    <Route path="/hr-general-request" element={<HrGeneralRequest />} />
-                    <Route path="/hr-leave-request" element={<HrLeaveRequest />} />
-                  </Routes>
+          {userRole === "hr" && (
+            <Route
+              path="/*"
+              element={
+                <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
+                  <HrSidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
+                  <div className="page-content">
+                    <Routes>
+                      <Route path="/hr-dashboard" element={<HrDashboard user={user} />} />
+                      <Route path="/hr-profile" element={<HrProfile />} />
+                      <Route path="/hr-attendance" element={<HrAttendance />} />
+                      <Route path="/hr-schedule" element={<HrSchedule />} />
+                      <Route path="/hr-payslip" element={<HrPayslip />} /> 
+                      <Route path="/hr-view/requisition" element={<HrViewRequisition />} />
+                      <Route path="*" element={<Navigate to="/hr-dashboard" />} />
+                      <Route path="/hr-requisition-history" element={<HrRequisitionHistory />} />
+                      <Route path="/hr-general-request" element={<HrGeneralRequest />} />
+                      <Route path="/hr-leave-request" element={<HrLeaveRequest />} />
+                    </Routes>
+                  </div>
                 </div>
-              </div>
-            }
-          />
-        )}
-      </Routes>
-    </Router>
+              }
+            />
+          )}
+        </Routes>
+      </Router>
+    </AdminDataProvider>
   );
 };
 

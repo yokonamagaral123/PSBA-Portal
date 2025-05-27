@@ -633,3 +633,28 @@
   pointer-events: none;
 }
 
+/* View Full Calendar Button */
+.admindashboard-view-calendar-btn-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.admindashboard-view-calendar-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+  padding: 7px 18px;
+  min-width: 140px;
+  margin: 0;
+  transition: background 0.2s;
+}
+.admindashboard-view-calendar-btn:hover {
+  background: #1251a3;
+}
+

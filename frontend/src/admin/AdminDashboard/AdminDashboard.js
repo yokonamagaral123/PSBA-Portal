@@ -3,6 +3,7 @@ import "./AdminDashboard.css";
 import { FaUsers, FaBuilding, FaFileAlt, FaCheckCircle, FaHourglassHalf, FaTimesCircle } from "react-icons/fa";
 import schoolImage from '../../assets/school.png';
 import school2Image from '../../assets/school2.png';
+import { useAdminData } from "../AdminDataContext";
 
 const images = [schoolImage, school2Image];
 const monthNames = [
@@ -10,39 +11,9 @@ const monthNames = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-// Map of PH holidays to their types
-const holidayTypeMap = {
-  "New Year's Day": "Regular Holiday",
-  "Maundy Thursday": "Regular Holiday",
-  "Good Friday": "Regular Holiday",
-  "Araw ng Kagitingan": "Regular Holiday",
-  "Labor Day": "Regular Holiday",
-  "Independence Day": "Regular Holiday",
-  "National Heroes Day": "Regular Holiday",
-  "Bonifacio Day": "Regular Holiday",
-  "Christmas Day": "Regular Holiday",
-  "Rizal Day": "Regular Holiday",
-  "Feast of Ramadhan": "Regular Holiday",
-  "Day of Valor": "Regular Holiday",
-  "Last day of the year": "Regular Holiday",
-
-  "Black Saturday": "Special Non-Working Holiday",
-  "Ninoy Aquino Day": "Special Non-Working Holiday",
-  "All Saints' Day Eve": "Special Non-Working Holiday",
-  "All Saints' Day": "Special Non-Working Holiday",
-  "Christmas Eve": "Special Non-Working Holiday",
-  "New Year's Eve": "Special Non-Working Holiday",
-  "Holy Saturday": "Special Non-Working Holiday",
-  "Chinese New Year": "Special Non-Working Holiday",
-  "Feast of the Immaculate Conception of the Blessed Virgin Mary": "Special Non-Working Holiday",
-
-  // Add more as needed
-};
-
 const AdminDashboard = () => {
   const [employees, setEmployees] = useState([]); // Add employees state
   const [requisitions, setRequisitions] = useState([]);
-  const [holidays, setHolidays] = useState([]);
 
   // Carousel state
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -58,7 +29,6 @@ const AdminDashboard = () => {
   const [todoInput, setTodoInput] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [todoTime, setTodoTime] = useState("");
-  const [todos, setTodos] = useState([]);
   const [showTodoModal, setShowTodoModal] = useState(false);
 
   // Overlay state for calendar day details
@@ -79,46 +49,8 @@ const AdminDashboard = () => {
   const [holidayDate, setHolidayDate] = useState("");
   const [holidayType, setHolidayType] = useState("Regular Holiday");
 
-  // Fetch holidays from Nager.Date API and custom holidays from backend for the selected year
-  const fetchAllHolidays = async (year) => {
-    let apiHolidays = [];
-    let customHolidays = [];
-    try {
-      // Fetch API holidays
-      const apiRes = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/PH`);
-      const apiData = await apiRes.json();
-      apiHolidays = apiData.map(h => ({
-        localName: h.name || h.localName, // Use English name if available
-        date: h.date,
-        type: h.type,
-        note: holidayTypeMap[h.name || h.localName] || "Holiday"
-      }));
-    } catch (err) {
-      console.error("Error fetching API holidays:", err);
-    }
-    try {
-      // Fetch custom holidays from backend
-      const customRes = await fetch(`http://localhost:5000/api/holidays/${year}`);
-      const customData = await customRes.json();
-      customHolidays = (customData.holidays || []).map(h => ({
-        localName: h.name,
-        date: h.date,
-        type: h.type,
-        isCustom: true,
-        note: h.type // Ensure note is set for custom holidays
-      }));
-    } catch (err) {
-      console.error("Error fetching custom holidays:", err);
-    }
-    // Merge, avoiding duplicates (by date)
-    const allHolidays = [...apiHolidays];
-    customHolidays.forEach(custom => {
-      if (!allHolidays.some(api => new Date(api.date).toDateString() === new Date(custom.date).toDateString())) {
-        allHolidays.push(custom);
-      }
-    });
-    setHolidays(allHolidays);
-  };
+  // Use context for holidays and todos
+  const { holidays, todos, year, setYear, refreshTodos } = useAdminData();
 
   useEffect(() => {
     // Fetch all employees (for count and departments)
@@ -169,30 +101,11 @@ const AdminDashboard = () => {
       })
       .catch(err => console.error("Failed to fetch announcements:", err));
 
-    // Fetch todos for this user on mount (user-specific by token)
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetch("http://localhost:5000/api/todos", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) setTodos(data.todos.map(t => ({
-            _id: t._id,
-            task: t.task,
-            dueDate: t.dueDate,
-            time: t.time,
-            done: t.done
-          })));
-        })
-        .catch(err => console.error("Failed to fetch todos:", err));
-    }
-
-    // Fetch holidays from Nager.Date API and custom holidays from backend for the selected year
-    fetchAllHolidays(calendar.year);
-  }, [calendar.year]);
+    // Fetch todos and holidays from context (refresh if year changes)
+    // Only update context year if it actually changed
+    if (year !== calendar.year) setYear(calendar.year);
+    refreshTodos();
+  }, [calendar.year, year, setYear, refreshTodos]);
 
   // Carousel auto-advance
   useEffect(() => {
@@ -295,6 +208,11 @@ const AdminDashboard = () => {
             lineHeight: 1.2
           }}>
             {holiday.localName}
+            {(holiday.type || holidayTypeMap[holiday.localName]) && (
+              <span style={{ fontWeight: 400, color: '#b71c1c', fontSize: 11, display: 'block' }}>
+                {holiday.type || holidayTypeMap[holiday.localName]}
+              </span>
+            )}
             {holiday.note && (
               <span style={{ fontWeight: 400, color: '#b71c1c', fontSize: 11, display: 'block' }}>
                 {holiday.note}
@@ -352,7 +270,7 @@ const AdminDashboard = () => {
   const handleTodoTimeChange = (e) => {
     setTodoTime(e.target.value);
   };
-  const handleAddTodo = () => {
+  const handleAddTodo = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("You must be logged in to add a to-do.");
@@ -375,13 +293,9 @@ const AdminDashboard = () => {
     })
       .then(res => res.json())
       .then(data => {
-        if (data.success) setTodos(prev => [{
-          _id: data.todo._id,
-          task: data.todo.task,
-          dueDate: data.todo.dueDate,
-          time: data.todo.time,
-          done: data.todo.done
-        }, ...prev]);
+        if (data.success) {
+          refreshTodos();
+        }
       })
       .catch(err => console.error("Failed to add todo:", err));
     setTodoInput("");
@@ -487,7 +401,7 @@ const AdminDashboard = () => {
         return;
       }
       // After adding, fetch all holidays again to update the calendar
-      await fetchAllHolidays(calendar.year);
+      refreshTodos();
     } catch (err) {
       console.error("Failed to add holiday:", err);
     }
@@ -514,7 +428,7 @@ const AdminDashboard = () => {
   const leaveRejected = requisitions.filter(r => r.status === "declined").length;
 
   // Add handleMarkAsDone function (copied from HrDashboard)
-  const handleMarkAsDone = (id) => {
+  const handleMarkAsDone = async (id) => {
     const token = localStorage.getItem("token");
     fetch(`http://localhost:5000/api/todos/${id}/done`, {
       method: "PATCH",
@@ -526,11 +440,7 @@ const AdminDashboard = () => {
       .then(res => res.json())
       .then(data => {
         if (data.success && data.todo) {
-          setTodos(prev =>
-            prev.map(todo =>
-              todo._id === id ? { ...todo, ...data.todo } : todo
-            )
-          );
+          refreshTodos();
         }
       })
       .catch(err => console.error("Failed to mark as done:", err));
@@ -548,7 +458,7 @@ const AdminDashboard = () => {
         },
       });
       if (res.ok) {
-        setTodos((prev) => prev.filter((todo) => todo._id !== id));
+        refreshTodos();
       }
     } catch (err) {
       console.error("Failed to delete todo:", err);
@@ -616,6 +526,15 @@ const AdminDashboard = () => {
               {calendarRows}
             </tbody>
           </table>
+          {/* One-liner View Full Calendar button below the calendar */}
+          <div className="admindashboard-view-calendar-btn-row">
+  <button
+    className="admindashboard-view-calendar-btn"
+    onClick={() => window.location.href = '/admin-schedule'}
+  >
+    View Full Calendar
+  </button>
+</div>
         </div>
         {/* Overlay for selected day */}
         {overlayOpen && (
@@ -697,7 +616,6 @@ const AdminDashboard = () => {
                         className="admindashboard-todo-mark-done-btn"
                         onClick={async () => {
                           setSelectedDayTasks(prev => prev.map(t => t._id === task._id ? { ...t, done: true } : t));
-                          setTodos(prev => prev.map(t => t._id === task._id ? { ...t, done: true } : t));
                           await handleMarkAsDone(task._id);
                         }}
                         title="Mark as done"
@@ -1017,5 +935,32 @@ function getDaysInMonth(month, year) {
 function getFirstDayOfWeek(month, year) {
   return new Date(year, month, 1).getDay();
 }
+
+// Map of PH holidays to their types
+const holidayTypeMap = {
+  "New Year's Day": "Regular Holiday",
+  "Maundy Thursday": "Regular Holiday",
+  "Good Friday": "Regular Holiday",
+  "Araw ng Kagitingan": "Regular Holiday",
+  "Labor Day": "Regular Holiday",
+  "Independence Day": "Regular Holiday",
+  "National Heroes Day": "Regular Holiday",
+  "Bonifacio Day": "Regular Holiday",
+  "Christmas Day": "Regular Holiday",
+  "Rizal Day": "Regular Holiday",
+  "Feast of Ramadhan": "Regular Holiday",
+  "Day of Valor": "Regular Holiday",
+  "Last day of the year": "Regular Holiday",
+  "Black Saturday": "Special Non-Working Holiday",
+  "Ninoy Aquino Day": "Special Non-Working Holiday",
+  "All Saints' Day Eve": "Special Non-Working Holiday",
+  "All Saints' Day": "Special Non-Working Holiday",
+  "Christmas Eve": "Special Non-Working Holiday",
+  "New Year's Eve": "Special Non-Working Holiday",
+  "Holy Saturday": "Special Non-Working Holiday",
+  "Chinese New Year": "Special Non-Working Holiday",
+  "Feast of the Immaculate Conception of Mary": "Special Non-Working Holiday",
+  // Add more as needed
+};
 
 export default AdminDashboard;
