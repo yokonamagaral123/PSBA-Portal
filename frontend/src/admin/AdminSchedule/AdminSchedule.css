@@ -126,3 +126,30 @@
   font-size: 0.98rem;
   font-weight: 500;
 }
+
+.admin-calendar-date-tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.admin-calendar-tooltip {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 120%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #222;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+  padding: 10px 16px;
+  min-width: 180px;
+  z-index: 10;
+  font-size: 14px;
+  white-space: pre-line;
+  pointer-events: none;
+}
+
+.admin-calendar-date-tooltip-wrapper:hover .admin-calendar-tooltip {
+  display: block;
+}
