@@ -6,6 +6,32 @@ import school2Image from '../../assets/school2.png';
 import "./HrDashboard.css";
 import axios from "axios";
 
+// Move holidayTypeMap here so it is always defined before use
+const holidayTypeMap = {
+  "New Year's Day": "Regular Holiday",
+  "Maundy Thursday": "Regular Holiday",
+  "Good Friday": "Regular Holiday",
+  "Araw ng Kagitingan": "Regular Holiday",
+  "Labor Day": "Regular Holiday",
+  "Independence Day": "Regular Holiday",
+  "National Heroes Day": "Regular Holiday",
+  "Bonifacio Day": "Regular Holiday",
+  "Christmas Day": "Regular Holiday",
+  "Rizal Day": "Regular Holiday",
+  "Feast of Ramadhan": "Regular Holiday",
+  "Day of Valor": "Regular Holiday",
+  "Last day of the year": "Regular Holiday",
+  "Black Saturday": "Special Non-Working Holiday",
+  "Ninoy Aquino Day": "Special Non-Working Holiday",
+  "All Saints' Day Eve": "Special Non-Working Holiday",
+  "All Saints' Day": "Special Non-Working Holiday",
+  "Christmas Eve": "Special Non-Working Holiday",
+  "New Year's Eve": "Special Non-Working Holiday",
+  "Holy Saturday": "Special Non-Working Holiday",
+  "Chinese New Year": "Special Non-Working Holiday",
+  "Feast of the Immaculate Conception of Mary": "Special Non-Working Holiday",
+};
+
 const images = [bannerImage, schoolImage, school2Image];
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -293,7 +319,7 @@ const HrDashboard = () => {
         className={tdClass}
         onClick={() => handleCalendarDayClick(day)}
         style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
-        title={holiday ? `${holiday.localName} (${holiday.type || ''})` : undefined}
+        title={holiday ? `${holiday.localName} (${holiday.type || holidayTypeMap[holiday.localName] || holidayTypeMap[holiday.name] || ''})` : undefined}
       >
         <span style={{ fontWeight: 400, fontSize: 20, position: 'relative', display: 'inline-block', width: 28, height: 28 }}>
           {day}
@@ -313,7 +339,14 @@ const HrDashboard = () => {
             }}></span>
           )}
         </span>
-        {holiday && <div className="hrdashboard-holiday-name" style={{ color: '#e74c3c', fontWeight: 600, fontSize: 13 }}>{holiday.localName || holiday.name}</div>}
+        {holiday && (
+          <div className="hrdashboard-holiday-name" style={{ color: '#e74c3c', fontWeight: 600, fontSize: 13 }}>
+            {holiday.localName || holiday.name}
+            <div style={{ fontWeight: 400, fontSize: 11, color: '#b71c1c', marginTop: 1 }}>
+              {holiday.type || holidayTypeMap[holiday.localName] || holidayTypeMap[holiday.name]}
+            </div>
+          </div>
+        )}
       </td>
     );
     if ((cells.length) % 7 === 0 || day === daysInMonth) {

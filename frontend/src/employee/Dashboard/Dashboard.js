@@ -18,6 +18,32 @@ function getFirstDayOfWeek(month, year) {
   return new Date(year, month, 1).getDay();
 }
 
+// Map of PH holidays to their types
+const holidayTypeMap = {
+  "New Year's Day": "Regular Holiday",
+  "Maundy Thursday": "Regular Holiday",
+  "Good Friday": "Regular Holiday",
+  "Araw ng Kagitingan": "Regular Holiday",
+  "Labor Day": "Regular Holiday",
+  "Independence Day": "Regular Holiday",
+  "National Heroes Day": "Regular Holiday",
+  "Bonifacio Day": "Regular Holiday",
+  "Christmas Day": "Regular Holiday",
+  "Rizal Day": "Regular Holiday",
+  "Feast of Ramadhan": "Regular Holiday",
+  "Day of Valor": "Regular Holiday",
+  "Last day of the year": "Regular Holiday",
+  "Black Saturday": "Special Non-Working Holiday",
+  "Ninoy Aquino Day": "Special Non-Working Holiday",
+  "All Saints' Day Eve": "Special Non-Working Holiday",
+  "All Saints' Day": "Special Non-Working Holiday",
+  "Christmas Eve": "Special Non-Working Holiday",
+  "New Year's Eve": "Special Non-Working Holiday",
+  "Holy Saturday": "Special Non-Working Holiday",
+  "Chinese New Year": "Special Non-Working Holiday",
+  "Feast of the Immaculate Conception of Mary": "Special Non-Working Holiday",
+};
+
 const EmployeeDashboard = () => {
   // Carousel state
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -337,6 +363,11 @@ const EmployeeDashboard = () => {
       const hDate = new Date(h.date);
       return hDate.getFullYear() === calendar.year && hDate.getMonth() === calendar.month && hDate.getDate() === day;
     });
+    // Use holidayTypeMap if holiday type is missing
+    let holidayType = holiday && holiday.type;
+    if (holiday && !holidayType && (holiday.localName || holiday.name)) {
+      holidayType = holidayTypeMap[holiday.localName] || holidayTypeMap[holiday.name] || '';
+    }
     // Class logic: green if all done, yellow if any not done, red if holiday
     let tdClass = "";
     if (hasDue && allDone) tdClass = "employee-dashboard-done-task";
@@ -354,7 +385,7 @@ const EmployeeDashboard = () => {
           }
         }}
         style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
-        title={holiday ? `${holiday.localName} (${holiday.type || ''})` : undefined}
+        title={holiday ? `${holiday.localName || holiday.name}${holidayType ? ` (${holidayType})` : ''}` : undefined}
       >
         <span style={{ fontWeight: 400, fontSize: 20, position: 'relative', display: 'inline-block', width: 28, height: 28 }}>
           {day}
@@ -374,7 +405,16 @@ const EmployeeDashboard = () => {
             }}></span>
           )}
         </span>
-        {holiday && <div className="holiday-name" style={{ color: '#e74c3c', fontWeight: 600, fontSize: 13 }}>{holiday.localName || holiday.name}</div>}
+        {holiday && (
+          <div className="holiday-name" style={{ color: '#e74c3c', fontWeight: 600, fontSize: 13, marginTop: 2 }}>
+            {holiday.localName || holiday.name}
+            {holidayType && (
+              <span style={{ fontWeight: 400, color: holidayType === 'Regular Holiday' ? '#b71c1c' : '#b71c1c', fontSize: 12, display: 'block', marginTop: 1 }}>
+                {holidayType}
+              </span>
+            )}
+          </div>
+        )}
       </td>
     );
     if ((cells.length) % 7 === 0 || day === daysInMonth) {
@@ -436,6 +476,15 @@ const EmployeeDashboard = () => {
             </thead>
             <tbody>{calendarRows}</tbody>
           </table>
+          <div className="employee-dashboard-view-calendar-btn-row">
+            <button
+              className="employee-dashboard-view-calendar-btn"
+              onClick={() => window.location.href = '/schedule'}
+              style={{ marginTop: 12, minWidth: 130, background: '#2583d8', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(37, 131, 216, 0.10)', height: 40 }}
+            >
+              View Full Calendar
+            </button>
+          </div>
         </div>
         {/* Announcements Section */}
         <div className="employee-announcements">
@@ -575,48 +624,95 @@ const EmployeeDashboard = () => {
                 &times;
               </button>
               <h2 className="employee-modal-title">
-                Task for {selectedDayDate}
-              </h2>
-              <ul className="employee-modal-task-list">
                 {(() => {
                   const dateObj = new Date(selectedDayDate);
-                  const day = dateObj.getDate();
-                  const tasks = getTasksForDay(day);
-                  if (tasks.length === 0) return <li className="employee-modal-task-empty">No tasks for this day.</li>;
-                  return tasks.map((item, idx) => {
-                    const isPending = !item.done;
-                    return (
-                      <li
-                        key={item._id || item.id || idx}
-                        className={`employee-modal-task-card${isPending ? ' pending' : ' done'}`}
-                      >
-                        <div className="employee-modal-task-main">
-                          <span className="employee-modal-task-title">{item.task || item.title}</span>
-                          {(item.time || item.dueTime) && (
-                            <span className="employee-modal-task-time">
-                              | Time: {item.time ? new Date(`1970-01-01T${item.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : item.dueTime}
-                            </span>
-                          )}
-                          <span className={`employee-modal-task-status${isPending ? ' pending' : ' done'}`}>
-                            {isPending ? 'Pending' : 'Done'}
+                  return `Details for ${dateObj.toLocaleDateString()}`;
+                })()}
+              </h2>
+              {(() => {
+                const dateObj = new Date(selectedDayDate);
+                const day = dateObj.getDate();
+                const month = dateObj.getMonth();
+                const year = dateObj.getFullYear();
+                const tasks = getTasksForDay(day);
+                const holiday = holidays.find(h => {
+                  const hDate = new Date(h.date);
+                  return hDate.getFullYear() === year && hDate.getMonth() === month && hDate.getDate() === day;
+                });
+                // Use holidayTypeMap if holiday type is missing
+                let holidayType = holiday && holiday.type;
+                if (holiday && !holidayType && holiday.localName) {
+                  holidayType = holidayTypeMap[holiday.localName] || holidayTypeMap[holiday.name] || '';
+                }
+                return (
+                  <>
+                    {holiday && (
+                      <div style={{ marginBottom: 10 }}>
+                        <div style={{ fontWeight: 600, color: '#e74c3c', marginBottom: 4 }}>Holiday:</div>
+                        <div style={{
+                          background: '#ffeaea',
+                          color: '#e74c3c',
+                          fontWeight: 600,
+                          borderRadius: 6,
+                          padding: '6px 8px',
+                          marginBottom: 6,
+                          display: 'inline-block',
+                          fontSize: 15
+                        }}>
+                          {holiday.localName || holiday.name}
+                          <span style={{ fontWeight: 400, color: holidayType === 'Regular Holiday' ? '#1976d2' : '#b71c1c', fontSize: 12, display: 'block', marginTop: 2 }}>
+                            {holidayType}
                           </span>
                         </div>
-                        <button
-                          className="employee-modal-task-check"
-                          disabled={!isPending}
-                          title={isPending ? 'Mark as done' : 'Done'}
-                          onClick={async () => {
-                            if (!isPending) return;
-                            await handleMarkAsDone(item._id || item.id);
-                          }}
-                        >
-                          <FaCheckCircle style={{ color: "#218838", background: 'none' }} />
-                        </button>
-                      </li>
-                    );
-                  });
-                })()}
-              </ul>
+                      </div>
+                    )}
+                    <div style={{ fontWeight: 600, color: '#2583d8', marginBottom: 4 }}>To-Do(s):</div>
+                    <ul className="employee-modal-task-list">
+                      {tasks.length === 0 && <li>No tasks due on this day.</li>}
+                      {tasks.map((item, idx) => (
+                        <li key={idx} style={{
+                          marginBottom: 10,
+                          listStyle: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          background: !item.done ? '#fffbe6' : '#e6ffed',
+                          borderRadius: 6,
+                          padding: '6px 8px',
+                          transition: 'background 0.2s'
+                        }}>
+                          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <div style={{ fontWeight: 600 }}>{item.task}</div>
+                            {item.time && (
+                              <div style={{ color: '#111', fontSize: 15 }}>
+                                | Time: {new Date(`1970-01-01T${item.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </div>
+                            )}
+                            {item.done ? (
+                              <span style={{ color: '#218838', marginLeft: 8, fontWeight: 600 }}>Done</span>
+                            ) : (
+                              <span style={{ color: '#e6a700', marginLeft: 8, fontWeight: 600 }}>Pending</span>
+                            )}
+                          </div>
+                          {!item.done && (
+                            <button
+                              className="employee-todo-mark-done-btn"
+                              onClick={async () => {
+                                setTodos(prev => prev.map(t => t._id === item._id ? { ...t, done: true } : t));
+                                await handleMarkAsDone(item._id);
+                              }}
+                              title="Mark as done"
+                              style={{ background: 'none', padding: 0, marginLeft: 10 }}
+                            >
+                              <FaCheckCircle style={{ color: "#218838", background: 'none' }} />
+                            </button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                );
+              })()}
             </div>
           </div>
         )}
