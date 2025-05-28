@@ -223,6 +223,75 @@ const AdminViewAttendance = () => {
     setCurrentPage(1);
   }, [search, startDate, endDate]);
 
+  // On mount, fetch attendance data from backend if available
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        const response = await fetch("/api/attendance");
+        if (!response.ok) throw new Error("Failed to fetch attendance data");
+        const data = await response.json();
+        // Enrich with names and schedule for display
+        // Use a local function to avoid dependency warning
+        const enrich = async (attendanceArr) => {
+          const empIDs = Array.from(new Set(attendanceArr.map(a => a.empID)));
+          const employeeDetails = await fetchEmployeeDetails(empIDs);
+          const empIdToDetails = {};
+          employeeDetails.forEach(emp => {
+            empIdToDetails[emp.employeeID] = {
+              name: `${emp.firstName} ${emp.lastName}`,
+              schedule: emp.schedule || {}
+            };
+          });
+          return attendanceArr.map(a => {
+            const details = empIdToDetails[a.empID] || {};
+            let scheduleStr = '';
+            let remarks = '';
+            let schedStart = '', schedEnd = '';
+            if (details.schedule && a.date) {
+              const dayOfWeek = new Date(a.date).toLocaleDateString('en-US', { weekday: 'long' });
+              const sched = details.schedule[dayOfWeek];
+              if (sched && sched.start && sched.end) {
+                scheduleStr = `${sched.start} - ${sched.end}`;
+                schedStart = sched.start;
+                schedEnd = sched.end;
+              }
+            }
+            if (schedStart && schedEnd && a.time) {
+              const toMinutes = t => {
+                const [h, m] = t.split(":").map(Number);
+                return h * 60 + m;
+              };
+              const startMins = toMinutes(schedStart);
+              const endMins = toMinutes(schedEnd);
+              const halfTimeMins = startMins + (endMins - startMins) / 2;
+              const entryMins = toMinutes(a.time);
+              if (entryMins > startMins && entryMins <= halfTimeMins) {
+                remarks = 'LATE';
+              } else if (entryMins > halfTimeMins && entryMins < endMins) {
+                remarks = 'UNDERTIME';
+              } else if (entryMins >= endMins) {
+                remarks = 'OVERTIME';
+              } else {
+                remarks = '';
+              }
+            }
+            return {
+              ...a,
+              name: details.name || '',
+              schedule: scheduleStr,
+              remarks
+            };
+          });
+        };
+        const enriched = await enrich(data);
+        setAttendanceData(enriched);
+      } catch (err) {
+        // Optionally handle error
+      }
+    };
+    fetchAttendance();
+  }, []);
+
   return (
     <>
       <div className="adminviewattendance-banner">

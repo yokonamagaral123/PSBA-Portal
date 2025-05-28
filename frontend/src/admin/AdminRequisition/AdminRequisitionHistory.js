@@ -53,7 +53,7 @@ const AdminRequisitionHistory = () => {
               <th>Start Date</th>
               <th>End Date</th>
               <th>Date Requested</th>
-              <th>HR Approval Status</th>
+              <th>Supervisor Approval Status</th>
               <th>Admin Approval Status</th>
               <th>Remarks</th>
               <th>Day Type</th>
