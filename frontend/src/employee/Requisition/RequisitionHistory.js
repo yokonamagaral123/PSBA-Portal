@@ -50,8 +50,7 @@ const RequisitionHistory = () => {
               <th>Time</th>
               <th>Employee Name</th>
               <th>Type</th>
-              <th>Department/Leave Type</th>
-              <th>Purpose</th>
+              <th>Category</th>
               <th>Reason</th>
               <th>Start Date</th>
               <th>End Date</th>
@@ -74,8 +73,7 @@ const RequisitionHistory = () => {
                       (req.requestedBy && typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}
                   </td>
                   <td>{req.type}</td>
-                  <td>{req.department || req.leaveType}</td>
-                  <td>{req.purpose}</td>
+                  <td>{req.category || ''}</td>
                   <td>{req.reason}</td>
                   <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
                   <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>

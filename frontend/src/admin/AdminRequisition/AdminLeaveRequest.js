@@ -3,8 +3,7 @@ import "./AdminLeaveRequest.css";
 
 const AdminLeaveRequest = () => {
   const [formData, setFormData] = useState({
-    leaveType: "",
-    purpose: "",
+    category: "",
     startDate: "",
     endDate: "",
     time: "",
@@ -45,7 +44,7 @@ const AdminLeaveRequest = () => {
   // Validate vacation leave rule
   useEffect(() => {
     let warn = "";
-    if (formData.leaveType === "Vacation Leave" && formData.startDate) {
+    if (formData.category === "Vacation Leave" && formData.startDate) {
       const today = new Date();
       today.setHours(0,0,0,0);
       const start = new Date(formData.startDate);
@@ -56,7 +55,7 @@ const AdminLeaveRequest = () => {
       }
     }
     setWarning(warn);
-  }, [formData.leaveType, formData.startDate]);
+  }, [formData.category, formData.startDate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,8 +90,7 @@ const AdminLeaveRequest = () => {
         await fetchCredits();
         alert("Leave request submitted successfully!");
         setFormData({
-          leaveType: "",
-          purpose: "",
+          category: "",
           startDate: "",
           endDate: "",
           time: "",
@@ -135,29 +133,16 @@ const AdminLeaveRequest = () => {
         <form onSubmit={handleSubmit}>
           <div className="admin-leave-request-row">
             <div className="admin-leave-request-field">
-              <label htmlFor="leaveType">Leave Type</label>
+              <label htmlFor="category">Category</label>
               <select
-                name="leaveType"
-                id="leaveType"
-                value={formData.leaveType}
+                name="category"
+                id="category"
+                value={formData.category}
                 onChange={handleChange}
               >
-                <option value="">Leave Type</option>
+                <option value="">Category</option>
                 <option value="Sick Leave">Sick Leave</option>
                 <option value="Vacation Leave">Vacation Leave</option>
-              </select>
-            </div>
-            <div className="admin-leave-request-field">
-              <label htmlFor="purpose">Purpose</label>
-              <select
-                name="purpose"
-                id="purpose"
-                value={formData.purpose}
-                onChange={handleChange}
-              >
-                <option value="">Purpose</option>
-                <option value="Medical">Medical</option>
-                <option value="Personal">Personal</option>
               </select>
             </div>
             <div className="admin-leave-request-field">

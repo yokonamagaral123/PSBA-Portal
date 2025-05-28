@@ -14,6 +14,7 @@ import LeaveRequest from "../employee/Requisition/LeaveRequest";
 import RequisitionHistory from "../employee/Requisition/RequisitionHistory";
 import Payroll from "../employee/Payroll/Payroll";
 import AssistBotHelp from "../employee/AssistBotHelp/AssistBotHelp";
+import EmployeeOfficialBusiness from "../employee/Requisition/EmployeeOfficialBusiness";
 
 import AdminDashboard from "../admin/AdminDashboard/AdminDashboard";
 import AdminProfile from "../admin/AdminProfile/AdminProfile";
@@ -41,11 +42,15 @@ import HrRequisitionHistory from "../hr/HrRequisition/HrRequisitionHistory";
 import HrGeneralRequest from "../hr/HrRequisition/HrGeneralRequest";
 import HrLeaveRequest from "../hr/HrRequisition/HrLeaveRequest";
 import HrViewRequisition from "../hr/HrView/HrViewRequisition";
+import HrOfficialBusiness from "../hr//HrRequisition/HrOfficialBusiness";
+
 import "./App.css";
 import BasicSalary from "../admin/AdminView/PayrollManagement/BasicSalary";
 import PayrollComputation from "../admin/AdminView/PayrollManagement/PayrollComputation";
 import PayrollRecord from "../admin/AdminView/PayrollManagement/PayrollRecord";
 import { AdminDataProvider } from "../admin/AdminDataContext";
+
+import OutsideOB from "../admin/AdminRequisition/OfficialBusiness";
 
 const App = () => {
   const [isMinimized, setIsMinimized] = useState(false);
@@ -99,7 +104,7 @@ const App = () => {
                       <Route path="/requisition/leave" element={<LeaveRequest />} />
                       <Route path="/requisition/history" element={<RequisitionHistory />} />
                       <Route path="/payroll" element={<Payroll />} />
-                     
+                      <Route path="/requisition/official-business" element={<EmployeeOfficialBusiness />} />
                       <Route path="/assistbothelp" element={<AssistBotHelp />} />
                     </Routes>
                   </div>
@@ -135,6 +140,9 @@ const App = () => {
                       <Route path="/payroll-management/basic-salary" element={<BasicSalary />} />
                       <Route path="/payroll-management/payroll-computation" element={<PayrollComputation />} />
                       <Route path="/payroll-management/payroll-record" element={<PayrollRecord />} />
+                     
+                      <Route path="/admin-view/official-business" element={<OutsideOB />} />
+                 
                       <Route path="*" element={<Navigate to="/admin-dashboard" />} />
                     </Routes>
                   </div>
@@ -161,6 +169,7 @@ const App = () => {
                       <Route path="/hr-requisition-history" element={<HrRequisitionHistory />} />
                       <Route path="/hr-general-request" element={<HrGeneralRequest />} />
                       <Route path="/hr-leave-request" element={<HrLeaveRequest />} />
+                      <Route path="/hr-official-business" element={<HrOfficialBusiness />} />
                     </Routes>
                   </div>
                 </div>

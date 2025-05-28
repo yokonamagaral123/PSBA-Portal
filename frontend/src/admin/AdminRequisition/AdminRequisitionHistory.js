@@ -47,8 +47,7 @@ const AdminRequisitionHistory = () => {
               <th>Time</th>
               <th>Admin Name</th>
               <th>Type</th>
-              <th>Department/Leave Type</th>
-              <th>Purpose</th>
+              <th>Category</th>
               <th>Reason</th>
               <th>Start Date</th>
               <th>End Date</th>
@@ -67,8 +66,7 @@ const AdminRequisitionHistory = () => {
                   <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
                   <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
                   <td>{req.type}</td>
-                  <td>{req.department || req.leaveType}</td>
-                  <td>{req.purpose}</td>
+                  <td>{req.category}</td>
                   <td>{req.reason}</td>
                   <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
                   <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>

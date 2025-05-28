@@ -3,8 +3,7 @@ import "./HrGeneralRequest.css";
 
 const HrGeneralRequest = () => {
   const [formData, setFormData] = useState({
-    department: "",
-    purpose: "",
+    category: "",
     startDate: "",
     endDate: "",
     time: "",
@@ -37,8 +36,7 @@ const HrGeneralRequest = () => {
       if (response.ok) {
         alert("Request submitted successfully!");
         setFormData({
-          department: "",
-          purpose: "",
+          category: "",
           startDate: "",
           endDate: "",
           time: "",
@@ -62,29 +60,19 @@ const HrGeneralRequest = () => {
         <h1>HR General Request</h1>
         <form onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="department">Department</label>
+            <label htmlFor="category">Category</label>
             <select
-              id="department"
-              name="department"
-              value={formData.department}
+              id="category"
+              name="category"
+              value={formData.category}
               onChange={handleChange}
             >
-              <option value="">Select Department</option>
-              <option value="HR">HR</option>
-              <option value="IT">IT</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="purpose">Purpose</label>
-            <select
-              id="purpose"
-              name="purpose"
-              value={formData.purpose}
-              onChange={handleChange}
-            >
-              <option value="">Select Purpose</option>
-              <option value="Equipment Request">Equipment Request</option>
+              <option value="">Select Category</option>
               <option value="Maintenance">Maintenance</option>
+              <option value="Equipment">Equipment</option>
+              <option value="IT Support">IT Support</option>
+              <option value="Facilities">Facilities</option>
+              <option value="Others">Others</option>
             </select>
           </div>
           <div>

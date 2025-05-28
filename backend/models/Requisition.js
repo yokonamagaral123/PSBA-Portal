@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 
 const requisitionSchema = new mongoose.Schema({
   type: { type: String, required: true },
-  department: { type: String },
-  leaveType: { type: String },
-  purpose: { type: String, required: true },
+  category: { type: String }, // Change leaveType to requestType
+  department: { type: mongoose.Schema.Types.ObjectId, ref: 'EmployeeDetails' }, // Reference EmployeeDetails for department
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   time: { type: String },
@@ -14,7 +13,7 @@ const requisitionSchema = new mongoose.Schema({
   requestedByName: { type: String, required: true }, // Name of the requester
   requestedByEmployeeID: { type: String }, // Employee ID of the requester
   remarks: { type: String, default: 'N/A' }, // New field for remarks
-  status: { type: String },  // New field for status
+  status: { type: String, default: 'pending' },  // New field for status
   leavePaymentStatus: { type: String, enum: ['with pay', 'without pay', 'N/A'], default: 'N/A' },
   dayType: { type: String, enum: ['whole day', 'half day', 'N/A'], default: 'N/A' },
   hrApprovalStatus: { type: String, enum: ['pending', 'approved', 'declined'], default: 'pending' }, // Two-step approval status

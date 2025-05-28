@@ -89,6 +89,14 @@ const Sidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
               <li>
                 <Link
+                  to="/requisition/official-business"
+                  className={isActive("/requisition/official-business") ? "active" : ""}
+                >
+                  Official Business
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/requisition/history"
                   className={
                     isActive("/requisition/history") ? "active" : ""
