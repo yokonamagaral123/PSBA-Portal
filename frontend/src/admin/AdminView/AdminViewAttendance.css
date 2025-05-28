@@ -148,3 +148,20 @@
   border: 2px solid #1976d2;
 }
 
+.adminviewattendance-reset-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+}
+.adminviewattendance-reset-btn svg {
+  transition: transform 0.2s;
+}
+.adminviewattendance-reset-btn:hover svg {
+  transform: rotate(-90deg);
+  stroke: #1976d2;
+}
+

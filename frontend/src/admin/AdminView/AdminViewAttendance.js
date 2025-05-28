@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./AdminViewAttendance.css";
 
@@ -124,16 +124,18 @@ const AdminViewAttendance = () => {
       if (schedStart && schedEnd && a.time) {
         // Convert to minutes for comparison
         const toMinutes = t => {
-          const [h, m] = t.split(':').map(Number);
+          const [h, m] = t.split(":").map(Number);
           return h * 60 + m;
         };
         const startMins = toMinutes(schedStart);
         const endMins = toMinutes(schedEnd);
-        // Support time in/out as e.g. '07:15', '18:30', etc.
+        const halfTimeMins = startMins + (endMins - startMins) / 2;
         const entryMins = toMinutes(a.time);
-        if (entryMins > startMins && entryMins <= endMins) {
+        if (entryMins > startMins && entryMins <= halfTimeMins) {
           remarks = 'LATE';
-        } else if (entryMins > endMins) {
+        } else if (entryMins > halfTimeMins && entryMins < endMins) {
+          remarks = 'UNDERTIME';
+        } else if (entryMins >= endMins) {
           remarks = 'OVERTIME';
         } else {
           remarks = '';
@@ -216,6 +218,11 @@ const AdminViewAttendance = () => {
     setCurrentPage(page);
   };
 
+  // Reset page to 1 when search or date filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, startDate, endDate]);
+
   return (
     <>
       <div className="adminviewattendance-banner">
@@ -263,6 +270,17 @@ const AdminViewAttendance = () => {
               placeholder="End Date"
               style={{ minWidth: 0 }}
             />
+            <button
+              className="adminviewattendance-reset-btn"
+              title="Reset filters"
+              onClick={() => {
+                setSearch("");
+                setStartDate("");
+                setEndDate("");
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2583d8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
           </div>
         </div>
         <div className="adminviewattendance-pagination-bar" style={{ marginLeft: 'auto' }}>
