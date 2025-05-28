@@ -102,22 +102,46 @@ const AdminViewAttendance = () => {
         schedule: emp.schedule || {}
       };
     });
-    // Merge name and schedule into attendance
+    // Merge name and schedule into attendance, and add remarks for LATE/OVERTIME
     return attendanceArr.map(a => {
       const details = empIdToDetails[a.empID] || {};
       let scheduleStr = '';
+      let remarks = '';
+      let schedStart = '', schedEnd = '';
       if (details.schedule && a.date) {
         // Get day of week from date
         const dayOfWeek = new Date(a.date).toLocaleDateString('en-US', { weekday: 'long' });
         const sched = details.schedule[dayOfWeek];
         if (sched && sched.start && sched.end) {
           scheduleStr = `${sched.start} - ${sched.end}`;
+          schedStart = sched.start;
+          schedEnd = sched.end;
+        }
+      }
+      // Parse times for logic
+      if (schedStart && schedEnd && a.time) {
+        // Convert to minutes for comparison
+        const toMinutes = t => {
+          const [h, m] = t.split(':').map(Number);
+          return h * 60 + m;
+        };
+        const startMins = toMinutes(schedStart);
+        const endMins = toMinutes(schedEnd);
+        // Support time in/out as e.g. '07:15', '18:30', etc.
+        const entryMins = toMinutes(a.time);
+        if (entryMins > startMins && entryMins <= endMins) {
+          remarks = 'LATE';
+        } else if (entryMins > endMins) {
+          remarks = 'OVERTIME';
+        } else {
+          remarks = '';
         }
       }
       return {
         ...a,
         name: details.name || '',
-        schedule: scheduleStr
+        schedule: scheduleStr,
+        remarks
       };
     });
   };
