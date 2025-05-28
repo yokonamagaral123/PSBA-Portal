@@ -74,6 +74,54 @@ const AdminViewAttendance = () => {
     }
   };
 
+  // Fetch employee details by empID
+  const fetchEmployeeDetails = async (empIDs) => {
+    try {
+      const response = await fetch('/api/employee/details/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ empIDs })
+      });
+      if (!response.ok) throw new Error('Failed to fetch employee details');
+      return await response.json(); // Should be an array of employee details
+    } catch (err) {
+      alert('Error fetching employee details: ' + err.message);
+      return [];
+    }
+  };
+
+  // After importing, fetch names and schedule and merge with attendance data
+  const enrichAttendanceWithNamesAndSchedule = async (attendanceArr) => {
+    const empIDs = Array.from(new Set(attendanceArr.map(a => a.empID)));
+    const employeeDetails = await fetchEmployeeDetails(empIDs);
+    // Map empID to name and schedule
+    const empIdToDetails = {};
+    employeeDetails.forEach(emp => {
+      empIdToDetails[emp.employeeID] = {
+        name: `${emp.firstName} ${emp.lastName}`,
+        schedule: emp.schedule || {}
+      };
+    });
+    // Merge name and schedule into attendance
+    return attendanceArr.map(a => {
+      const details = empIdToDetails[a.empID] || {};
+      let scheduleStr = '';
+      if (details.schedule && a.date) {
+        // Get day of week from date
+        const dayOfWeek = new Date(a.date).toLocaleDateString('en-US', { weekday: 'long' });
+        const sched = details.schedule[dayOfWeek];
+        if (sched && sched.start && sched.end) {
+          scheduleStr = `${sched.start} - ${sched.end}`;
+        }
+      }
+      return {
+        ...a,
+        name: details.name || '',
+        schedule: scheduleStr
+      };
+    });
+  };
+
   // Send attendance data to backend and update local state
   const sendAttendanceToServer = async (data) => {
     try {
@@ -83,7 +131,9 @@ const AdminViewAttendance = () => {
         body: JSON.stringify({ data })
       });
       if (!response.ok) throw new Error("Failed to import attendance data");
-      setAttendanceData(data); // Update local state for immediate UI feedback
+      // Enrich with names and schedule after import
+      const enriched = await enrichAttendanceWithNamesAndSchedule(data);
+      setAttendanceData(enriched); // Update local state for UI
       alert("Attendance data imported successfully.");
     } catch (err) {
       alert("Error importing attendance data: " + err.message);
