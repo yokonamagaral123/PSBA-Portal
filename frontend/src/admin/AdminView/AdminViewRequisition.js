@@ -140,7 +140,7 @@ const AdminViewRequisition = () => {
               <th>Day Type</th>
               <th>Leave Payment Status</th>
               <th>Remarks</th>
-              <th>HR Approval Status</th>
+              <th>Supervisor Approval Status</th>
               <th>Admin Approval Status</th>
               <th>Action</th>
               <th>Last Modified</th>
