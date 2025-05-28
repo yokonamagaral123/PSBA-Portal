@@ -57,7 +57,7 @@ const HrGeneralRequest = () => {
         <h1 className="general-request-banner-title">GENERAL REQUEST</h1>
       </div>
       <div className="admin-general-request-content">
-        <h1>HR General Request</h1>
+        <h1>General Request</h1>
         <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="category">Category</label>

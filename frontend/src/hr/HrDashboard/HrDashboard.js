@@ -318,7 +318,7 @@ const HrDashboard = () => {
         key={day}
         className={tdClass}
         onClick={() => handleCalendarDayClick(day)}
-        style={{ cursor: hasDue || holiday ? "pointer" : "default" }}
+        style={{ cursor: (hasDue || holiday) ? "pointer" : "default" }}
         title={holiday ? `${holiday.localName} (${holiday.type || holidayTypeMap[holiday.localName] || holidayTypeMap[holiday.name] || ''})` : undefined}
       >
         <span style={{ fontWeight: 400, fontSize: 20, position: 'relative', display: 'inline-block', width: 28, height: 28 }}>
@@ -630,6 +630,16 @@ const HrDashboard = () => {
               {calendarRows}
             </tbody>
           </table>
+          {/* View Schedule Button */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
+            <button
+              className="hrdashboard-view-schedule-btn"
+              style={{ padding: '10px 28px', fontSize: 17, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, letterSpacing: 0.5 }}
+              onClick={() => window.location.href = '/hr-schedule'}
+            >
+              View Schedule
+            </button>
+          </div>
         </div>
 
         {/* Overlay for selected day */}

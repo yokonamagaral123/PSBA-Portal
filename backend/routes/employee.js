@@ -72,7 +72,6 @@ router.put("/details", async (req, res) => {
     // Prevent changing unique identifiers
     delete updateFields.email;
     delete updateFields.employeeID;
-    delete updateFields.username;
 
     const updated = await EmployeeDetails.findOneAndUpdate(
       { email },

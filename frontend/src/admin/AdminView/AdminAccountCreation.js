@@ -24,7 +24,6 @@ const AdminAccountCreation = () => {
     employmentType: "Full-Time",
     startDate: "",
     employmentStatus: "Active",
-    username: "",
     temporaryPassword: "",
     confirmPassword: "",
     role: "employee",
@@ -155,7 +154,6 @@ const AdminAccountCreation = () => {
           employmentType: "Full-Time",
           startDate: "",
           employmentStatus: "Active",
-          username: "",
           temporaryPassword: "",
           confirmPassword: "",
           role: "employee",
@@ -730,7 +728,7 @@ const AdminAccountCreation = () => {
             </div>
             <div style={{display:'flex',justifyContent:'flex-end',gap:12}}>
               <button className="account-creation-back-button" onClick={() => setReviewModal(false)}>Back</button>
-              <button className="account-creation-submit-button" onClick={handleConfirmCreate}>Confirm & Create</button>
+              <button className="account-creation-submit-button" onClick={(e) => { e.preventDefault(); handleConfirmCreate(); }}>Confirm & Create</button>
             </div>
           </div>
         </div>

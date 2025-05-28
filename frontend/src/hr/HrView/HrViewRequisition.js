@@ -89,10 +89,7 @@ const HrViewRequisition = () => {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
-      (req.type && req.type.toLowerCase().includes(term)) ||
-      (req.department && req.department.toLowerCase().includes(term)) ||
-      (req.leaveType && req.leaveType.toLowerCase().includes(term)) ||
-      (req.purpose && req.purpose.toLowerCase().includes(term)) ||
+      (req.category && req.category.toLowerCase().includes(term)) ||
       (req.reason && req.reason.toLowerCase().includes(term)) ||
       (req.requestedByName && req.requestedByName.toLowerCase().includes(term)) ||
       (req.status && req.status.toLowerCase().includes(term)) ||
@@ -111,7 +108,7 @@ const HrViewRequisition = () => {
         <div className="hrviewrequisition-searchbar" style={{ gap: 12 }}>
           <input
             type="text"
-            placeholder="Search by Type, Department, Purpose, Status, etc."
+            placeholder="Search by Category, Status, Employee, etc."
             className="hrviewrequisition-input"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
@@ -134,9 +131,7 @@ const HrViewRequisition = () => {
               <th>Time</th>
               <th>Employee ID</th>
               <th>Full Name</th>
-              <th>Type</th>
-              <th>Department/Leave Type</th>
-              <th>Purpose</th>
+              <th>Category</th>
               <th>Reason</th>
               <th>Start Date</th>
               <th>End Date</th>
@@ -144,7 +139,7 @@ const HrViewRequisition = () => {
               <th>Day Type</th>
               <th>Leave Payment Status</th>
               <th>Remarks</th>
-              <th>HR Approval Status</th>
+              <th>Supervisor Approval Status</th>
               <th>Admin Approval Status</th>
               <th>Action</th>
               <th>Last Modified</th>
@@ -167,9 +162,7 @@ const HrViewRequisition = () => {
                     <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
                     <td>{req.requestedByEmployeeID || (req.requestedBy && req.requestedBy.employeeID) || ''}</td>
                     <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
-                    <td>{req.type}</td>
-                    <td>{req.department || req.leaveType}</td>
-                    <td>{req.purpose}</td>
+                    <td>{req.category}</td>
                     <td>{req.reason}</td>
                     <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
                     <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>
@@ -254,7 +247,7 @@ const HrViewRequisition = () => {
               })
             ) : (
               <tr>
-                <td colSpan="17">No requisitions found</td>
+                <td colSpan="15">No requisitions found</td>
               </tr>
             )}
           </tbody>

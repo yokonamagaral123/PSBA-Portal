@@ -89,7 +89,7 @@ const HrLeaveRequest = () => {
         <h1 className="leave-request-banner-title">LEAVE REQUEST</h1>
       </div>
       <div className="admin-leave-request-content">
-        <h1>HR Leave Request</h1>
+        <h1>Leave Request</h1>
         <div style={{ display: "flex", gap: "30px", margin: "20px 0" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span role="img" aria-label="Vacation">🌴</span>
