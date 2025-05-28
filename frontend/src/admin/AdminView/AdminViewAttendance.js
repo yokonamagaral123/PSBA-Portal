@@ -8,6 +8,8 @@ const AdminViewAttendance = () => {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 50;
 
   // Handle file import for both .xlsx and .txt
   const handleImport = async (e) => {
@@ -183,52 +185,101 @@ const AdminViewAttendance = () => {
     return (empIdMatch || nameMatch) && dateMatch;
   });
 
+  // Pagination logic
+  const totalRows = filteredAttendance.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage);
+  const paginatedAttendance = filteredAttendance.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  // Pagination controls
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 1) return pages;
+    // Always show 2 preceding, current, and 2 succeeding
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, currentPage + 2);
+    // Adjust if at start or end
+    if (currentPage <= 2) {
+      end = Math.min(totalPages, 5);
+    }
+    if (currentPage >= totalPages - 1) {
+      start = Math.max(1, totalPages - 4);
+    }
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  };
+
+  const goToPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
   return (
     <>
       <div className="adminviewattendance-banner">
         <h1 className="dashboard-banner-title">ATTENDANCE MANAGEMENT</h1>
       </div>
       <div className="adminviewattendance-import-searchbar-row">
-        <div className="adminviewattendance-import-btn-container">
-          <button
-            onClick={() => fileInputRef.current && fileInputRef.current.click()}
-            style={{ padding: "8px 18px", fontWeight: 600, background: "#2583d8", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-          >
-            Import File
-          </button>
-          <input
-            type="file"
-            accept=".xlsx, .xls, .txt"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleImport}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <div className="adminviewattendance-import-btn-container">
+            <button
+              onClick={() => fileInputRef.current && fileInputRef.current.click()}
+              style={{ padding: "8px 18px", fontWeight: 600, background: "#2583d8", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
+            >
+              Import File
+            </button>
+            <input
+              type="file"
+              accept=".xlsx, .xls, .txt"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleImport}
+            />
+          </div>
+          <div className="adminviewattendance-searchbar" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <input
+              className="adminviewattendance-input"
+              type="text"
+              placeholder="Search by Employee ID or Name..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <input
+              className="adminviewattendance-input"
+              type="date"
+              value={startDate}
+              onChange={e => setStartDate(e.target.value)}
+              placeholder="Start Date"
+              style={{ minWidth: 0 }}
+            />
+            <span style={{ color: '#888', fontWeight: 500 }}>to</span>
+            <input
+              className="adminviewattendance-input"
+              type="date"
+              value={endDate}
+              onChange={e => setEndDate(e.target.value)}
+              placeholder="End Date"
+              style={{ minWidth: 0 }}
+            />
+          </div>
         </div>
-        <div className="adminviewattendance-searchbar" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <input
-            className="adminviewattendance-input"
-            type="text"
-            placeholder="Search by Employee ID or Name..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          <input
-            className="adminviewattendance-input"
-            type="date"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
-            placeholder="Start Date"
-            style={{ minWidth: 0 }}
-          />
-          <span style={{ color: '#888', fontWeight: 500 }}>to</span>
-          <input
-            className="adminviewattendance-input"
-            type="date"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
-            placeholder="End Date"
-            style={{ minWidth: 0 }}
-          />
+        <div className="adminviewattendance-pagination-bar" style={{ marginLeft: 'auto' }}>
+          <button onClick={() => goToPage(Math.max(1, currentPage - 10))} disabled={currentPage === 1} className="adminviewattendance-page-btn">{'<<'}</button>
+          <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="adminviewattendance-page-btn">{'<'}</button>
+          {getPageNumbers().map(page => (
+            <button
+              key={page}
+              onClick={() => goToPage(page)}
+              className={`adminviewattendance-page-btn${page === currentPage ? ' adminviewattendance-page-current' : ''}`}
+              disabled={page === currentPage}
+            >
+              {page}
+            </button>
+          ))}
+          <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages || totalPages === 0} className="adminviewattendance-page-btn">{'>'}</button>
+          <button onClick={() => goToPage(Math.min(totalPages, currentPage + 10))} disabled={currentPage === totalPages || totalPages === 0} className="adminviewattendance-page-btn">{'>>'}</button>
         </div>
       </div>
       <div className="adminviewattendance-container">
@@ -245,10 +296,10 @@ const AdminViewAttendance = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredAttendance.length === 0 ? (
+              {paginatedAttendance.length === 0 ? (
                 <tr><td colSpan={6} className="no-employees">No records found.</td></tr>
               ) : (
-                filteredAttendance.map((entry, idx) => (
+                paginatedAttendance.map((entry, idx) => (
                   <tr key={idx}>
                     <td>{entry.empID}</td>
                     <td>{entry.name}</td>
