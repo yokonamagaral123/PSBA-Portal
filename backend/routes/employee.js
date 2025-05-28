@@ -89,4 +89,19 @@ router.put("/details", async (req, res) => {
   }
 });
 
+// Batch fetch employee details by empID array
+router.post("/details/batch", async (req, res) => {
+  try {
+    const { empIDs } = req.body;
+    if (!Array.isArray(empIDs) || empIDs.length === 0) {
+      return res.status(400).json({ success: false, message: "empIDs array is required" });
+    }
+    const employees = await EmployeeDetails.find({ employeeID: { $in: empIDs } });
+    res.status(200).json(employees);
+  } catch (error) {
+    console.error("Error fetching employee details batch:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 module.exports = router;

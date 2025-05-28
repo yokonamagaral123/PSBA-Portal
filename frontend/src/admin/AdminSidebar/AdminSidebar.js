@@ -133,7 +133,7 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
                   to="/admin-view/attendance"
                   className={isActive("/admin-view/attendance") ? "active" : ""}
                 >
-                  Attendance
+                  Attendance Management
                 </Link>
               </li>
               <li>
