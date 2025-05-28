@@ -10,31 +10,30 @@ const AdminViewAttendance = () => {
   const [endDate, setEndDate] = useState("");
 
   // Handle file import for both .xlsx and .txt
-  const handleImport = (e) => {
+  const handleImport = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const ext = file.name.split('.').pop().toLowerCase();
+    let mapped = [];
     if (ext === "txt") {
       const reader = new FileReader();
-      reader.onload = (evt) => {
+      reader.onload = async (evt) => {
         const text = evt.target.result;
         const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
-        const mapped = lines.map(line => {
+        mapped = lines.map(line => {
           const cols = line.trim().split(/\s+/);
           return {
             empID: cols[0] || "",
             date: cols[1] || "",
-            time: cols[2] || "",
-            // Add more fields if needed
+            time: cols[2] || ""
           };
         });
-        setAttendanceData(mapped);
-        console.log("Parsed TXT data:", mapped);
+        await sendAttendanceToServer(mapped);
       };
       reader.readAsText(file);
     } else if (ext === "xlsx" || ext === "xls") {
       const reader = new FileReader();
-      reader.onload = (evt) => {
+      reader.onload = async (evt) => {
         try {
           const bstr = evt.target.result;
           const wb = XLSX.read(bstr, { type: "binary" });
@@ -48,11 +47,11 @@ const AdminViewAttendance = () => {
           const normalizedHeaders = headers.map(h => (h || "").toString().trim().toLowerCase());
           const headerKeyMap = {
             "employee id": "empID",
-            "date": "date"
-            // Add more mappings if needed
+            "date": "date",
+            "time": "time"
           };
           const rows = data.slice(headerRowIdx + 1).filter(row => Array.isArray(row) && row.some(cell => cell && cell.toString().trim() !== ""));
-          const mapped = rows.map(row => {
+          mapped = rows.map(row => {
             const obj = {};
             normalizedHeaders.forEach((h, i) => {
               const key = headerKeyMap[h];
@@ -60,11 +59,11 @@ const AdminViewAttendance = () => {
             });
             return {
               empID: obj.empID || "",
-              date: obj.date || ""
+              date: obj.date || "",
+              time: obj.time || ""
             };
           });
-          setAttendanceData(mapped);
-          console.log("Parsed Excel data:", mapped);
+          await sendAttendanceToServer(mapped);
         } catch (err) {
           alert("Failed to parse Excel file. Please check the file format.\n" + err);
         }
@@ -72,6 +71,22 @@ const AdminViewAttendance = () => {
       reader.readAsBinaryString(file);
     } else {
       alert("Unsupported file type. Please upload a .xlsx, .xls, or .txt file.");
+    }
+  };
+
+  // Send attendance data to backend and update local state
+  const sendAttendanceToServer = async (data) => {
+    try {
+      const response = await fetch("/api/attendance/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data })
+      });
+      if (!response.ok) throw new Error("Failed to import attendance data");
+      setAttendanceData(data); // Update local state for immediate UI feedback
+      alert("Attendance data imported successfully.");
+    } catch (err) {
+      alert("Error importing attendance data: " + err.message);
     }
   };
 
@@ -97,7 +112,7 @@ const AdminViewAttendance = () => {
   return (
     <>
       <div className="adminviewattendance-banner">
-        <h1 className="dashboard-banner-title">ADMIN VIEW ATTENDANCE</h1>
+        <h1 className="dashboard-banner-title">ATTENDANCE MANAGEMENT</h1>
       </div>
       <div className="adminviewattendance-import-searchbar-row">
         <div className="adminviewattendance-import-btn-container">
