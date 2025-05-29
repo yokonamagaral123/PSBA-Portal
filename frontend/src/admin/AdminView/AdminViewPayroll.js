@@ -87,6 +87,7 @@ const AdminViewPayroll = () => {
                   <th>Name</th>
                   <th>Department</th>
                   <th>Position</th>
+                  <th>Employment Type</th>
                 </tr>
               </thead>
               <tbody>
@@ -97,10 +98,11 @@ const AdminViewPayroll = () => {
                     <td>{emp.firstName} {emp.middleName} {emp.lastName}</td>
                     <td>{emp.department}</td>
                     <td>{emp.jobTitle}</td>
+                    <td>{emp.employmentType}</td>
                   </tr>
                 ))}
                 {filteredEmployees.length === 0 && (
-                  <tr><td colSpan={5} className="no-employees">No employees found.</td></tr>
+                  <tr><td colSpan={6} className="no-employees">No employees found.</td></tr>
                 )}
               </tbody>
             </table>
