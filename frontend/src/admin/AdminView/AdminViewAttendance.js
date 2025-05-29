@@ -1,201 +1,405 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./AdminViewAttendance.css";
 
 const AdminViewAttendance = () => {
-  const [attendanceData, setAttendanceData] = useState([
-    {
-      id: "EMP001",
-      date: "2025-04-10",
-      name: "John Doe",
-      schedule: "9:00 AM - 6:00 PM",
-      timeIn: "9:01 AM",
-      timeOut: "6:00 PM",
-      remarks: "Present",
-    },
-    {
-      id: "EMP002",
-      date: "2025-04-10",
-      name: "Jane Smith",
-      schedule: "9:00 AM - 6:00 PM",
-      timeIn: "9:05 AM",
-      timeOut: "5:58 PM",
-      remarks: "Late",
-    },
-    {
-      id: "EMP003",
-      date: "2025-04-10",
-      name: "Mark Lee",
-      schedule: "8:00 AM - 5:00 PM",
-      timeIn: "8:00 AM",
-      timeOut: "5:01 PM",
-      remarks: "Present",
-    },
-  ]);
   const fileInputRef = useRef();
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 50;
 
-  // Helper to parse time string to Date object (today's date)
-  function parseTime(timeStr) {
-    if (!timeStr) return null;
-    const [time, modifier] = timeStr.split(" ");
-    let [hours, minutes] = time.split(":").map(Number);
-    if (modifier && modifier.toLowerCase() === "pm" && hours !== 12) hours += 12;
-    if (modifier && modifier.toLowerCase() === "am" && hours === 12) hours = 0;
-    const now = new Date();
-    now.setHours(hours, minutes, 0, 0);
-    return now;
-  }
-
-  // Compare timeIn with schedule start
-  function getRemarks(timeIn, schedule) {
-    if (!timeIn || !schedule) return "";
-    // Defensive: ensure timeIn and schedule are strings
-    if (typeof timeIn !== "string") timeIn = String(timeIn || "");
-    if (typeof schedule !== "string") schedule = String(schedule || "");
-    const [start] = schedule.split("-");
-    const schedStart = parseTime(start.trim());
-    const inTime = parseTime(timeIn.trim());
-    if (!schedStart || !inTime) return "";
-    return inTime > schedStart ? "Late" : "On Time";
-  }
-
-  // Handle Excel import
-  const handleImport = (e) => {
+  // Handle file import for both .xlsx and .txt
+  const handleImport = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      try {
-        const bstr = evt.target.result;
-        const wb = XLSX.read(bstr, { type: "binary" });
-        const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-        console.log("Raw Excel data:", data);
-        // Find the first non-empty row as header
-        let headerRowIdx = data.findIndex(row => Array.isArray(row) && row.some(cell => cell && cell.toString().trim() !== ""));
-        if (headerRowIdx === -1) {
-          alert("No header row found in Excel file. Please check your file format.");
-          return;
-        }
-        const headers = data[headerRowIdx];
-        // Normalize headers: trim and lowercase
-        const normalizedHeaders = headers.map(h => (h || "").toString().trim().toLowerCase());
-        // Map normalized header names to expected keys
-        const headerKeyMap = {
-          "employee id": "id",
-          "date": "date",
-          "employee": "name",
-          "work schedule": "schedule",
-          "time in": "timeIn",
-          "time out": "timeOut",
-          "remarks": "remarks"
-        };
-        // All rows after header
-        const rows = data.slice(headerRowIdx + 1).filter(row => Array.isArray(row) && row.some(cell => cell && cell.toString().trim() !== ""));
-        if (rows.length === 0) {
-          alert("No data rows found in Excel file. Please check your file format.");
-          return;
-        }
-        const mapped = rows.map(row => {
-          const obj = {};
-          normalizedHeaders.forEach((h, i) => {
-            const key = headerKeyMap[h];
-            if (key) obj[key] = row[i] || "";
-          });
-          // Convert Excel date serial to yyyy-mm-dd if needed
-          let dateVal = obj.date;
-          if (!isNaN(dateVal) && dateVal !== "") {
-            // Excel date serial to JS date
-            const excelEpoch = new Date(Date.UTC(1899, 11, 30));
-            const jsDate = new Date(excelEpoch.getTime() + (Number(dateVal) * 86400000));
-            obj.date = jsDate.toISOString().slice(0, 10);
-          }
-          // Convert Excel time serials to HH:MM AM/PM if needed
-          function excelTimeToString(val) {
-            if (typeof val === "number") {
-              let totalMinutes = Math.round(val * 24 * 60);
-              let hours = Math.floor(totalMinutes / 60);
-              let minutes = totalMinutes % 60;
-              let ampm = hours >= 12 ? "PM" : "AM";
-              hours = hours % 12;
-              if (hours === 0) hours = 12;
-              return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
-            }
-            return val;
-          }
-          obj.timeIn = excelTimeToString(obj.timeIn);
-          obj.timeOut = excelTimeToString(obj.timeOut);
-          // Auto-remarks
-          obj.remarks = getRemarks(obj.timeIn, obj.schedule);
+    const ext = file.name.split('.').pop().toLowerCase();
+    let mapped = [];
+    if (ext === "txt") {
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        const text = evt.target.result;
+        const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+        mapped = lines.map(line => {
+          const cols = line.trim().split(/\s+/);
           return {
-            id: obj.id || "",
-            date: obj.date || "",
-            name: obj.name || "",
-            schedule: obj.schedule || "",
-            timeIn: obj.timeIn || "",
-            timeOut: obj.timeOut || "",
-            remarks: obj.remarks || "",
+            empID: cols[0] || "",
+            date: cols[1] || "",
+            time: cols[2] || ""
           };
         });
-        console.log("Mapped data:", mapped);
-        setAttendanceData(mapped);
+        await sendAttendanceToServer(mapped);
+      };
+      reader.readAsText(file);
+    } else if (ext === "xlsx" || ext === "xls") {
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const bstr = evt.target.result;
+          const wb = XLSX.read(bstr, { type: "binary" });
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          // Find the first non-empty row as header
+          let headerRowIdx = data.findIndex(row => Array.isArray(row) && row.some(cell => cell && cell.toString().trim() !== ""));
+          if (headerRowIdx === -1) return;
+          const headers = data[headerRowIdx];
+          const normalizedHeaders = headers.map(h => (h || "").toString().trim().toLowerCase());
+          const headerKeyMap = {
+            "employee id": "empID",
+            "date": "date",
+            "time": "time"
+          };
+          const rows = data.slice(headerRowIdx + 1).filter(row => Array.isArray(row) && row.some(cell => cell && cell.toString().trim() !== ""));
+          mapped = rows.map(row => {
+            const obj = {};
+            normalizedHeaders.forEach((h, i) => {
+              const key = headerKeyMap[h];
+              if (key) obj[key] = row[i] || "";
+            });
+            return {
+              empID: obj.empID || "",
+              date: obj.date || "",
+              time: obj.time || ""
+            };
+          });
+          await sendAttendanceToServer(mapped);
+        } catch (err) {
+          alert("Failed to parse Excel file. Please check the file format.\n" + err);
+        }
+      };
+      reader.readAsBinaryString(file);
+    } else {
+      alert("Unsupported file type. Please upload a .xlsx, .xls, or .txt file.");
+    }
+  };
+
+  // Fetch employee details by empID
+  const fetchEmployeeDetails = async (empIDs) => {
+    try {
+      const response = await fetch('/api/employee/details/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ empIDs })
+      });
+      if (!response.ok) throw new Error('Failed to fetch employee details');
+      return await response.json(); // Should be an array of employee details
+    } catch (err) {
+      alert('Error fetching employee details: ' + err.message);
+      return [];
+    }
+  };
+
+  // After importing, fetch names and schedule and merge with attendance data
+  const enrichAttendanceWithNamesAndSchedule = async (attendanceArr) => {
+    const empIDs = Array.from(new Set(attendanceArr.map(a => a.empID)));
+    const employeeDetails = await fetchEmployeeDetails(empIDs);
+    // Map empID to name and schedule
+    const empIdToDetails = {};
+    employeeDetails.forEach(emp => {
+      empIdToDetails[emp.employeeID] = {
+        name: `${emp.firstName} ${emp.lastName}`,
+        schedule: emp.schedule || {}
+      };
+    });
+    // Merge name and schedule into attendance, and add remarks for LATE/OVERTIME
+    return attendanceArr.map(a => {
+      const details = empIdToDetails[a.empID] || {};
+      let scheduleStr = '';
+      let remarks = '';
+      let schedStart = '', schedEnd = '';
+      if (details.schedule && a.date) {
+        // Get day of week from date
+        const dayOfWeek = new Date(a.date).toLocaleDateString('en-US', { weekday: 'long' });
+        const sched = details.schedule[dayOfWeek];
+        if (sched && sched.start && sched.end) {
+          scheduleStr = `${sched.start} - ${sched.end}`;
+          schedStart = sched.start;
+          schedEnd = sched.end;
+        }
+      }
+      // Parse times for logic
+      if (schedStart && schedEnd && a.time) {
+        // Convert to minutes for comparison
+        const toMinutes = t => {
+          const [h, m] = t.split(":").map(Number);
+          return h * 60 + m;
+        };
+        const startMins = toMinutes(schedStart);
+        const endMins = toMinutes(schedEnd);
+        const halfTimeMins = startMins + (endMins - startMins) / 2;
+        const entryMins = toMinutes(a.time);
+        if (entryMins > startMins && entryMins <= halfTimeMins) {
+          remarks = 'LATE';
+        } else if (entryMins > halfTimeMins && entryMins < endMins) {
+          remarks = 'UNDERTIME';
+        } else if (entryMins >= endMins) {
+          remarks = 'OVERTIME';
+        } else {
+          remarks = '';
+        }
+      }
+      return {
+        ...a,
+        name: details.name || '',
+        schedule: scheduleStr,
+        remarks
+      };
+    });
+  };
+
+  // Send attendance data to backend and update local state
+  const sendAttendanceToServer = async (data) => {
+    try {
+      const response = await fetch("/api/attendance/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data })
+      });
+      if (!response.ok) throw new Error("Failed to import attendance data");
+      // Enrich with names and schedule after import
+      const enriched = await enrichAttendanceWithNamesAndSchedule(data);
+      setAttendanceData(enriched); // Update local state for UI
+      alert("Attendance data imported successfully.");
+    } catch (err) {
+      alert("Error importing attendance data: " + err.message);
+    }
+  };
+
+  // Helper to check if a date is within the range
+  const isWithinDateRange = (dateStr) => {
+    if (!dateStr) return false;
+    if (!startDate && !endDate) return true;
+    const entryDate = new Date(dateStr);
+    if (isNaN(entryDate)) return false;
+    if (startDate && entryDate < new Date(startDate)) return false;
+    if (endDate && entryDate > new Date(endDate)) return false;
+    return true;
+  };
+
+  // Filtered attendance data by empID or name and date range
+  const filteredAttendance = attendanceData.filter(entry => {
+    const empIdMatch = entry.empID?.toLowerCase().includes(search.toLowerCase());
+    const nameMatch = entry.name?.toLowerCase().includes(search.toLowerCase());
+    const dateMatch = isWithinDateRange(entry.date);
+    return (empIdMatch || nameMatch) && dateMatch;
+  });
+
+  // Pagination logic
+  const totalRows = filteredAttendance.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage);
+  const paginatedAttendance = filteredAttendance.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  // Pagination controls
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 1) return pages;
+    // Always show 2 preceding, current, and 2 succeeding
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, currentPage + 2);
+    // Adjust if at start or end
+    if (currentPage <= 2) {
+      end = Math.min(totalPages, 5);
+    }
+    if (currentPage >= totalPages - 1) {
+      start = Math.max(1, totalPages - 4);
+    }
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  };
+
+  const goToPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  // Reset page to 1 when search or date filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, startDate, endDate]);
+
+  // On mount, fetch attendance data from backend if available
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        const response = await fetch("/api/attendance");
+        if (!response.ok) throw new Error("Failed to fetch attendance data");
+        const data = await response.json();
+        // Enrich with names and schedule for display
+        // Use a local function to avoid dependency warning
+        const enrich = async (attendanceArr) => {
+          const empIDs = Array.from(new Set(attendanceArr.map(a => a.empID)));
+          const employeeDetails = await fetchEmployeeDetails(empIDs);
+          const empIdToDetails = {};
+          employeeDetails.forEach(emp => {
+            empIdToDetails[emp.employeeID] = {
+              name: `${emp.firstName} ${emp.lastName}`,
+              schedule: emp.schedule || {}
+            };
+          });
+          return attendanceArr.map(a => {
+            const details = empIdToDetails[a.empID] || {};
+            let scheduleStr = '';
+            let remarks = '';
+            let schedStart = '', schedEnd = '';
+            if (details.schedule && a.date) {
+              const dayOfWeek = new Date(a.date).toLocaleDateString('en-US', { weekday: 'long' });
+              const sched = details.schedule[dayOfWeek];
+              if (sched && sched.start && sched.end) {
+                scheduleStr = `${sched.start} - ${sched.end}`;
+                schedStart = sched.start;
+                schedEnd = sched.end;
+              }
+            }
+            if (schedStart && schedEnd && a.time) {
+              const toMinutes = t => {
+                const [h, m] = t.split(":").map(Number);
+                return h * 60 + m;
+              };
+              const startMins = toMinutes(schedStart);
+              const endMins = toMinutes(schedEnd);
+              const halfTimeMins = startMins + (endMins - startMins) / 2;
+              const entryMins = toMinutes(a.time);
+              if (entryMins > startMins && entryMins <= halfTimeMins) {
+                remarks = 'LATE';
+              } else if (entryMins > halfTimeMins && entryMins < endMins) {
+                remarks = 'UNDERTIME';
+              } else if (entryMins >= endMins) {
+                remarks = 'OVERTIME';
+              } else {
+                remarks = '';
+              }
+            }
+            return {
+              ...a,
+              name: details.name || '',
+              schedule: scheduleStr,
+              remarks
+            };
+          });
+        };
+        const enriched = await enrich(data);
+        setAttendanceData(enriched);
       } catch (err) {
-        alert("Failed to parse Excel file. Please check the file format.\n" + err);
-        console.error("Excel import error:", err);
+        // Optionally handle error
       }
     };
-    reader.readAsBinaryString(file);
-  };
+    fetchAttendance();
+  }, []);
 
   return (
     <>
       <div className="adminviewattendance-banner">
-        <h1 className="dashboard-banner-title">ADMIN VIEW ATTENDANCE</h1>
+        <h1 className="dashboard-banner-title">ATTENDANCE MANAGEMENT</h1>
       </div>
-      {/* Import Excel Button */}
-      <div className="adminviewattendance-import-btn-container">
-        <button
-          onClick={() => fileInputRef.current && fileInputRef.current.click()}
-          style={{ padding: "8px 18px", fontWeight: 600, background: "#2583d8", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-        >
-          Import Excel
-        </button>
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          ref={fileInputRef}
-          style={{ display: "none" }}
-          onChange={handleImport}
-        />
+      <div className="adminviewattendance-import-searchbar-row">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <div className="adminviewattendance-import-btn-container">
+            <button
+              onClick={() => fileInputRef.current && fileInputRef.current.click()}
+              style={{ padding: "8px 18px", fontWeight: 600, background: "#2583d8", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
+            >
+              Import File
+            </button>
+            <input
+              type="file"
+              accept=".xlsx, .xls, .txt"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleImport}
+            />
+          </div>
+          <div className="adminviewattendance-searchbar" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <input
+              className="adminviewattendance-input"
+              type="text"
+              placeholder="Search by Employee ID or Name..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <input
+              className="adminviewattendance-input"
+              type="date"
+              value={startDate}
+              onChange={e => setStartDate(e.target.value)}
+              placeholder="Start Date"
+              style={{ minWidth: 0 }}
+            />
+            <span style={{ color: '#888', fontWeight: 500 }}>to</span>
+            <input
+              className="adminviewattendance-input"
+              type="date"
+              value={endDate}
+              onChange={e => setEndDate(e.target.value)}
+              placeholder="End Date"
+              style={{ minWidth: 0 }}
+            />
+            <button
+              className="adminviewattendance-reset-btn"
+              title="Reset filters"
+              onClick={() => {
+                setSearch("");
+                setStartDate("");
+                setEndDate("");
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2583d8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+          </div>
+        </div>
+        <div className="adminviewattendance-pagination-bar" style={{ marginLeft: 'auto' }}>
+          <button onClick={() => goToPage(Math.max(1, currentPage - 10))} disabled={currentPage === 1} className="adminviewattendance-page-btn">{'<<'}</button>
+          <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="adminviewattendance-page-btn">{'<'}</button>
+          {getPageNumbers().map(page => (
+            <button
+              key={page}
+              onClick={() => goToPage(page)}
+              className={`adminviewattendance-page-btn${page === currentPage ? ' adminviewattendance-page-current' : ''}`}
+              disabled={page === currentPage}
+            >
+              {page}
+            </button>
+          ))}
+          <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages || totalPages === 0} className="adminviewattendance-page-btn">{'>'}</button>
+          <button onClick={() => goToPage(Math.min(totalPages, currentPage + 10))} disabled={currentPage === totalPages || totalPages === 0} className="adminviewattendance-page-btn">{'>>'}</button>
+        </div>
       </div>
       <div className="adminviewattendance-container">
-        <table className="adminviewattendance-table">
-          <thead>
-            <tr>
-              <th>Employee ID</th>
-              <th>Date</th>
-              <th>Employee</th>
-              <th>Work Schedule</th>
-              <th>Time In</th>
-              <th>Time Out</th>
-              <th>Remarks</th>
-            </tr>
-          </thead>
-          <tbody>
-            {attendanceData.map((entry, index) => (
-              <tr key={index}>
-                <td>{entry.id}</td>
-                <td>{entry.date}</td>
-                <td>{entry.name}</td>
-                <td>{entry.schedule}</td>
-                <td>{entry.timeIn}</td>
-                <td>{entry.timeOut}</td>
-                <td>{entry.remarks}</td>
+        <div className="table-container">
+          <table className="adminviewattendance-table">
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Schedule</th>
+                <th>Date</th>
+                <th>Time in/Out</th>
+                <th>Remarks</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {paginatedAttendance.length === 0 ? (
+                <tr><td colSpan={6} className="no-employees">No records found.</td></tr>
+              ) : (
+                paginatedAttendance.map((entry, idx) => (
+                  <tr key={idx}>
+                    <td>{entry.empID}</td>
+                    <td>{entry.name}</td>
+                    <td>{entry.schedule}</td>
+                    <td>{entry.date}</td>
+                    <td>{entry.time}</td>
+                    <td>{entry.remarks}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

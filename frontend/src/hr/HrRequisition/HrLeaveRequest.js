@@ -3,8 +3,7 @@ import "./HrLeaveRequest.css";
 
 const HrLeaveRequest = () => {
   const [formData, setFormData] = useState({
-    leaveType: "",
-    purpose: "",
+    category: "",
     startDate: "",
     endDate: "",
     time: "",
@@ -67,8 +66,7 @@ const HrLeaveRequest = () => {
         await fetchCredits();
         alert("Leave request submitted successfully!");
         setFormData({
-          leaveType: "",
-          purpose: "",
+          category: "",
           startDate: "",
           endDate: "",
           time: "",
@@ -91,7 +89,7 @@ const HrLeaveRequest = () => {
         <h1 className="leave-request-banner-title">LEAVE REQUEST</h1>
       </div>
       <div className="admin-leave-request-content">
-        <h1>HR Leave Request</h1>
+        <h1>Leave Request</h1>
         <div style={{ display: "flex", gap: "30px", margin: "20px 0" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span role="img" aria-label="Vacation">🌴</span>
@@ -105,29 +103,16 @@ const HrLeaveRequest = () => {
         <form onSubmit={handleSubmit}>
           <div className="hr-leave-request-row">
             <div className="hr-leave-request-field">
-              <label htmlFor="leaveType">Leave Type</label>
+              <label htmlFor="category">Category</label>
               <select
-                name="leaveType"
-                id="leaveType"
-                value={formData.leaveType}
+                name="category"
+                id="category"
+                value={formData.category}
                 onChange={handleChange}
               >
-                <option value="">Leave Type</option>
+                <option value="">Category</option>
                 <option value="Sick Leave">Sick Leave</option>
                 <option value="Vacation Leave">Vacation Leave</option>
-              </select>
-            </div>
-            <div className="hr-leave-request-field">
-              <label htmlFor="purpose">Purpose</label>
-              <select
-                name="purpose"
-                id="purpose"
-                value={formData.purpose}
-                onChange={handleChange}
-              >
-                <option value="">Purpose</option>
-                <option value="Medical">Medical</option>
-                <option value="Personal">Personal</option>
               </select>
             </div>
             <div className="hr-leave-request-field">

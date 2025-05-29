@@ -13,7 +13,7 @@ const HrPayslip = () => {
       <div className="hr-payslip-main">
         <h1 className="hr-payslip-title">Payslip</h1>
         <p>Payslip information per-user</p>
-        {/* Add payroll management features here */}
+        {/* Add payslip info here */}
       </div>
     </>
   );

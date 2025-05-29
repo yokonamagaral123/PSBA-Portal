@@ -658,3 +658,9 @@
   background: #1251a3;
 }
 
+.admindashboard-view-calendar-btn-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ 
+}

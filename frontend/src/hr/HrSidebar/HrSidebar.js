@@ -93,6 +93,14 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
                   Leave Request
                 </Link>
               </li>
+               <li>
+                <Link
+                  to="/hr-official-business"
+                  className={isActive("/hr-official-business") ? "active" : ""}
+                >
+                  Official Business
+                </Link>
+              </li>
               <li>
                 <Link
                   to="/hr-requisition-history"
@@ -101,6 +109,7 @@ const HrSidebar = ({ isMinimized, toggleSidebar }) => {
                   Requisition History
                 </Link>
               </li>
+             
             </ul>
           )}
         </li>

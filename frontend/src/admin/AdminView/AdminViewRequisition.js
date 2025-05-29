@@ -89,13 +89,13 @@ const AdminViewRequisition = () => {
       (req.type && req.type.toLowerCase().includes(term)) ||
       (req.department && req.department.toLowerCase().includes(term)) ||
       (req.leaveType && req.leaveType.toLowerCase().includes(term)) ||
-      (req.purpose && req.purpose.toLowerCase().includes(term)) ||
       (req.reason && req.reason.toLowerCase().includes(term)) ||
       (req.requestedByName && req.requestedByName.toLowerCase().includes(term)) ||
       (req.status && req.status.toLowerCase().includes(term)) ||
       (req.remarks && req.remarks.toLowerCase().includes(term)) ||
       (req.requestedByEmployeeID && req.requestedByEmployeeID.toLowerCase().includes(term)) ||
-      (req.requestedBy && req.requestedBy.employeeID && req.requestedBy.employeeID.toLowerCase().includes(term))
+      (req.requestedBy && req.requestedBy.employeeID && req.requestedBy.employeeID.toLowerCase().includes(term)) ||
+      (req.category && req.category.toLowerCase().includes(term))
     );
   });
 
@@ -131,8 +131,7 @@ const AdminViewRequisition = () => {
               <th>Employee ID</th>
               <th>Full Name</th>
               <th>Type</th>
-              <th>Department/Leave Type</th>
-              <th>Purpose</th>
+              <th>Category</th>
               <th>Reason</th>
               <th>Start Date</th>
               <th>End Date</th>
@@ -140,7 +139,7 @@ const AdminViewRequisition = () => {
               <th>Day Type</th>
               <th>Leave Payment Status</th>
               <th>Remarks</th>
-              <th>HR Approval Status</th>
+              <th>Supervisor Approval Status</th>
               <th>Admin Approval Status</th>
               <th>Action</th>
               <th>Last Modified</th>
@@ -157,8 +156,7 @@ const AdminViewRequisition = () => {
                     <td>{req.requestedByEmployeeID || (req.requestedBy && req.requestedBy.employeeID) || ''}</td>
                     <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>
                     <td>{req.type}</td>
-                    <td>{req.department || req.leaveType}</td>
-                    <td>{req.purpose}</td>
+                    <td>{req.category}</td>
                     <td>{req.reason}</td>
                     <td>{req.startDate ? new Date(req.startDate).toLocaleDateString() : ''}</td>
                     <td>{req.endDate ? new Date(req.endDate).toLocaleDateString() : ''}</td>

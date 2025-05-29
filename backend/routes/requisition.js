@@ -11,7 +11,7 @@ router.post('/create', auth, async (req, res) => {
   console.log("User from token:", req.user);
   // ...rest of your code
   try {
-    const { type, department, leaveType, purpose, startDate, endDate, time, reason, leavePaymentStatus, dayType } = req.body;
+    const { type, department, category, startDate, endDate, time, reason, leavePaymentStatus, dayType } = req.body;
     const user = req.user;
 
     if (!user) {
@@ -21,14 +21,12 @@ router.post('/create', auth, async (req, res) => {
     // Fetch employee details for the name
     const employee = await EmployeeDetails.findOne({ email: user.email });
     const requestedByName = employee
-      ? `${employee.firstName} ${employee.lastName}`
+      ? `${employee.firstName} ${employee.lastName}`  
       : user.email; // fallback
 
     const requisition = new Requisition({
       type,
-      department,
-      leaveType,
-      purpose,
+      category, // ensure category is saved
       startDate,
       endDate,
       time,

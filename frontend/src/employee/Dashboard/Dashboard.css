@@ -572,3 +572,11 @@
   background: #ffeaea;
   color: #b71c1c;
 }
+
+/* Center the View Calendar button row */
+.employee-dashboard-view-calendar-btn-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ 
+}

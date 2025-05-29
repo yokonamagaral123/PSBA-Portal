@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 const EmployeeDetails = require("../models/EmployeeDetails");
 const User = require("../models/User");
 
@@ -17,6 +18,8 @@ router.get("/user-count", async (req, res) => {
 
 // Create employee route
 router.post("/create-employee", async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     // Debug: Log the incoming request body
     console.log("Received employee data:", req.body);
@@ -72,22 +75,28 @@ router.post("/create-employee", async (req, res) => {
       !employeeID ||
       !temporaryPassword
     ) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ message: "All required fields must be provided." });
     }
 
     // Check for duplicate keys in EmployeeDetails
     const existingEmployee = await EmployeeDetails.findOne({
       $or: [{ email }, { employeeID }],
-    });
+    }).session(session);
     if (existingEmployee) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({
         message: "Employee with the same email or employee ID already exists.",
       });
     }
 
     // Check for duplicate keys in User collection
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).session(session);
     if (existingUser) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({
         message: "A user with the same email already exists.",
       });
@@ -102,7 +111,7 @@ router.post("/create-employee", async (req, res) => {
       password: hashedPassword,
       role: role || "employee", // Default role is 'employee'
     });
-    await user.save();
+    await user.save({ session });
 
     // Save to EmployeeDetails collection
     const employeeDetails = new EmployeeDetails({
@@ -142,17 +151,33 @@ router.post("/create-employee", async (req, res) => {
       schoolYearTo,
       yearGraduated,
     });
-    await employeeDetails.save();
+    await employeeDetails.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(201).json({ message: "Employee account created successfully!" });
   } catch (error) {
-    console.error("Error creating employee account:", error);
-
+    await session.abortTransaction();
+    session.endSession();
     // Handle duplicate key errors
     if (error.code === 11000) {
+      // Find which field is duplicated
+      let duplicateField = 'unknown';
+      if (error.keyPattern) {
+        if (error.keyPattern.email) duplicateField = 'email';
+        else if (error.keyPattern.employeeID) duplicateField = 'employeeID';
+      } else if (error.keyValue) {
+        if (error.keyValue.email) duplicateField = 'email';
+        else if (error.keyValue.employeeID) duplicateField = 'employeeID';
+      }
+      // Log the full error for debugging
+      console.error('Duplicate key error:', error);
+      // If still unknown, return the full error object for debugging
       return res.status(400).json({
-        message: "Duplicate key error",
-        details: error.keyValue, // This will show which field caused the error
+        message: `Duplicate ${duplicateField} error`,
+        details: error.keyValue,
+        fullError: error
       });
     }
 
@@ -164,7 +189,9 @@ router.post("/create-employee", async (req, res) => {
       });
     }
 
-    res.status(500).json({ message: "Failed to create employee account." });
+    // Log the error for debugging
+    console.error("Create employee error:", error);
+    res.status(500).json({ message: "Failed to create employee account.", error: error.message });
   }
 });
 

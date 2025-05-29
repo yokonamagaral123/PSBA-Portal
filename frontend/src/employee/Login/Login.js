@@ -117,7 +117,7 @@ const Login = ({ setUserRole }) => {
               onChange={(e) => setLoginType(e.target.value)}
             >
               <option value="employee">Employee</option>
-              <option value="hr">HR</option>
+              <option value="hr">Supervisor</option>
             </select>
           </div>
         )}
