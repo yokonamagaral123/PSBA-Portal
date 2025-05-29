@@ -19,17 +19,13 @@ const BasicSalary = () => {
   };
 
   const handleSave = async () => {
-    // Calculate derived rates based on employment type
+    // Calculate derived rates for both Full-time and Part-time using 261 days/year
     let daily, hourly, perMinute;
-    if (employee && employee.employmentType === 'Part-time') {
-      // Daily pay computation
+    if (employee) {
       daily = (basicSalary * 12 / 261).toFixed(2);
-    } else {
-      // Default to Full-time computation
-      daily = (basicSalary * 12 / 365).toFixed(2);
+      hourly = (daily / 8).toFixed(2);
+      perMinute = (hourly / 60).toFixed(2);
     }
-    hourly = (daily / 8).toFixed(2);
-    perMinute = (hourly / 60).toFixed(2);
 
     setDailyRate(daily);
     setHourlyRate(hourly);

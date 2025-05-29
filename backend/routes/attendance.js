@@ -17,11 +17,22 @@ router.post('/import', async (req, res) => {
   }
 });
 
-// GET /api/attendance - Get the latest attendance data
+// GET /api/attendance - Get attendance data, optionally filtered by empID and date range
 router.get('/', async (req, res) => {
   try {
+    const { empID, start, end } = req.query;
     const record = await Attendance.findOne();
-    res.json(record ? record.data : []);
+    let data = record ? record.data : [];
+    if (empID) {
+      data = data.filter(a => a.empID === empID);
+    }
+    if (start) {
+      data = data.filter(a => a.date >= start);
+    }
+    if (end) {
+      data = data.filter(a => a.date <= end);
+    }
+    res.json(data);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
