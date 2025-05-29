@@ -115,19 +115,28 @@ const PayrollComputation = () => {
   }
 
   // Helper for Pag-IBIG computation
-  function getPagIbigContributions() {
-    // Both EE and ER are 100
-    return { ee: '100.00', er: '100.00' };
+  function getPagIbigContributions(payPeriod) {
+    // Pag-IBIG EE is 0 on 15th cutoff, 200 on 30th cutoff (EE only)
+    if (payPeriod.match(/1–15|1-15/)) {
+      return { ee: '0.00', er: '0.00' };
+    } else if (payPeriod.match(/16–3[01]|16-3[01]|16–30|16-30/)) {
+      return { ee: '200.00', er: '100.00' };
+    }
+    // Default for custom
+    return { ee: '200.00', er: '100.00' };
   }
 
-  // Helper to sum government deductions
+  // Helper to sum government deductions (dynamic for cutoff)
   function getTotalDeductions(form) {
-    // Only sum numeric values, treat empty as 0
-    const fields = [
-      form.sssEE, form.sssER, form.sssEC,
-      form.philHealthEE, form.philHealthER,
-      form.pagIbigEE, form.pagIbigER
-    ];
+    // Only include employee share in deductions
+    let fields = [form.sssEE];
+    if (payPeriod.match(/1–15|1-15/)) {
+      // 15th cut off: include PhilHealth EE only
+      fields = fields.concat([form.philHealthEE]);
+    } else if (payPeriod.match(/16–3[01]|16-3[01]|16–30|16-30/)) {
+      // 30th cut off: include Pag-IBIG EE only
+      fields = fields.concat([form.pagIbigEE]);
+    }
     return fields.reduce((sum, val) => sum + (parseFloat(val) || 0), 0).toFixed(2);
   }
 
@@ -138,21 +147,9 @@ const PayrollComputation = () => {
         try {
           const response = await axios.get(`/api/salary/${employee.employeeID}`);
           if (response.data && response.data.basicSalary) {
-            const sss = getSSSContributions(response.data.basicSalary);
-            const philhealth = getPhilHealthContributions(response.data.basicSalary);
-            const pagibig = getPagIbigContributions();
             setForm(prev => ({
               ...prev,
-              basicPay: response.data.basicSalary,
-              sssEE: sss.sssEE + sss.mpfEE,
-              sssER: sss.sssER + sss.mpfER,
-              sssEC: sss.sssEC,
-              mpfEE: sss.mpfEE,
-              mpfER: sss.mpfER,
-              philHealthEE: philhealth.ee,
-              philHealthER: philhealth.er,
-              pagIbigEE: pagibig.ee,
-              pagIbigER: pagibig.er,
+              basicPay: response.data.basicSalary // always set monthly only here
             }));
             setBasicPay(response.data.basicSalary);
           }
@@ -165,31 +162,41 @@ const PayrollComputation = () => {
   }, [employee]);
 
   useEffect(() => {
-    // Auto-update SSS and PhilHealth fields if basicPay changes
+    // SSS EE should be based on monthly basic pay, then divided by 2 per cutoff
     if (basicPay) {
-      const sss = getSSSContributions(Number(basicPay));
+      const periodPay = parseFloat(getPeriodBasicPay());
+      // Get SSS based on monthly basic pay
+      const sssMonthly = getSSSContributions(parseFloat(basicPay));
+      // Divide SSS EE by 2 for per cutoff
+      const sssEEPerCutoff = (parseFloat(sssMonthly.sssEE) / 2).toFixed(2);
+      const sssERPerCutoff = (parseFloat(sssMonthly.sssER) / 2).toFixed(2);
+      const sssECPerCutoff = (parseFloat(sssMonthly.sssEC) / 2).toFixed(2);
+      const mpfEEPerCutoff = (parseFloat(sssMonthly.mpfEE) / 2).toFixed(2);
+      const mpfERPerCutoff = (parseFloat(sssMonthly.mpfER) / 2).toFixed(2);
+      // Add MPF EE to SSS EE, and MPF ER to SSS ER for output
+      const sssEEWithMPF = (parseFloat(sssEEPerCutoff) + parseFloat(mpfEEPerCutoff)).toFixed(2);
+      const sssERWithMPF = (parseFloat(sssERPerCutoff) + parseFloat(mpfERPerCutoff)).toFixed(2);
       const philhealth = getPhilHealthContributions(basicPay);
-      const pagibig = getPagIbigContributions();
-      const totalDeductions = getTotalDeductions({
-        sssEE: sss.sssEE + sss.mpfEE,
-        sssER: sss.sssER + sss.mpfER,
-        sssEC: sss.sssEC,
-        philHealthEE: philhealth.ee,
-        philHealthER: philhealth.er,
-        pagIbigEE: pagibig.ee,
-        pagIbigER: pagibig.er,
-      });
+      const pagibig = getPagIbigContributions(payPeriod);
+      let fields = [sssEEWithMPF];
+      if (payPeriod.match(/1–15|1-15/)) {
+        fields = fields.concat([philhealth.ee]);
+      } else if (payPeriod.match(/16–3[01]|16-3[01]|16–30|16-30/)) {
+        fields = fields.concat([pagibig.ee]);
+      }
+      const totalDeductions = fields.reduce((sum, val) => sum + (parseFloat(val) || 0), 0).toFixed(2);
       const withholdingTax = calculateWithholdingTax({
-        basicPay: basicPay,
+        basicPay: periodPay,
         totalDeductions: totalDeductions
       });
       setForm(prev => ({
         ...prev,
-        sssEE: sss.sssEE + sss.mpfEE,
-        sssER: sss.sssER + sss.mpfER,
-        sssEC: sss.sssEC,
-        mpfEE: sss.mpfEE,
-        mpfER: sss.mpfER,
+        basicPay: prev.basicPay, // keep monthly for display
+        sssEE: sssEEWithMPF, // SSS EE + MPF EE
+        sssER: sssERWithMPF, // SSS ER + MPF ER
+        sssEC: sssECPerCutoff,
+        mpfEE: mpfEEPerCutoff,
+        mpfER: mpfERPerCutoff,
         philHealthEE: philhealth.ee,
         philHealthER: philhealth.er,
         pagIbigEE: pagibig.ee,
@@ -198,16 +205,71 @@ const PayrollComputation = () => {
         withholdingTax: withholdingTax,
       }));
     }
-  }, [basicPay]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [basicPay, payPeriod]);
 
   // Pay period options for filter
   const payPeriodOptions = [
+    // 2025
     'May 1–15, 2025',
     'May 16–31, 2025',
     'June 1–15, 2025',
     'June 16–30, 2025',
+    'July 1–15, 2025',
+    'July 16–31, 2025',
+    'August 1–15, 2025',
+    'August 16–31, 2025',
+    'September 1–15, 2025',
+    'September 16–30, 2025',
+    'October 1–15, 2025',
+    'October 16–31, 2025',
+    'November 1–15, 2025',
+    'November 16–30, 2025',
+    'December 1–15, 2025',
+    'December 16–31, 2025',
+    // 2026
+    'January 1–15, 2026',
+    'January 16–31, 2026',
+    'February 1–15, 2026',
+    'February 16–28, 2026',
+    'March 1–15, 2026',
+    'March 16–31, 2026',
+    'April 1–15, 2026',
+    'April 16–30, 2026',
+    'May 1–15, 2026',
+    'May 16–31, 2026',
+    'June 1–15, 2026',
+    'June 16–30, 2026',
+    'July 1–15, 2026',
+    'July 16–31, 2026',
+    'August 1–15, 2026',
+    'August 16–31, 2026',
+    'September 1–15, 2026',
+    'September 16–30, 2026',
+    'October 1–15, 2026',
+    'October 16–31, 2026',
+    'November 1–15, 2026',
+    'November 16–30, 2026',
+    'December 1–15, 2026',
+    'December 16–31, 2026',
     'Custom...'
   ];
+
+  // Helper to get pay for the selected period
+  function getPeriodBasicPay() {
+    if (!form.basicPay) return 0;
+    // Match any pay period containing 1–15, 1-15, 16–31, 16-31, 16–30, or 16-30 (even with month/year)
+    if (
+      payPeriod.match(/1[–-]15/) ||
+      payPeriod.match(/16[–-]3[01]/) ||
+      payPeriod.match(/16[–-]30/)
+    ) {
+      // Semi-monthly: 1st-15th or 16th-end
+      return (parseFloat(form.basicPay) / 2).toFixed(2);
+    }
+    // If custom, default to full monthly unless user overrides
+    return parseFloat(form.basicPay).toFixed(2);
+  }
 
   return (
     <div className="payroll-computation-layout">
@@ -247,15 +309,41 @@ const PayrollComputation = () => {
           </div>
         )}
         <div className="payslip-card">
+          <div className="payslip-row payslip-section-title" style={{background:'#f5f5f5', fontWeight:700, fontSize:'1.1em'}}>Payroll Summary</div>
+          <div className="payslip-row">
+            <span>{
+              payPeriod.match(/1–15|1-15/)
+                ? '15th cut off'
+                : payPeriod.match(/16–3[01]|16-3[01]|16–30|16-30/)
+                ? '30th cut off'
+                : 'Pay for Period'
+            }</span>
+            <span><input type="number" name="periodPay" value={getPeriodBasicPay()} readOnly className="payslip-input" /></span>
+          </div>
           <div className="payslip-row">
             <span>Monthly Basic Pay</span>
             <span><input type="number" name="basicPay" value={form.basicPay} readOnly className="payslip-input" /></span>
           </div>
-          <div className="payslip-row payslip-section-title">Government Deductions</div>
+
+          <div className="payslip-row payslip-section-title" style={{marginTop:16}}>Employee Deductions (to be deducted from Net Pay)</div>
           <div className="payslip-row">
             <span>SSS EE</span>
             <span><input type="number" name="sssEE" value={form.sssEE} readOnly className="payslip-input" /></span>
           </div>
+          <div className="payslip-row">
+            <span>PhilHealth EE</span>
+            <span><input type="number" name="philHealthEE" value={payPeriod.match(/16–3[01]|16-3[01]|16–30|16-30/) ? 0 : form.philHealthEE} readOnly className="payslip-input" /></span>
+          </div>
+          <div className="payslip-row">
+            <span>Pag-IBIG EE</span>
+            <span><input type="number" name="pagIbigEE" value={payPeriod.match(/1–15|1-15/) ? 0 : form.pagIbigEE} readOnly className="payslip-input" /></span>
+          </div>
+          <div className="payslip-row payslip-total" style={{background:'#ffeaea', fontWeight:600}}>
+            <span>Total Employee Deductions</span>
+            <span><input type="number" name="totalDeductions" value={getTotalDeductions(form)} readOnly className="payslip-input" /></span>
+          </div>
+
+          <div className="payslip-row payslip-section-title" style={{marginTop:16}}>Employer Contributions (for reference only, not deducted)</div>
           <div className="payslip-row">
             <span>SSS ER</span>
             <span><input type="number" name="sssER" value={form.sssER || ''} readOnly className="payslip-input" /></span>
@@ -265,41 +353,36 @@ const PayrollComputation = () => {
             <span><input type="number" name="sssEC" value={form.sssEC || ''} readOnly className="payslip-input" /></span>
           </div>
           <div className="payslip-row">
-            <span>PhilHealth EE</span>
-            <span><input type="number" name="philHealthEE" value={form.philHealthEE} readOnly className="payslip-input" /></span>
-          </div>
-          <div className="payslip-row">
             <span>PhilHealth ER</span>
-            <span><input type="number" name="philHealthER" value={form.philHealthER} readOnly className="payslip-input" /></span>
-          </div>
-          <div className="payslip-row">
-            <span>Pag-IBIG EE</span>
-            <span><input type="number" name="pagIbigEE" value={form.pagIbigEE} readOnly className="payslip-input" /></span>
+            <span><input type="number" name="philHealthER" value={payPeriod.match(/16–3[01]|16-3[01]|16–30|16-30/) ? 0 : form.philHealthER} readOnly className="payslip-input" /></span>
           </div>
           <div className="payslip-row">
             <span>Pag-IBIG ER</span>
-            <span><input type="number" name="pagIbigER" value={form.pagIbigER} readOnly className="payslip-input" /></span>
+            <span><input type="number" name="pagIbigER" value={payPeriod.match(/1–15|1-15/) ? 0 : form.pagIbigER} readOnly className="payslip-input" /></span>
           </div>
-          <div className="payslip-row payslip-total">
-            <span>Total Deductions</span>
-            <span><input type="number" name="totalDeductions" value={form.totalDeductions} readOnly className="payslip-input" /></span>
-          </div>
+
+          <div className="payslip-row payslip-section-title" style={{marginTop:16}}>Tax Computation</div>
           <div className="payslip-row">
             <span>Taxable Income</span>
-            <span><input type="number" name="taxableIncome" value={(parseFloat(form.basicPay || 0) - parseFloat(form.totalDeductions || 0)).toFixed(2)} readOnly className="payslip-input" /></span>
+            <span>
+              <input type="number" name="taxableIncome" value={(getPeriodBasicPay() - parseFloat(getTotalDeductions(form) || 0)).toFixed(2)} readOnly className="payslip-input" />
+              <span style={{ marginLeft: 10, color: (getPeriodBasicPay() - parseFloat(getTotalDeductions(form) || 0)) > 10417 ? 'green' : 'gray', fontWeight: 600 }}>
+                {(getPeriodBasicPay() - parseFloat(getTotalDeductions(form) || 0)) > 10417 ? 'TAXABLE' : 'NOT TAXABLE'}
+              </span>
+            </span>
           </div>
-          <div className="payslip-row payslip-section-title">Tax Computation</div>
           <div className="payslip-row">
             <span>Withholding Tax</span>
             <span><input type="number" name="withholdingTax" value={form.withholdingTax} readOnly className="payslip-input" /></span>
           </div>
-          <div className="payslip-row payslip-total">
-            <span>Total Deduction</span>
-            <span><input type="number" name="totalDeduction" value={form.withholdingTax} readOnly className="payslip-input" /></span>
+          <div className="payslip-row payslip-total" style={{background:'#eaf7ff', fontWeight:600}}>
+            <span>Total Deduction (Employee Deductions + Tax)</span>
+            <span><input type="number" name="totalDeduction" value={form.withholdingTax ? (parseFloat(getTotalDeductions(form)) + parseFloat(form.withholdingTax)).toFixed(2) : getTotalDeductions(form)} readOnly className="payslip-input" /></span>
           </div>
-          <div className="payslip-row payslip-net">
+
+          <div className="payslip-row payslip-net" style={{background:'#eaffea', fontWeight:700}}>
             <span>Net Pay</span>
-            <span><input type="number" name="netPay" value={(parseFloat(form.basicPay || 0) - parseFloat(form.totalDeductions || 0) - parseFloat(form.withholdingTax || 0)).toFixed(2)} readOnly className="payslip-input payslip-net-input" /></span>
+            <span><input type="number" name="netPay" value={(getPeriodBasicPay() - parseFloat(getTotalDeductions(form) || 0) - parseFloat(form.withholdingTax || 0)).toFixed(2)} readOnly className="payslip-input payslip-net-input" /></span>
           </div>
         </div>
       </div>

@@ -2,6 +2,13 @@ import React, { useRef, useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./AdminViewAttendance.css";
 
+// Helper to convert HH:MM or HH:MM:SS to minutes
+const toMinutes = t => {
+  if (!t) return 0;
+  const [h, m, s] = t.split(":").map(Number);
+  return h * 60 + m + (s ? s / 60 : 0);
+};
+
 const AdminViewAttendance = () => {
   const fileInputRef = useRef();
   const [attendanceData, setAttendanceData] = useState([]);
@@ -92,6 +99,75 @@ const AdminViewAttendance = () => {
     }
   };
 
+  // Helper: group by empID+date, assign remarks only to earliest/latest per day
+  const groupAndRemarkAttendance = (attendanceArr, empIdToDetails) => {
+    // Group attendance by empID + date
+    const grouped = {};
+    attendanceArr.forEach(a => {
+      const key = `${a.empID}_${a.date}`;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(a);
+    });
+    // Build enriched array
+    let enriched = [];
+    Object.values(grouped).forEach(records => {
+      if (!records.length) return;
+      const a = records[0];
+      const details = empIdToDetails[a.empID] || {};
+      let scheduleStr = '', schedStart = '', schedEnd = '';
+      if (details.schedule && a.date) {
+        const dayOfWeek = new Date(a.date).toLocaleDateString('en-US', { weekday: 'long' });
+        const sched = details.schedule[dayOfWeek];
+        if (sched && sched.start && sched.end) {
+          scheduleStr = `${sched.start} - ${sched.end}`;
+          schedStart = sched.start;
+          schedEnd = sched.end;
+        }
+      }
+      // Sort records by time
+      const sorted = [...records].sort((x, y) => toMinutes(x.time) - toMinutes(y.time));
+      const first = sorted[0];
+      const last = sorted[sorted.length - 1];
+      const startMins = schedStart ? toMinutes(schedStart) : null;
+      const endMins = schedEnd ? toMinutes(schedEnd) : null;
+      // Assign remarks only to earliest and latest
+      sorted.forEach((r, idx) => {
+        let remarks = '';
+        const mins = toMinutes(r.time);
+        if (r === first) {
+          // IN
+          if (startMins !== null) {
+            if (mins <= startMins + 5) {
+              remarks = 'ON TIME';
+            } else {
+              remarks = 'LATE';
+            }
+          }
+        } else if (r === last && sorted.length > 1) {
+          // OUT
+          if (endMins !== null) {
+            if (mins < endMins) {
+              remarks = 'UNDERTIME';
+            } else if (mins <= endMins + 5) {
+              remarks = 'ON TIME';
+            } else if (mins > endMins + 5) {
+              remarks = 'OVERTIME';
+            }
+          }
+        }
+        // All other times: remarks remains ''
+        enriched.push({ ...r, name: details.name || '', schedule: scheduleStr, remarks });
+      });
+    });
+    // Sort by date, empID, time
+    enriched.sort((a, b) => {
+      if (a.date !== b.date) return a.date.localeCompare(b.date);
+      if (a.empID !== b.empID) return a.empID.localeCompare(b.empID);
+      return toMinutes(a.time) - toMinutes(b.time);
+    });
+    return enriched;
+  };
+
   // After importing, fetch names and schedule and merge with attendance data
   const enrichAttendanceWithNamesAndSchedule = async (attendanceArr) => {
     const empIDs = Array.from(new Set(attendanceArr.map(a => a.empID)));
@@ -104,50 +180,7 @@ const AdminViewAttendance = () => {
         schedule: emp.schedule || {}
       };
     });
-    // Merge name and schedule into attendance, and add remarks for LATE/OVERTIME
-    return attendanceArr.map(a => {
-      const details = empIdToDetails[a.empID] || {};
-      let scheduleStr = '';
-      let remarks = '';
-      let schedStart = '', schedEnd = '';
-      if (details.schedule && a.date) {
-        // Get day of week from date
-        const dayOfWeek = new Date(a.date).toLocaleDateString('en-US', { weekday: 'long' });
-        const sched = details.schedule[dayOfWeek];
-        if (sched && sched.start && sched.end) {
-          scheduleStr = `${sched.start} - ${sched.end}`;
-          schedStart = sched.start;
-          schedEnd = sched.end;
-        }
-      }
-      // Parse times for logic
-      if (schedStart && schedEnd && a.time) {
-        // Convert to minutes for comparison
-        const toMinutes = t => {
-          const [h, m] = t.split(":").map(Number);
-          return h * 60 + m;
-        };
-        const startMins = toMinutes(schedStart);
-        const endMins = toMinutes(schedEnd);
-        const halfTimeMins = startMins + (endMins - startMins) / 2;
-        const entryMins = toMinutes(a.time);
-        if (entryMins > startMins && entryMins <= halfTimeMins) {
-          remarks = 'LATE';
-        } else if (entryMins > halfTimeMins && entryMins < endMins) {
-          remarks = 'UNDERTIME';
-        } else if (entryMins >= endMins) {
-          remarks = 'OVERTIME';
-        } else {
-          remarks = '';
-        }
-      }
-      return {
-        ...a,
-        name: details.name || '',
-        schedule: scheduleStr,
-        remarks
-      };
-    });
+    return groupAndRemarkAttendance(attendanceArr, empIdToDetails);
   };
 
   // Send attendance data to backend and update local state
@@ -231,59 +264,16 @@ const AdminViewAttendance = () => {
         if (!response.ok) throw new Error("Failed to fetch attendance data");
         const data = await response.json();
         // Enrich with names and schedule for display
-        // Use a local function to avoid dependency warning
-        const enrich = async (attendanceArr) => {
-          const empIDs = Array.from(new Set(attendanceArr.map(a => a.empID)));
-          const employeeDetails = await fetchEmployeeDetails(empIDs);
-          const empIdToDetails = {};
-          employeeDetails.forEach(emp => {
-            empIdToDetails[emp.employeeID] = {
-              name: `${emp.firstName} ${emp.lastName}`,
-              schedule: emp.schedule || {}
-            };
-          });
-          return attendanceArr.map(a => {
-            const details = empIdToDetails[a.empID] || {};
-            let scheduleStr = '';
-            let remarks = '';
-            let schedStart = '', schedEnd = '';
-            if (details.schedule && a.date) {
-              const dayOfWeek = new Date(a.date).toLocaleDateString('en-US', { weekday: 'long' });
-              const sched = details.schedule[dayOfWeek];
-              if (sched && sched.start && sched.end) {
-                scheduleStr = `${sched.start} - ${sched.end}`;
-                schedStart = sched.start;
-                schedEnd = sched.end;
-              }
-            }
-            if (schedStart && schedEnd && a.time) {
-              const toMinutes = t => {
-                const [h, m] = t.split(":").map(Number);
-                return h * 60 + m;
-              };
-              const startMins = toMinutes(schedStart);
-              const endMins = toMinutes(schedEnd);
-              const halfTimeMins = startMins + (endMins - startMins) / 2;
-              const entryMins = toMinutes(a.time);
-              if (entryMins > startMins && entryMins <= halfTimeMins) {
-                remarks = 'LATE';
-              } else if (entryMins > halfTimeMins && entryMins < endMins) {
-                remarks = 'UNDERTIME';
-              } else if (entryMins >= endMins) {
-                remarks = 'OVERTIME';
-              } else {
-                remarks = '';
-              }
-            }
-            return {
-              ...a,
-              name: details.name || '',
-              schedule: scheduleStr,
-              remarks
-            };
-          });
-        };
-        const enriched = await enrich(data);
+        const empIDs = Array.from(new Set(data.map(a => a.empID)));
+        const employeeDetails = await fetchEmployeeDetails(empIDs);
+        const empIdToDetails = {};
+        employeeDetails.forEach(emp => {
+          empIdToDetails[emp.employeeID] = {
+            name: `${emp.firstName} ${emp.lastName}`,
+            schedule: emp.schedule || {}
+          };
+        });
+        const enriched = groupAndRemarkAttendance(data, empIdToDetails);
         setAttendanceData(enriched);
       } catch (err) {
         // Optionally handle error

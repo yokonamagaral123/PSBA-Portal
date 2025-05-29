@@ -19,10 +19,17 @@ const BasicSalary = () => {
   };
 
   const handleSave = async () => {
-    // Calculate derived rates
-    const daily = (basicSalary / 30).toFixed(2);
-    const hourly = (daily / 8).toFixed(2);
-    const perMinute = (hourly / 60).toFixed(2);
+    // Calculate derived rates based on employment type
+    let daily, hourly, perMinute;
+    if (employee && employee.employmentType === 'Part-time') {
+      // Daily pay computation
+      daily = (basicSalary * 12 / 261).toFixed(2);
+    } else {
+      // Default to Full-time computation
+      daily = (basicSalary * 12 / 365).toFixed(2);
+    }
+    hourly = (daily / 8).toFixed(2);
+    perMinute = (hourly / 60).toFixed(2);
 
     setDailyRate(daily);
     setHourlyRate(hourly);
@@ -98,6 +105,7 @@ const BasicSalary = () => {
             <span><strong>Name:</strong> {employee.firstName} {employee.middleName} {employee.lastName}</span>
             <span className="employee-info-separator">I</span>
             <span><strong>Department:</strong> {employee.department}</span>
+            {employee.employmentType && <><span className="employee-info-separator">I</span><span><strong>Employment Type:</strong> {employee.employmentType}</span></>}
           </div>
         ) : (
           <div className="employee-info">No employee selected.</div>

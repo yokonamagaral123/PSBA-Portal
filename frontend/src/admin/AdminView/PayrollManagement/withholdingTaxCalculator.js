@@ -14,13 +14,16 @@ const TAX_BRACKETS = [
 export function calculateWithholdingTax({ basicPay, totalDeductions }) {
   const taxableIncome = parseFloat(basicPay || 0) - parseFloat(totalDeductions || 0);
   let withholdingTax = 0;
-
+  // Debug log for troubleshooting
+  // eslint-disable-next-line no-console
+  console.log('TAX DEBUG:', { basicPay, totalDeductions, taxableIncome });
   for (const bracket of TAX_BRACKETS) {
-    if (taxableIncome > bracket.min && taxableIncome <= bracket.max) {
+    if (taxableIncome > parseFloat(bracket.min) && taxableIncome <= parseFloat(bracket.max)) {
       withholdingTax = bracket.baseTax + (taxableIncome - bracket.lowerLimit) * bracket.rate;
+      // eslint-disable-next-line no-console
+      console.log('TAX BRACKET:', bracket, 'WithholdingTax:', withholdingTax);
       break;
     }
   }
-
   return withholdingTax > 0 ? withholdingTax.toFixed(2) : '0.00';
 }
