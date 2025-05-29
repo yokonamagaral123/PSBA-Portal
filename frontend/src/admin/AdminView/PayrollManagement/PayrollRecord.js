@@ -76,6 +76,10 @@ const PayrollRecord = () => {
   const [lateMins, setLateMins] = useState(0);
   const [undertimeMins, setUndertimeMins] = useState(0);
   const [overtimeMins, setOvertimeMins] = useState(0);
+  const [expanded, setExpanded] = useState({ late: false, undertime: false, overtime: false });
+  const [lateDetails, setLateDetails] = useState([]);
+  const [undertimeDetails, setUndertimeDetails] = useState([]);
+  const [overtimeDetails, setOvertimeDetails] = useState([]);
 
   // Helper to convert HH:MM or HH:MM:SS to minutes
   const toMinutes = t => {
@@ -125,6 +129,10 @@ const PayrollRecord = () => {
         const end = new Date(cutoff.end);
         let totalDays = 0;
         let late = 0, undertime = 0, overtime = 0;
+        // For breakdowns:
+        const lateArr = [];
+        const undertimeArr = [];
+        const overtimeArr = [];
         // Group attendance by date
         const grouped = {};
         attendanceArr.forEach(a => {
@@ -148,11 +156,20 @@ const PayrollRecord = () => {
               const inMins = toMinutes(first.time);
               const outMins = toMinutes(last.time);
               // Late
-              if (inMins > schedStart + 5) late += inMins - schedStart;
+              if (inMins > schedStart + 5) {
+                late += inMins - schedStart;
+                lateArr.push({ date: dateStr, scheduled: sched.start, actual: first.time, mins: inMins - schedStart });
+              }
               // Undertime
-              if (outMins < schedEnd) undertime += schedEnd - outMins;
+              if (outMins < schedEnd) {
+                undertime += schedEnd - outMins;
+                undertimeArr.push({ date: dateStr, scheduled: sched.end, actual: last.time, mins: schedEnd - outMins });
+              }
               // Overtime
-              if (outMins > schedEnd + 5) overtime += outMins - schedEnd;
+              if (outMins > schedEnd + 5) {
+                overtime += outMins - schedEnd;
+                overtimeArr.push({ date: dateStr, scheduled: sched.end, actual: last.time, mins: outMins - schedEnd });
+              }
             }
           }
         }
@@ -160,12 +177,18 @@ const PayrollRecord = () => {
         setLateMins(late);
         setUndertimeMins(undertime);
         setOvertimeMins(overtime);
+        setLateDetails(lateArr);
+        setUndertimeDetails(undertimeArr);
+        setOvertimeDetails(overtimeArr);
       } catch {
         setDaysWorked(0);
         setAbsentDays(0);
         setLateMins(0);
         setUndertimeMins(0);
         setOvertimeMins(0);
+        setLateDetails([]);
+        setUndertimeDetails([]);
+        setOvertimeDetails([]);
       }
     };
     fetchAttendance();
@@ -211,17 +234,116 @@ const PayrollRecord = () => {
             <span className="payroll-record-label">Absent Days</span>
             <span className="payroll-record-absent">{absentDays}</span>
           </div>
-          <div className="payroll-record-row">
-            <span className="payroll-record-label">Late</span>
-            <span className="payroll-record-late">{formatHoursMins(lateMins)}</span>
+          <div className="payroll-record-row payroll-record-expandable" style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+            <div style={{ display: 'flex', width: '100%', alignItems: 'center', minHeight: 32 }}>
+              <span className="payroll-record-label" onClick={() => setExpanded(e => ({ ...e, late: !e.late }))} style={{ cursor: lateDetails.length ? 'pointer' : 'default', userSelect: 'none', display: 'flex', alignItems: 'center' }}>
+                Late {lateDetails.length > 0 && <span style={{ fontSize: 14, color: '#1976d2', marginLeft: 4, transition: 'transform 0.2s', transform: expanded.late ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>}
+              </span>
+              <span className="payroll-record-late" style={{ marginLeft: 8 }}>{formatHoursMins(lateMins)}</span>
+            </div>
+            <div
+              className={`payroll-record-dropdown-anim${expanded.late && lateDetails.length > 0 ? ' open' : ''}`}
+              style={{ overflow: 'hidden', transition: 'max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s', maxHeight: expanded.late && lateDetails.length > 0 ? 400 : 0, opacity: expanded.late && lateDetails.length > 0 ? 1 : 0, marginTop: expanded.late && lateDetails.length > 0 ? 8 : 0 }}
+            >
+              {lateDetails.length > 0 && (
+                <div style={{overflowX:'auto'}}>
+                  <table className="payroll-record-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: '#f6f9fc' }}>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Date</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Scheduled In</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Actual In</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Minutes Late</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lateDetails.map((l, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
+                          <td style={{ padding: '6px 12px' }}>{l.date}</td>
+                          <td style={{ padding: '6px 12px' }}>{l.scheduled}</td>
+                          <td style={{ padding: '6px 12px' }}>{l.actual}</td>
+                          <td style={{ padding: '6px 12px', color: '#d32f2f', fontWeight: 600 }}>{l.mins}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="payroll-record-row">
-            <span className="payroll-record-label">Undertime</span>
-            <span className="payroll-record-undertime">{formatHoursMins(undertimeMins)}</span>
+          <div className="payroll-record-row payroll-record-expandable" style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+            <div style={{ display: 'flex', width: '100%', alignItems: 'center', minHeight: 32 }}>
+              <span className="payroll-record-label" onClick={() => setExpanded(e => ({ ...e, undertime: !e.undertime }))} style={{ cursor: undertimeDetails.length ? 'pointer' : 'default', userSelect: 'none', display: 'flex', alignItems: 'center' }}>
+                Undertime {undertimeDetails.length > 0 && <span style={{ fontSize: 14, color: '#1976d2', marginLeft: 4, transition: 'transform 0.2s', transform: expanded.undertime ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>}
+              </span>
+              <span className="payroll-record-undertime" style={{ marginLeft: 8 }}>{formatHoursMins(undertimeMins)}</span>
+            </div>
+            <div
+              className={`payroll-record-dropdown-anim${expanded.undertime && undertimeDetails.length > 0 ? ' open' : ''}`}
+              style={{ overflow: 'hidden', transition: 'max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s', maxHeight: expanded.undertime && undertimeDetails.length > 0 ? 400 : 0, opacity: expanded.undertime && undertimeDetails.length > 0 ? 1 : 0, marginTop: expanded.undertime && undertimeDetails.length > 0 ? 8 : 0 }}
+            >
+              {undertimeDetails.length > 0 && (
+                <div style={{overflowX:'auto'}}>
+                  <table className="payroll-record-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: '#f6f9fc' }}>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Date</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Scheduled Out</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Actual Out</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Minutes Undertime</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {undertimeDetails.map((u, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
+                          <td style={{ padding: '6px 12px' }}>{u.date}</td>
+                          <td style={{ padding: '6px 12px' }}>{u.scheduled}</td>
+                          <td style={{ padding: '6px 12px' }}>{u.actual}</td>
+                          <td style={{ padding: '6px 12px', color: '#f9a825', fontWeight: 600 }}>{u.mins}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="payroll-record-row">
-            <span className="payroll-record-label">Overtime</span>
-            <span className="payroll-record-overtime">{formatHoursMins(overtimeMins)}</span>
+          <div className="payroll-record-row payroll-record-expandable" style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+            <div style={{ display: 'flex', width: '100%', alignItems: 'center', minHeight: 32 }}>
+              <span className="payroll-record-label" onClick={() => setExpanded(e => ({ ...e, overtime: !e.overtime }))} style={{ cursor: overtimeDetails.length ? 'pointer' : 'default', userSelect: 'none', display: 'flex', alignItems: 'center' }}>
+                Overtime {overtimeDetails.length > 0 && <span style={{ fontSize: 14, color: '#1976d2', marginLeft: 4, transition: 'transform 0.2s', transform: expanded.overtime ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>}
+              </span>
+              <span className="payroll-record-overtime" style={{ marginLeft: 8 }}>{formatHoursMins(overtimeMins)}</span>
+            </div>
+            <div
+              className={`payroll-record-dropdown-anim${expanded.overtime && overtimeDetails.length > 0 ? ' open' : ''}`}
+              style={{ overflow: 'hidden', transition: 'max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s', maxHeight: expanded.overtime && overtimeDetails.length > 0 ? 400 : 0, opacity: expanded.overtime && overtimeDetails.length > 0 ? 1 : 0, marginTop: expanded.overtime && overtimeDetails.length > 0 ? 8 : 0 }}
+            >
+              {overtimeDetails.length > 0 && (
+                <div style={{overflowX:'auto'}}>
+                  <table className="payroll-record-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: '#f6f9fc' }}>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Date</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Scheduled Out</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Actual Out</th>
+                        <th style={{ padding: '6px 12px', fontWeight: 600 }}>Minutes Overtime</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {overtimeDetails.map((o, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
+                          <td style={{ padding: '6px 12px' }}>{o.date}</td>
+                          <td style={{ padding: '6px 12px' }}>{o.scheduled}</td>
+                          <td style={{ padding: '6px 12px' }}>{o.actual}</td>
+                          <td style={{ padding: '6px 12px', color: '#388e3c', fontWeight: 600 }}>{o.mins}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

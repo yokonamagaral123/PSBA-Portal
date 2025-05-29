@@ -400,7 +400,9 @@ const AdminDashboard = () => {
         alert(data.message || "Failed to add holiday.");
         return;
       }
-      // After adding, fetch all holidays again to update the calendar
+      // After adding, force a context year change to trigger holiday refresh
+      setYear(y => y + 1); // bump year to force effect
+      setTimeout(() => setYear(calendar.year), 100); // restore to current year after short delay
       refreshTodos();
     } catch (err) {
       console.error("Failed to add holiday:", err);

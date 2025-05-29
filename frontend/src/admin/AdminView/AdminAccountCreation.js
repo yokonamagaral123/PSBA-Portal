@@ -609,8 +609,8 @@ const AdminAccountCreation = () => {
                 onChange={handleChange}
               >
                 <option value="employee">Employee</option>
-                <option value="supervisor">Supervisor</option>
-                <option value="hr">HR</option>
+               
+                <option value="hr">Supervisor</option>
                 <option value="admin">Admin</option>
               </select>
             </div>

@@ -4,14 +4,6 @@
   min-height: 100vh;
 }
 
-.payroll-computation-content {
-  padding: 24px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-  max-width: 800px;
-  margin: 0 auto;
-}
 
 .payroll-computation-form {
   display: grid;
@@ -103,7 +95,7 @@
   border-radius: 14px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   padding: 32px 40px;
-  max-width: 520px;
+  max-width: 20px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -119,35 +111,44 @@
   font-size: 1.08rem;
 }
 
+.payslip-row span:first-child {
+  color: #444;
+}
+
+.payslip-row input[readonly] {
+  background: none;
+  border: none;
+  color: #222;
+  font-weight: 600;
+  width: 100px;
+  text-align: right;
+}
+
 .payslip-section-title {
-  font-weight: bold;
+  font-size: 1.15em;
+  font-weight: 700;
   color: #1976d2;
-  background: #e3f0fc;
+  background: #f0f6ff;
   border-radius: 6px;
-  padding: 8px 12px;
-  margin: 18px 0 6px 0;
-  border-bottom: none;
+  padding: 6px 10px;
+  margin-bottom: 30px;
 }
 
 .payslip-total {
-  font-weight: bold;
-  color: #d32f2f;
-  background: #fff3f3;
-  border-radius: 6px;
-  padding: 8px 12px;
-  margin: 10px 0 0 0;
-  border-bottom: none;
+  background: #fffbe7;
+  color: #bfa100;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 4px 8px;
 }
 
 .payslip-net {
-  font-weight: bold;
-  color: #388e3c;
-  background: #e8f5e9;
-  border-radius: 6px;
-  padding: 12px 12px;
-  margin: 18px 0 0 0;
-  font-size: 1.18rem;
-  border-bottom: none;
+  background: #eaffea;
+  color: #1b7e1b;
+  font-weight: 800;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 1.1em;
 }
 
 .payslip-input {
@@ -172,6 +173,25 @@
   color: #388e3c;
 }
 
+.payslip-sections-container {
+  display: flex;
+  gap: 32px;
+  margin-top: 24px;
+  justify-content: space-between;
+}
+
+.payslip-section {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 24px 20px 20px 20px;
+  min-width: 320px;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 @media (max-width: 900px) {
   .payroll-computation-form {
     grid-template-columns: 1fr;
@@ -188,5 +208,16 @@
     flex-direction: column;
     gap: 8px;
     padding: 10px 8px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .payslip-sections-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .payslip-section {
+    min-width: unset;
+    width: 100%;
   }
 }
