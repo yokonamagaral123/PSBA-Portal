@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
-import { FaUser, FaClock, FaFileAlt, FaMoneyBill, FaQuestionCircle, FaSignOutAlt, FaTachometerAlt, FaBars, FaCalendarAlt } from "react-icons/fa";
+import { FaUser, FaClock, FaFileAlt, FaMoneyBill, FaSignOutAlt, FaTachometerAlt, FaBars, FaCalendarAlt } from "react-icons/fa";
 
 const Sidebar = ({ isMinimized, toggleSidebar }) => {
   const [isRequisitionOpen, setIsRequisitionOpen] = useState(false);
@@ -107,14 +107,6 @@ const Sidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
             </ul>
           )}
-        </li>
-        <li>
-          <Link
-            to="/assistbothelp"
-            className={isActive("/assistbothelp") ? "active" : ""}
-          >
-            <FaQuestionCircle /> {!isMinimized && <span>AssistBot/Help</span>}
-          </Link>
         </li>
         <li>
           <Link to="/" className={isActive("/") ? "active" : ""}>

@@ -1,6 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import * as XLSX from "xlsx";
 import "./AdminViewAttendance.css";
+import { useAdminData } from "../AdminDataContext";
 
 // Helper to convert HH:MM or HH:MM:SS to minutes
 const toMinutes = t => {
@@ -9,14 +10,58 @@ const toMinutes = t => {
   return h * 60 + m + (s ? s / 60 : 0);
 };
 
+const holidayTypeMap = {
+  "New Year's Day": "Regular Holiday",
+  "Maundy Thursday": "Regular Holiday",
+  "Good Friday": "Regular Holiday",
+  "Araw ng Kagitingan": "Regular Holiday",
+  "Labor Day": "Regular Holiday",
+  "Independence Day": "Regular Holiday",
+  "National Heroes Day": "Regular Holiday",
+  "Bonifacio Day": "Regular Holiday",
+  "Christmas Day": "Regular Holiday",
+  "Rizal Day": "Regular Holiday",
+  "Feast of Ramadhan": "Regular Holiday",
+  "Day of Valor": "Regular Holiday",
+  "Last day of the year": "Regular Holiday",
+  "Black Saturday": "Special Non-Working Holiday",
+  "Ninoy Aquino Day": "Special Non-Working Holiday",
+  "All Saints' Day Eve": "Special Non-Working Holiday",
+  "All Saints' Day": "Special Non-Working Holiday",
+  "Christmas Eve": "Special Non-Working Holiday",
+  "New Year's Eve": "Special Non-Working Holiday",
+  "Holy Saturday": "Special Non-Working Holiday",
+  "Chinese New Year": "Special Non-Working Holiday",
+  "Feast of the Immaculate Conception of Mary": "Special Non-Working Holiday",
+  // Add more as needed
+};
+
 const AdminViewAttendance = () => {
   const fileInputRef = useRef();
-  const [attendanceData, setAttendanceData] = useState([]);
-  const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 50;
+  // Fetch holidays for the current year (or visible range)
+  const { holidays } = useAdminData();
+  const [search, setSearch] = useState("");
+  const [loggerData, setLoggerData] = useState([]);
+
+  // Fetch Logger data (adminattendance.js/Logger model)
+  useEffect(() => {
+    const fetchLogger = async () => {
+      try {
+        const res = await fetch("/api/logger/all");
+        const data = await res.json();
+        if (data.success && Array.isArray(data.records)) {
+          setLoggerData(data.records);
+        }
+      } catch (err) {
+        // Optionally handle error
+      }
+    };
+    fetchLogger();
+  }, []);
 
   // Handle file import for both .xlsx and .txt
   const handleImport = async (e) => {
@@ -99,8 +144,30 @@ const AdminViewAttendance = () => {
     }
   };
 
-  // Helper: group by empID+date, assign remarks only to earliest/latest per day
-  const groupAndRemarkAttendance = (attendanceArr, empIdToDetails) => {
+  // Store raw attendance data and enriched data separately
+  const [rawAttendanceData, setRawAttendanceData] = useState([]);
+  const [enrichedAttendanceData, setEnrichedAttendanceData] = useState([]);
+
+  // Memoized getHolidayInfo
+  const getHolidayInfo = useCallback((dateStr) => {
+    if (!dateStr) return null;
+    // Normalize both dates to YYYY-MM-DD for accurate comparison
+    const normalizedDateStr = new Date(dateStr).toISOString().slice(0, 10);
+    const h = holidays.find(h => {
+      const holidayDate = new Date(h.date).toISOString().slice(0, 10);
+      return holidayDate === normalizedDateStr;
+    });
+    if (h) {
+      // Use type from API/custom, or fallback to holidayTypeMap
+      const type = h.type || holidayTypeMap[h.localName || h.name] || '';
+      const localName = h.localName || h.name || '';
+      return { type, localName };
+    }
+    return null;
+  }, [holidays]);
+
+  // Memoized groupAndRemarkAttendance
+  const groupAndRemarkAttendance = useCallback((attendanceArr, empIdToDetails) => {
     // Group attendance by empID + date
     const grouped = {};
     attendanceArr.forEach(a => {
@@ -130,6 +197,8 @@ const AdminViewAttendance = () => {
       const last = sorted[sorted.length - 1];
       const startMins = schedStart ? toMinutes(schedStart) : null;
       const endMins = schedEnd ? toMinutes(schedEnd) : null;
+      // Get holiday info for this date
+      const holidayInfo = getHolidayInfo(a.date);
       // Assign remarks only to earliest and latest
       sorted.forEach((r, idx) => {
         let remarks = '';
@@ -155,7 +224,17 @@ const AdminViewAttendance = () => {
             }
           }
         }
-        // All other times: remarks remains ''
+        // Always add holiday info if applicable, even if no other remarks
+        if (holidayInfo) {
+          const holidayType = holidayInfo.type ? holidayInfo.type : '';
+          const holidayName = holidayInfo.localName ? holidayInfo.localName : '';
+          const holidayLabel = holidayType && holidayName ? `${holidayType}: ${holidayName}` : holidayType || holidayName;
+          if (remarks) {
+            remarks += ` / ${holidayLabel}`;
+          } else {
+            remarks = holidayLabel;
+          }
+        }
         enriched.push({ ...r, name: details.name || '', schedule: scheduleStr, remarks });
       });
     });
@@ -166,22 +245,7 @@ const AdminViewAttendance = () => {
       return toMinutes(a.time) - toMinutes(b.time);
     });
     return enriched;
-  };
-
-  // After importing, fetch names and schedule and merge with attendance data
-  const enrichAttendanceWithNamesAndSchedule = async (attendanceArr) => {
-    const empIDs = Array.from(new Set(attendanceArr.map(a => a.empID)));
-    const employeeDetails = await fetchEmployeeDetails(empIDs);
-    // Map empID to name and schedule
-    const empIdToDetails = {};
-    employeeDetails.forEach(emp => {
-      empIdToDetails[emp.employeeID] = {
-        name: `${emp.firstName} ${emp.lastName}`,
-        schedule: emp.schedule || {}
-      };
-    });
-    return groupAndRemarkAttendance(attendanceArr, empIdToDetails);
-  };
+  }, [getHolidayInfo]);
 
   // Send attendance data to backend and update local state
   const sendAttendanceToServer = async (data) => {
@@ -192,9 +256,7 @@ const AdminViewAttendance = () => {
         body: JSON.stringify({ data })
       });
       if (!response.ok) throw new Error("Failed to import attendance data");
-      // Enrich with names and schedule after import
-      const enriched = await enrichAttendanceWithNamesAndSchedule(data);
-      setAttendanceData(enriched); // Update local state for UI
+      setRawAttendanceData(data); // Store raw data
       alert("Attendance data imported successfully.");
     } catch (err) {
       alert("Error importing attendance data: " + err.message);
@@ -212,8 +274,45 @@ const AdminViewAttendance = () => {
     return true;
   };
 
+  // On mount, fetch attendance data from backend if available
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        const response = await fetch("/api/attendance");
+        if (!response.ok) throw new Error("Failed to fetch attendance data");
+        const data = await response.json();
+        setRawAttendanceData(data);
+      } catch (err) {
+        // Optionally handle error
+      }
+    };
+    fetchAttendance();
+  }, []);
+
+  // When rawAttendanceData or holidays change, re-enrich for display
+  useEffect(() => {
+    const enrich = async () => {
+      if (!rawAttendanceData.length) {
+        setEnrichedAttendanceData([]);
+        return;
+      }
+      const empIDs = Array.from(new Set(rawAttendanceData.map(a => a.empID)));
+      const employeeDetails = await fetchEmployeeDetails(empIDs);
+      const empIdToDetails = {};
+      employeeDetails.forEach(emp => {
+        empIdToDetails[emp.employeeID] = {
+          name: `${emp.firstName} ${emp.lastName}`,
+          schedule: emp.schedule || {}
+        };
+      });
+      const enriched = groupAndRemarkAttendance(rawAttendanceData, empIdToDetails);
+      setEnrichedAttendanceData(enriched);
+    };
+    enrich();
+  }, [rawAttendanceData, holidays, groupAndRemarkAttendance]);
+
   // Filtered attendance data by empID or name and date range
-  const filteredAttendance = attendanceData.filter(entry => {
+  const filteredAttendance = enrichedAttendanceData.filter(entry => {
     const empIdMatch = entry.empID?.toLowerCase().includes(search.toLowerCase());
     const nameMatch = entry.name?.toLowerCase().includes(search.toLowerCase());
     const dateMatch = isWithinDateRange(entry.date);
@@ -255,32 +354,6 @@ const AdminViewAttendance = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [search, startDate, endDate]);
-
-  // On mount, fetch attendance data from backend if available
-  useEffect(() => {
-    const fetchAttendance = async () => {
-      try {
-        const response = await fetch("/api/attendance");
-        if (!response.ok) throw new Error("Failed to fetch attendance data");
-        const data = await response.json();
-        // Enrich with names and schedule for display
-        const empIDs = Array.from(new Set(data.map(a => a.empID)));
-        const employeeDetails = await fetchEmployeeDetails(empIDs);
-        const empIdToDetails = {};
-        employeeDetails.forEach(emp => {
-          empIdToDetails[emp.employeeID] = {
-            name: `${emp.firstName} ${emp.lastName}`,
-            schedule: emp.schedule || {}
-          };
-        });
-        const enriched = groupAndRemarkAttendance(data, empIdToDetails);
-        setAttendanceData(enriched);
-      } catch (err) {
-        // Optionally handle error
-      }
-    };
-    fetchAttendance();
-  }, []);
 
   return (
     <>
@@ -369,23 +442,48 @@ const AdminViewAttendance = () => {
                 <th>Schedule</th>
                 <th>Date</th>
                 <th>Time in/Out</th>
+                <th>Logged Time</th>
                 <th>Remarks</th>
               </tr>
             </thead>
             <tbody>
               {paginatedAttendance.length === 0 ? (
-                <tr><td colSpan={6} className="no-employees">No records found.</td></tr>
+                <tr><td colSpan={7} className="no-employees">No records found.</td></tr>
               ) : (
-                paginatedAttendance.map((entry, idx) => (
-                  <tr key={idx}>
-                    <td>{entry.empID}</td>
-                    <td>{entry.name}</td>
-                    <td>{entry.schedule}</td>
-                    <td>{entry.date}</td>
-                    <td>{entry.time}</td>
-                    <td>{entry.remarks}</td>
-                  </tr>
-                ))
+                paginatedAttendance.map((entry, idx) => {
+                  // Find all entries for this empID and date
+                  const sameDayEntries = paginatedAttendance.filter(e => e.empID === entry.empID && e.date === entry.date);
+                  // Sort by time
+                  const sorted = [...sameDayEntries].sort((a, b) => {
+                    const toSecs = t => {
+                      if (!t) return 0;
+                      const [h, m, s] = t.split(":").map(Number);
+                      return h * 3600 + m * 60 + (s ? s : 0);
+                    };
+                    return toSecs(a.time) - toSecs(b.time);
+                  });
+                  const isFirst = sorted.length > 0 && entry === sorted[0];
+                  const isLast = sorted.length > 1 && entry === sorted[sorted.length - 1];
+                  let loggedTime = "";
+                  // Find the corresponding Logger record for this empID/date
+                  const loggerRecord = loggerData.find(
+                    r => (r.employeeID === entry.empID || r.empID === entry.empID) && r.date === entry.date
+                  );
+                  if (isFirst && loggerRecord && loggerRecord.timeIn) loggedTime = loggerRecord.timeIn;
+                  if (isLast && loggerRecord && loggerRecord.timeOut) loggedTime = loggerRecord.timeOut;
+                  if (isFirst && isLast && loggerRecord && loggerRecord.timeIn) loggedTime = loggerRecord.timeIn;
+                  return (
+                    <tr key={idx}>
+                      <td>{entry.empID}</td>
+                      <td>{entry.name}</td>
+                      <td>{entry.schedule}</td>
+                      <td>{entry.date}</td>
+                      <td>{entry.time}</td>
+                      <td>{loggedTime}</td>
+                      <td>{entry.remarks}</td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
