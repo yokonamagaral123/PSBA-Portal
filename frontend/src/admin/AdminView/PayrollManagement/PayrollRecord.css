@@ -1,7 +1,122 @@
+/* PayrollRecord modernized styles, unique class names */
+.payroll-record-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 32px 40px 32px 40px;
+  margin: 32px auto;
+  max-width: 520px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.payroll-record-header {
+  background: #f3f6fa;
+  color: #1976d2;
+  font-weight: 700;
+  font-size: 20px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+
+.payroll-record-section-title {
+  background: #e3f0fb;
+  color: #1976d2;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin: 18px 0 8px 0;
+}
+
+.payroll-record-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 15px;
+}
+
+.payroll-record-row:last-child {
+  border-bottom: none;
+}
+
+.payroll-record-summary {
+  background: #f8fafd;
+  border-radius: 8px;
+  padding: 18px 16px;
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+
+.payroll-record-total {
+  color: #d32f2f;
+  font-weight: 700;
+  background: #ffeaea;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 16px 0 0 0;
+  text-align: right;
+}
+
+.payroll-record-netpay {
+  color: #388e3c;
+  background: #e8f5e9;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 18px;
+  font-size: 18px;
+  text-align: right;
+}
+
+.payroll-record-label {
+  color: #333;
+}
+
+.payroll-record-value {
+  color: #222;
+  font-weight: 600;
+}
+
+.payroll-record-absent {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.payroll-record-late,
+.payroll-record-undertime {
+  color: #f9a825;
+  font-weight: 600;
+}
+
+.payroll-record-overtime {
+  color: #388e3c;
+  font-weight: 600;
+}
+
 .payroll-management-layout {
   padding: 32px;
 }
 
 .payroll-management-content {
   padding: 24px;
+}
+
+.employee-info-horizontal {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  background: #f3f6fa;
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin-bottom: 18px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.employee-info-separator {
+  color: #bdbdbd;
+  font-weight: 400;
 }
