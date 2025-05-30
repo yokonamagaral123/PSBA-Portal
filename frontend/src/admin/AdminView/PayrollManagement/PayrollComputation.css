@@ -192,6 +192,10 @@
   gap: 8px;
 }
 
+.generate-payslip-btn:hover, .generate-payslip-btn:focus {
+  background: #1251a3;
+}
+
 @media (max-width: 900px) {
   .payroll-computation-form {
     grid-template-columns: 1fr;

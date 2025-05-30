@@ -14,52 +14,52 @@ const Login = ({ setUserRole }) => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-  try {
-    const endpoint = isAdminLogin
-      ? "http://localhost:5000/api/admin/login"
-      : loginType === "hr"
-      ? "http://localhost:5000/api/hr/login"
-      : "http://localhost:5000/api/login";
+    try {
+      const endpoint = isAdminLogin
+        ? "http://localhost:5000/api/admin/login"
+        : loginType === "hr"
+        ? "http://localhost:5000/api/hr/login"
+        : "http://localhost:5000/api/login";
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      // Save token and user role to localStorage
-      const userRole = data.user?.role;
-      const token = data.token;
+      if (response.ok) {
+        // Save token and user role to localStorage
+        const userRole = data.user?.role;
+        const token = data.token;
 
-      if (!userRole || !token) {
-        throw new Error("User role or token is missing in the response");
-      }
+        if (!userRole || !token) {
+          throw new Error("User role or token is missing in the response");
+        }
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("userRole", userRole);
+        localStorage.setItem("token", token);
+        localStorage.setItem("userRole", userRole);
 
-      setUserRole(userRole);
+        setUserRole(userRole);
 
-      // Redirect based on role
-      if (userRole === "admin") {
-        navigate("/admin-dashboard");
-      } else if (userRole === "hr") {
-        navigate("/hr-dashboard");
+        // Redirect based on role
+        if (userRole === "admin") {
+          navigate("/admin-dashboard");
+        } else if (userRole === "hr") {
+          navigate("/hr-dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
-        navigate("/dashboard");
+        setError(data.message || "Invalid email or password!");
       }
-    } else {
-      setError(data.message || "Invalid email or password!");
+    } catch (err) {
+      setError("Error connecting to server");
     }
-  } catch (err) {
-    setError("Error connecting to server");
-  }
-};
+  };
 
   const handleForgotPassword = () => {
     navigate("/forgot-password");
@@ -82,59 +82,61 @@ const Login = ({ setUserRole }) => {
 
         {error && <p className="error-message">{error}</p>}
 
-        <div className="input-container">
-          <label>Email Address</label>
-          <input
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div className="input-container password-group">
-          <label>Password</label>
-          <input
-            type={passwordVisible ? "text" : "password"}
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <span
-            className="eye-icon"
-            onClick={() => setPasswordVisible(!passwordVisible)}
-          >
-            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-          </span>
-        </div>
-
-        {!isAdminLogin && (
+        <form onSubmit={e => { e.preventDefault(); handleLogin(); }}>
           <div className="input-container">
-            <label>Login as:</label>
-            <select
-              className="login-type-selector"
-              value={loginType}
-              onChange={(e) => setLoginType(e.target.value)}
+            <label>Email Address</label>
+            <input
+              type="email"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="input-container password-group">
+            <label>Password</label>
+            <input
+              type={passwordVisible ? "text" : "password"}
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <span
+              className="eye-icon"
+              onClick={() => setPasswordVisible(!passwordVisible)}
             >
-              <option value="employee">Employee</option>
-              <option value="hr">Supervisor</option>
-            </select>
+              {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+            </span>
           </div>
-        )}
 
-        <div className="options">
-          <div className="remember-me">
-            <input type="checkbox" id="remember-me" />
-            <label htmlFor="remember-me">Keep me logged in</label>
+          {!isAdminLogin && (
+            <div className="input-container">
+              <label>Login as:</label>
+              <select
+                className="login-type-selector"
+                value={loginType}
+                onChange={(e) => setLoginType(e.target.value)}
+              >
+                <option value="employee">Employee</option>
+                <option value="hr">Supervisor</option>
+              </select>
+            </div>
+          )}
+
+          <div className="options">
+            <div className="remember-me">
+              <input type="checkbox" id="remember-me" />
+              <label htmlFor="remember-me">Keep me logged in</label>
+            </div>
+            <button type="button" onClick={handleForgotPassword} className="forgot-password">
+              Forgot Password?
+            </button>
           </div>
-          <button onClick={handleForgotPassword} className="forgot-password">
-            Forgot Password?
+
+          <button className="login-button" type="submit">
+            {isAdminLogin ? "Admin Login" : "Login"}
           </button>
-        </div>
-
-        <button className="login-button" onClick={handleLogin}>
-          {isAdminLogin ? "Admin Login" : "Login"}
-        </button>
+        </form>
 
         {!isAdminLogin ? (
           <button

@@ -565,10 +565,90 @@ const PayrollComputation = () => {
           </div>
         </div>
         {employee && (
-          <div className="payslip-employee-info" style={{ width: '100%', maxWidth: 900, marginBottom: 12, background: '#f5f8fa', borderRadius: 8, padding: 8, display: 'flex', gap: 32, fontSize: '1em', color: '#333' }}>
+          <div className="payslip-employee-info" style={{ width: '100%', maxWidth: 900, marginBottom: 12, background: '#f5f8fa', borderRadius: 8, padding: 8, display: 'flex', gap: 32, fontSize: '1em', color: '#333', alignItems: 'center' }}>
             <div><strong>Employee ID:</strong> {employee.employeeID}</div>
             <div><strong>Name:</strong> {employee.firstName} {employee.middleName} {employee.lastName}</div>
-            <div><strong>Department:</strong> {employee.department}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span><strong>Department:</strong> {employee.department}</span>
+              <button
+                className="generate-payslip-btn"
+                style={{
+                  marginLeft: 12,
+                  background: '#1976d2',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 6,
+                  padding: '6px 16px',
+                  fontWeight: 600,
+                  fontSize: '0.98em',
+                  cursor: 'pointer',
+                  boxShadow: '0 1px 4px rgba(25,118,210,0.08)',
+                  transition: 'background 0.2s',
+                }}
+                onClick={async () => {
+                  const payslipData = {
+                    employeeID: employee.employeeID,
+                    name: `${employee.firstName} ${employee.middleName} ${employee.lastName}`,
+                    department: employee.department,
+                    payPeriod,
+                    payrollSummary: {
+                      periodPay: Number(getPeriodBasicPay()),
+                      monthlyBasicPay: Number(form.basicPay),
+                      ratePerDay: dailyRate,
+                      ratePerHour: hourlyRate,
+                      ratePerMinute: perMinuteRate,
+                      late: formatHoursMins(lateMins),
+                      undertime: formatHoursMins(undertimeMins),
+                      absent: `${absentDays} day${absentDays !== 1 ? 's' : ''}`,
+                      lateDeduction: lateBreakdown.deduction,
+                      undertimeDeduction: undertimeBreakdown.deduction,
+                      absentDeduction: absentDeduction,
+                      totalLateUndertimeAbsentDeduction: lateUndertimeDeduction + absentDeduction,
+                    },
+                    additionalPay: {
+                      overtime: overtimeBreakdown.hours > 0 || overtimeBreakdown.minutes > 0 ? `${overtimeBreakdown.hours} hr${overtimeBreakdown.hours !== 1 ? 's' : ''} ${overtimeBreakdown.minutes} min${overtimeBreakdown.minutes !== 1 ? 's' : ''}` : '0 min',
+                      overtimeMultiplier: 1.25,
+                      totalOvertimePay: overtimeBreakdown.pay,
+                    },
+                    employeeDeductions: {
+                      sssEE: Number(form.sssEE),
+                      philHealthEE: payPeriod.match(/16–3[01]|16-3[01]|16–30|16-30/) ? 0 : Number(form.philHealthEE),
+                      pagIbigEE: payPeriod.match(/1–15|1-15/) ? 0 : Number(form.pagIbigEE),
+                      totalEmployeeDeductions: Number(getTotalDeductions(form)),
+                    },
+                    employerContributions: {
+                      sssER: Number(form.sssER),
+                      sssEC: Number(form.sssEC),
+                      philHealthER: payPeriod.match(/16–3[01]|16-3[01]|16–30|16-30/) ? 0 : Number(form.philHealthER),
+                      pagIbigER: payPeriod.match(/1–15|1-15/) ? 0 : Number(form.pagIbigER),
+                    },
+                    taxComputation: {
+                      taxableIncome: Number((getPeriodBasicPay() - parseFloat(getTotalDeductionsWithLateUndertime(form) || 0)).toFixed(2)),
+                      withholdingTax: Number(form.withholdingTax),
+                      totalDeduction: Number(form.withholdingTax ? (parseFloat(getTotalDeductionsWithLateUndertime(form)) + parseFloat(form.withholdingTax)).toFixed(2) : getTotalDeductionsWithLateUndertime(form)),
+                      netPay: Number((getPeriodBasicPay() - parseFloat(getTotalDeductionsWithLateUndertime(form) || 0) - parseFloat(form.withholdingTax || 0) + overtimeBreakdown.pay).toFixed(2)),
+                      isTaxable: (getPeriodBasicPay() - parseFloat(getTotalDeductionsWithLateUndertime(form) || 0)) > 10417,
+                    },
+                    email: employee.email, // Add email to uniquely identify the user
+                  };
+                  try {
+                    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+                    if (!token) {
+                      alert("No user token found. Please log in.");
+                      return;
+                    }
+                    await axios.post('/api/payslip/save', payslipData, {
+                      headers: { Authorization: `Bearer ${token}` }
+                    });
+                    alert('Payslip saved successfully!');
+                  } catch (err) {
+                    alert('Failed to save payslip: ' + (err.response?.data?.message || err.message));
+                  }
+                }}
+              >
+                Generate payslip
+              </button>
+            </div>
           </div>
         )}
         <div className="payslip-sections-container payslip-sections-clean" style={{ display: 'flex', gap: 24, justifyContent: 'right', alignItems: 'flex-start', width: '100%', maxWidth: 1100, margin: '0 auto' }}>
