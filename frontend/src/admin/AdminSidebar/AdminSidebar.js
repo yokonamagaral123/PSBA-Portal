@@ -138,14 +138,6 @@ const AdminSidebar = ({ isMinimized, toggleSidebar }) => {
               </li>
               <li>
                 <Link
-                  to="/admin-view/documents"
-                  className={isActive("/admin-view/documents") ? "active" : ""}
-                >
-                  Documents
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/admin-view/manage-employees"
                   className={isActive("/admin-view/manage-employees") ? "active" : ""}
                 >
