@@ -70,9 +70,11 @@ function getCutoffDates(payPeriod) {
 // Helper to get only admin-approved overtime details for use in PayrollComputation
 // This must be defined at the top level for export
 export const getApprovedOvertimeDetails = (overtimeDetails, approvedOvertime, getMatchingOvertimeRequisition) => {
+  // Only include overtime entries that are admin-approved (approvedOvertime[key] === true)
+  // Key is usually `${date}-${actual}`
   return overtimeDetails.filter(o => {
     const key = o.date + '-' + o.actual;
-    return approvedOvertime[key] && getMatchingOvertimeRequisition(o);
+    return approvedOvertime[key];
   });
 };
 
