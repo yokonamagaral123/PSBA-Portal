@@ -45,6 +45,23 @@ const AdminViewAttendance = () => {
   // Fetch holidays for the current year (or visible range)
   const { holidays } = useAdminData();
   const [search, setSearch] = useState("");
+  const [loggerData, setLoggerData] = useState([]);
+
+  // Fetch Logger data (adminattendance.js/Logger model)
+  useEffect(() => {
+    const fetchLogger = async () => {
+      try {
+        const res = await fetch("/api/logger/all");
+        const data = await res.json();
+        if (data.success && Array.isArray(data.records)) {
+          setLoggerData(data.records);
+        }
+      } catch (err) {
+        // Optionally handle error
+      }
+    };
+    fetchLogger();
+  }, []);
 
   // Handle file import for both .xlsx and .txt
   const handleImport = async (e) => {
@@ -425,23 +442,48 @@ const AdminViewAttendance = () => {
                 <th>Schedule</th>
                 <th>Date</th>
                 <th>Time in/Out</th>
+                <th>Logged Time</th>
                 <th>Remarks</th>
               </tr>
             </thead>
             <tbody>
               {paginatedAttendance.length === 0 ? (
-                <tr><td colSpan={6} className="no-employees">No records found.</td></tr>
+                <tr><td colSpan={7} className="no-employees">No records found.</td></tr>
               ) : (
-                paginatedAttendance.map((entry, idx) => (
-                  <tr key={idx}>
-                    <td>{entry.empID}</td>
-                    <td>{entry.name}</td>
-                    <td>{entry.schedule}</td>
-                    <td>{entry.date}</td>
-                    <td>{entry.time}</td>
-                    <td>{entry.remarks}</td>
-                  </tr>
-                ))
+                paginatedAttendance.map((entry, idx) => {
+                  // Find all entries for this empID and date
+                  const sameDayEntries = paginatedAttendance.filter(e => e.empID === entry.empID && e.date === entry.date);
+                  // Sort by time
+                  const sorted = [...sameDayEntries].sort((a, b) => {
+                    const toSecs = t => {
+                      if (!t) return 0;
+                      const [h, m, s] = t.split(":").map(Number);
+                      return h * 3600 + m * 60 + (s ? s : 0);
+                    };
+                    return toSecs(a.time) - toSecs(b.time);
+                  });
+                  const isFirst = sorted.length > 0 && entry === sorted[0];
+                  const isLast = sorted.length > 1 && entry === sorted[sorted.length - 1];
+                  let loggedTime = "";
+                  // Find the corresponding Logger record for this empID/date
+                  const loggerRecord = loggerData.find(
+                    r => (r.employeeID === entry.empID || r.empID === entry.empID) && r.date === entry.date
+                  );
+                  if (isFirst && loggerRecord && loggerRecord.timeIn) loggedTime = loggerRecord.timeIn;
+                  if (isLast && loggerRecord && loggerRecord.timeOut) loggedTime = loggerRecord.timeOut;
+                  if (isFirst && isLast && loggerRecord && loggerRecord.timeIn) loggedTime = loggerRecord.timeIn;
+                  return (
+                    <tr key={idx}>
+                      <td>{entry.empID}</td>
+                      <td>{entry.name}</td>
+                      <td>{entry.schedule}</td>
+                      <td>{entry.date}</td>
+                      <td>{entry.time}</td>
+                      <td>{loggedTime}</td>
+                      <td>{entry.remarks}</td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

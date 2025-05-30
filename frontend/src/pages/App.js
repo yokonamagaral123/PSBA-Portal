@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "../employee/Sidebar/Sidebar";
 import AdminSidebar from "../admin/AdminSidebar/AdminSidebar";
-import NotificationBell from "../employee/NotifcationBell/NotificationBell";
 import Login from "../employee/Login/Login";
 import Dashboard from "../employee/Dashboard/Dashboard";
 import Profile from "../employee/Profile/Profile";
@@ -93,7 +92,7 @@ const App = () => {
                 <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
                   <Sidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
                   <div className="top-bar">
-                    <NotificationBell />
+                    {/* NotificationBell removed */}
                   </div>
                   <div className="page-content">
                     <Routes>

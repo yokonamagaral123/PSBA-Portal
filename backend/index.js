@@ -27,6 +27,7 @@ const userRoutes = require("./routes/user"); // <-- Add this line
 const holidayRoutes = require('./routes/holiday');
 const salaryRoutes = require('./routes/salary');
 const attendanceRoutes = require('./routes/attendance');
+const loggerRoutes = require('./routes/logger');
 
 app.use("/api", authRoutes);
 app.use("/api/requisitions", requisitionRoutes);
@@ -38,6 +39,7 @@ app.use("/api/user", userRoutes); // <-- Add this line
 app.use('/api/holidays', holidayRoutes);
 app.use('/api/salary', salaryRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/logger', loggerRoutes);
 
 // Test route
 app.get("/test", (req, res) => {
