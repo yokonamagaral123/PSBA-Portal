@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import "./AdminViewRequisition.css";
 
 const AdminViewRequisition = () => {
@@ -6,6 +7,9 @@ const AdminViewRequisition = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editRows, setEditRows] = useState({});
   const [statusFilter, setStatusFilter] = useState("all");
+  const location = useLocation();
+  const requisitionId = location.state?.requisitionId;
+  const rowRefs = useRef({});
 
   useEffect(() => {
     const fetchRequisitions = async () => {
@@ -30,6 +34,12 @@ const AdminViewRequisition = () => {
     };
     fetchRequisitions();
   }, []);
+
+  useEffect(() => {
+    if (requisitionId && rowRefs.current[requisitionId]) {
+      rowRefs.current[requisitionId].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [requisitionId, requisitions]);
 
   const handleEditChange = (id, field, value) => {
     setEditRows(prev => ({
@@ -150,8 +160,9 @@ const AdminViewRequisition = () => {
               filteredRequisitions.map((req, index) => {
                 const edit = editRows[req._id] || {};
                 const isEditing = edit.status !== undefined || edit.remarks !== undefined || edit.leavePaymentStatus !== undefined;
+                const highlight = req._id === requisitionId;
                 return (
-                  <tr key={req._id}>
+                  <tr key={req._id} ref={el => rowRefs.current[req._id] = el} style={highlight ? { background: '#fffbe6', boxShadow: '0 0 0 2px #ffe082' } : {}}>
                     <td>{req.time ? (req.time.length > 5 ? new Date(`1970-01-01T${req.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : req.time) : ''}</td>
                     <td>{req.requestedByEmployeeID || (req.requestedBy && req.requestedBy.employeeID) || ''}</td>
                     <td>{req.requestedByName || (req.requestedBy && req.requestedBy.name) || (typeof req.requestedBy === "string" ? req.requestedBy : "N/A")}</td>

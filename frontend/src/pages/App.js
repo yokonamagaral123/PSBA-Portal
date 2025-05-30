@@ -49,6 +49,7 @@ import BasicSalary from "../admin/AdminView/PayrollManagement/BasicSalary";
 import PayrollComputation from "../admin/AdminView/PayrollManagement/PayrollComputation";
 import PayrollRecord from "../admin/AdminView/PayrollManagement/PayrollRecord";
 import { AdminDataProvider } from "../admin/AdminDataContext";
+import { PayrollDataProvider } from "../admin/AdminView/PayrollManagement/PayrollDataContext";
 
 import OutsideOB from "../admin/AdminRequisition/OfficialBusiness";
 
@@ -117,36 +118,38 @@ const App = () => {
             <Route
               path="/*"
               element={
-                <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
-                  <AdminSidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
-                  <div className="page-content">
-                    <Routes>
-                      <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                      <Route path="/admin-profile" element={<AdminProfile />} />
-                      <Route path="/admin-attendance" element={<AdminAttendance />} />
-                      <Route path="/admin-schedule" element={<AdminSchedule />} />
-                      <Route path="/admin-general-request" element={<AdminGeneralRequest />} />
-                      <Route path="/admin-leave-request" element={<AdminLeaveRequest />} />
-                      <Route path="/admin-requisition-history" element={<AdminRequisitionHistory />} />
-                      <Route path="/admin-payroll" element={<AdminPayroll />} />
-                      <Route path="/admin-view/attendance" element={<AdminViewAttendance />} />
-                      <Route path="/admin-view/scheduler" element={<AdminScheduler />} />
-                      <Route path="/admin-view/payroll" element={<AdminViewPayroll />} />
-                      <Route path="/admin-view/requisition" element={<AdminViewRequisition />} />
-                      <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
-                      <Route path="/admin-view/account-creation" element={<AdminAccountCreation />} />
-                      <Route path="/admin-view/manage-employees" element={<ManageEmployees />} />
-                    
-                      <Route path="/payroll-management/basic-salary" element={<BasicSalary />} />
-                      <Route path="/payroll-management/payroll-computation" element={<PayrollComputation />} />
-                      <Route path="/payroll-management/payroll-record" element={<PayrollRecord />} />
-                     
-                      <Route path="/admin-view/official-business" element={<OutsideOB />} />
-                 
-                      <Route path="*" element={<Navigate to="/admin-dashboard" />} />
-                    </Routes>
+                <PayrollDataProvider>
+                  <div className={`app-container ${isMinimized ? "sidebar-minimized" : ""}`}>
+                    <AdminSidebar isMinimized={isMinimized} toggleSidebar={toggleSidebar} />
+                    <div className="page-content">
+                      <Routes>
+                        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                        <Route path="/admin-profile" element={<AdminProfile />} />
+                        <Route path="/admin-attendance" element={<AdminAttendance />} />
+                        <Route path="/admin-schedule" element={<AdminSchedule />} />
+                        <Route path="/admin-general-request" element={<AdminGeneralRequest />} />
+                        <Route path="/admin-leave-request" element={<AdminLeaveRequest />} />
+                        <Route path="/admin-requisition-history" element={<AdminRequisitionHistory />} />
+                        <Route path="/admin-payroll" element={<AdminPayroll />} />
+                        <Route path="/admin-view/attendance" element={<AdminViewAttendance />} />
+                        <Route path="/admin-view/scheduler" element={<AdminScheduler />} />
+                        <Route path="/admin-view/payroll" element={<AdminViewPayroll />} />
+                        <Route path="/admin-view/requisition" element={<AdminViewRequisition />} />
+                        <Route path="/admin-view/documents" element={<AdminViewDocuments />} />
+                        <Route path="/admin-view/account-creation" element={<AdminAccountCreation />} />
+                        <Route path="/admin-view/manage-employees" element={<ManageEmployees />} />
+                      
+                        <Route path="/payroll-management/basic-salary" element={<BasicSalary />} />
+                        <Route path="/payroll-management/payroll-computation" element={<PayrollComputation />} />
+                        <Route path="/payroll-management/payroll-record" element={<PayrollRecord />} />
+                       
+                        <Route path="/admin-view/official-business" element={<OutsideOB />} />
+                   
+                        <Route path="*" element={<Navigate to="/admin-dashboard" />} />
+                      </Routes>
+                    </div>
                   </div>
-                </div>
+                </PayrollDataProvider>
               }
             />
           )}

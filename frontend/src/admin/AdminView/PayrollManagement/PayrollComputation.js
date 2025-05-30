@@ -5,6 +5,8 @@ import './PayrollSidebar.css';
 import './PayrollComputation.css';
 import axios from 'axios';
 import { calculateWithholdingTax } from './withholdingTaxCalculator';
+import { usePayrollData } from './PayrollDataContext';
+import { getApprovedOvertimeDetails } from './PayrollRecord';
 
 // SSS Table (updated based on the provided image)
 const SSS_TABLE = [
@@ -82,8 +84,9 @@ function getSSSContributions(basicPay) {
 const PayrollComputation = () => {
   const location = useLocation();
   const employee = location.state?.employee;
-
-  const [payPeriod, setPayPeriod] = useState('May 1–15, 2025');
+  // Use payPeriod from navigation state if present, otherwise default
+  const initialPayPeriod = location.state?.payPeriod || 'May 1–15, 2025';
+  const [payPeriod, setPayPeriod] = useState(initialPayPeriod);
   const [basicPay, setBasicPay] = useState('');
   const [daysWorked, setDaysWorked] = useState(0);
   const [dailyRate, setDailyRate] = useState(0);
@@ -92,7 +95,6 @@ const PayrollComputation = () => {
   const [lateMins, setLateMins] = useState(0);
   const [undertimeMins, setUndertimeMins] = useState(0);
   const [lateUndertimeDeduction, setLateUndertimeDeduction] = useState(0);
-  const [overtimeMins, setOvertimeMins] = useState(0);
   const [form, setForm] = useState({
   // Removed basicPay dependency from form
     basicPay: '',
@@ -186,7 +188,7 @@ const PayrollComputation = () => {
         const start = `${year}-${pad(month)}-${pad(startDay)}`;
         const end = `${year}-${pad(month)}-${pad(endDay)}`;
         // 2. Fetch attendance
-        let days = 0, late = 0, undertime = 0, overtime = 0;
+        let days = 0, late = 0, undertime = 0; // remove overtime
         try {
           const attRes = await axios.get(`/api/attendance?empID=${employee.employeeID}&start=${start}&end=${end}`);
           const attendanceArr = attRes.data || [];
@@ -226,17 +228,16 @@ const PayrollComputation = () => {
                 if (inMins > schedStart + 5) late += inMins - schedStart;
                 if (outMins < schedEnd) undertime += schedEnd - outMins;
                 // Use a 5-minute grace period for overtime, to match PayrollRecord.js
-                if (outMins > schedEnd + 5) overtime += outMins - schedEnd;
+                if (outMins > schedEnd + 5) undertime += outMins - schedEnd; // remove this line
               }
             }
           }
         } catch {
-          days = 0; late = 0; undertime = 0; overtime = 0;
+          days = 0; late = 0; undertime = 0;
         }
         setDaysWorked(days);
         setLateMins(late);
         setUndertimeMins(undertime);
-        setOvertimeMins(overtime);
         // 3. Fetch daily, hourly, per minute rate
         try {
           const salRes = await axios.get(`/api/salary/${employee.employeeID}`);
@@ -276,15 +277,109 @@ const PayrollComputation = () => {
     setUndertimeBreakdown(undertime);
   }, [lateMins, undertimeMins, hourlyRate, perMinuteRate]);
 
-  // Overtime breakdown and pay calculation
+  // Use context for shared state
+  const {
+    approvedOvertime,
+    overtimeDetails,
+    getMatchingOvertimeRequisition,
+    setOvertimeDetails, // Add setter if available in context
+    setApprovedOvertime // Add setter if available in context
+  } = usePayrollData();
+
+  // --- NEW STATE FOR REMOTE OVERTIME DATA ---
+  const [remoteOvertimeDetails, setRemoteOvertimeDetails] = useState([]);
+  const [remoteApprovedOvertime, setRemoteApprovedOvertime] = useState({});
+
+  // Filter context overtime data for the current employee and pay period
+  const cutoff = (() => {
+    const match = payPeriod.match(/([A-Za-z]+) (\d+)[–-](\d+), (\d{4})/);
+    if (!match) return null;
+    const [, monthStr, startDay, endDay, year] = match;
+    const month = new Date(`${monthStr} 1, ${year}`).getMonth() + 1;
+    const pad = n => n.toString().padStart(2, '0');
+    return {
+      start: `${year}-${pad(month)}-${pad(startDay)}`,
+      end: `${year}-${pad(month)}-${pad(endDay)}`
+    };
+  })();
+
+  // Filter overtimeDetails for this employee and cutoff
+  const filteredOvertimeDetails = overtimeDetails.filter(o => {
+    if (!employee) return false;
+    if (!o.date) return false;
+    if (!cutoff) return false;
+    // Only include overtime for this employee
+    if (o.employeeID !== employee.employeeID) return false;
+    return o.date >= cutoff.start && o.date <= cutoff.end;
+  });
+
+  // Filter approvedOvertime for this cutoff
+  const filteredApprovedOvertime = Object.fromEntries(
+    Object.entries(approvedOvertime).filter(([key, val]) => {
+      const [date] = key.split('-');
+      if (!cutoff) return false;
+      return date >= cutoff.start && date <= cutoff.end;
+    })
+  );
+
+  // --- FETCH OVERTIME DATA FROM BACKEND IF CONTEXT IS EMPTY OR STALE ---
   useEffect(() => {
-    const hours = Math.floor(overtimeMins / 60);
-    const minutes = Math.round(overtimeMins % 60);
-    // Use the same breakdown as the UI: (hours * hourlyRate + minutes * perMinuteRate) * OVERTIME_MULTIPLIER
+    const fetchOvertimeData = async () => {
+      if (!employee || !cutoff) return;
+      // If context already has data for this employee and cutoff, skip
+      if (filteredOvertimeDetails.length > 0) return;
+      try {
+        // Fetch overtime details for this employee and cutoff
+        const otRes = await axios.get(`/api/overtime?empID=${employee.employeeID}&start=${cutoff.start}&end=${cutoff.end}`);
+        const details = otRes.data || [];
+        setRemoteOvertimeDetails(details);
+        // Optionally update context if setter is available
+        if (typeof setOvertimeDetails === 'function') {
+          setOvertimeDetails(prev => {
+            // Merge new details, avoid duplicates
+            const existing = Array.isArray(prev) ? prev : [];
+            const merged = [...existing.filter(o => o.employeeID !== employee.employeeID || o.date < cutoff.start || o.date > cutoff.end), ...details];
+            return merged;
+          });
+        }
+        // Fetch approved overtime for this employee and cutoff
+        const apprRes = await axios.get(`/api/overtime/approved?empID=${employee.employeeID}&start=${cutoff.start}&end=${cutoff.end}`);
+        const approved = apprRes.data || {};
+        setRemoteApprovedOvertime(approved);
+        if (typeof setApprovedOvertime === 'function') {
+          setApprovedOvertime(prev => ({ ...prev, ...approved }));
+        }
+      } catch (err) {
+        // fallback: clear remote data
+        setRemoteOvertimeDetails([]);
+        setRemoteApprovedOvertime({});
+      }
+    };
+    fetchOvertimeData();
+    // Only run when employee, cutoff, or context changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employee, cutoff, overtimeDetails, approvedOvertime]);
+
+  // Use remote data if context is empty for this employee/cutoff
+  const overtimeDetailsToUse = filteredOvertimeDetails.length > 0 ? filteredOvertimeDetails : remoteOvertimeDetails;
+  const approvedOvertimeToUse = Object.keys(filteredApprovedOvertime).length > 0 ? filteredApprovedOvertime : remoteApprovedOvertime;
+
+  // Use only admin-approved overtime for all calculations (filtered)
+  const approvedOvertimeEntries = getApprovedOvertimeDetails(
+    overtimeDetailsToUse,
+    approvedOvertimeToUse,
+    getMatchingOvertimeRequisition
+  );
+  const approvedOvertimeMins = approvedOvertimeEntries.reduce((sum, o) => sum + o.mins, 0);
+
+  // Use approvedOvertimeMins for all overtime calculations
+  useEffect(() => {
+    const hours = Math.floor(approvedOvertimeMins / 60);
+    const minutes = Math.round(approvedOvertimeMins % 60);
     const basePay = (hours * hourlyRate) + (minutes * perMinuteRate);
     const pay = Number((basePay * OVERTIME_MULTIPLIER).toFixed(2));
     setOvertimeBreakdown({ hours, minutes, pay });
-  }, [overtimeMins, hourlyRate, perMinuteRate]);
+  }, [approvedOvertimeMins, hourlyRate, perMinuteRate]);
 
   // Always use 12500 as period pay per cutoff
   const PERIOD_PAY = 12500;
@@ -435,6 +530,10 @@ const PayrollComputation = () => {
     'Custom...'
   ];
 
+  if (!employee) {
+    return <div style={{ color: 'red', fontWeight: 600, margin: 32 }}>No employee selected. Please select an employee from Payroll Management.</div>;
+  }
+
   return (
     <div className="payroll-computation-layout" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', minHeight: '100vh', background: '#f6f9fc' }}>
       <PayrollSidebar />
@@ -514,7 +613,7 @@ const PayrollComputation = () => {
             <div className="payslip-row payslip-section-title">Tax Computation</div>
             <div className="payslip-row"><span>Taxable Income</span><span><input type="number" name="taxableIncome" value={(getPeriodBasicPay() - parseFloat(getTotalDeductionsWithLateUndertime(form) || 0)).toFixed(2)} readOnly className="payslip-input" /><span style={{ marginLeft: 10, color: (getPeriodBasicPay() - parseFloat(getTotalDeductionsWithLateUndertime(form) || 0)) > 10417 ? 'green' : 'gray', fontWeight: 600 }}>{(getPeriodBasicPay() - parseFloat(getTotalDeductionsWithLateUndertime(form) || 0)) > 10417 ? 'TAXABLE' : 'NOT TAXABLE'}</span></span></div>
             <div className="payslip-row"><span>Withholding Tax</span><span><input type="number" name="withholdingTax" value={form.withholdingTax} readOnly className="payslip-input" /></span></div>
-            <div className="payslip-row payslip-total payslip-total-tax"><span>Total Deduction (Employee Deductions + Tax)</span><span><input type="number" name="totalDeduction" value={form.withholdingTax ? (parseFloat(getTotalDeductionsWithLateUndertime(form)) + parseFloat(form.withholdingTax)).toFixed(2) : getTotalDeductionsWithLateUndertime(form)} readOnly className="payslip-input" /></span></div>
+            <div className="payslip-row payslip-total payslip-total-tax"><span>Total Deduction (Employee Deductions + Tax)</span><span><input type="number" name="totalDeductions" value={form.withholdingTax ? (parseFloat(getTotalDeductionsWithLateUndertime(form)) + parseFloat(form.withholdingTax)).toFixed(2) : getTotalDeductionsWithLateUndertime(form)} readOnly className="payslip-input" /></span></div>
             <div className="payslip-row payslip-net"><span>Net Pay</span><span><input type="number" name="netPay" value={(getPeriodBasicPay() - parseFloat(getTotalDeductionsWithLateUndertime(form) || 0) - parseFloat(form.withholdingTax || 0) + overtimeBreakdown.pay).toFixed(2)} readOnly className="payslip-input payslip-net-input" /></span></div>
           </div>
         </div>
