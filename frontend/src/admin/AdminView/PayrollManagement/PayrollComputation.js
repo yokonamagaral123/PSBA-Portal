@@ -381,8 +381,12 @@ const PayrollComputation = () => {
     setOvertimeBreakdown({ hours, minutes, pay });
   }, [approvedOvertimeMins, hourlyRate, perMinuteRate]);
 
-  // Always use 12500 as period pay per cutoff
-  const PERIOD_PAY = 12500;
+  // Always use half of monthly basic pay as period pay per cutoff
+  const getPeriodBasicPay = React.useCallback(() => {
+    // Use the monthly basic pay from form or state
+    const monthly = parseFloat(form.basicPay || basicPay || 0);
+    return (monthly / 2).toFixed(2);
+  }, [form.basicPay, basicPay]);
 
   // Calculate expected working days for the cutoff
   const getExpectedWorkingDays = React.useCallback(() => {
@@ -408,14 +412,10 @@ const PayrollComputation = () => {
     return count;
   }, [payPeriod, employee]);
 
+  // Calculate expected working days for the cutoff
   const expectedWorkingDays = getExpectedWorkingDays();
   const absentDays = Math.max(0, expectedWorkingDays - daysWorked);
   const absentDeduction = absentDays * dailyRate;
-
-  // Override getPeriodBasicPay to always return 12500
-  const getPeriodBasicPay = React.useCallback(() => {
-    return PERIOD_PAY.toFixed(2);
-  }, []);
 
   // Helper to get total deduction for late/undertime + employee deductions
   const getTotalDeductionsWithLateUndertime = React.useCallback((formArg) => {
