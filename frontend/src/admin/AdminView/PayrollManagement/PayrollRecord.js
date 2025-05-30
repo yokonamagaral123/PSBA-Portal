@@ -93,19 +93,19 @@ const PayrollRecord = () => {
   const [lateDetails, setLateDetails] = useState([]);
   const [undertimeDetails, setUndertimeDetails] = useState([]);
   const [overtimeDetails, setOvertimeDetails] = useState([]);
-  const [approvedOvertime, setApprovedOvertime] = useState({});
   const [requisitionOvertimeMap, setRequisitionOvertimeMap] = useState({});
   const [requisitionPopover, setRequisitionPopover] = useState({});
-  const [approvedOvertimePay, setApprovedOvertimePay] = useState(0);
-  const [pendingApproval, setPendingApproval] = useState({}); // Track pending approvals
   const hourlyRate = 12500 / 80; // e.g., 12,500 per cutoff, 80 hours per cutoff
 
   // Use context for shared state
   const {
-    setApprovedOvertime: setContextApprovedOvertime,
+    approvedOvertime,
     setOvertimeDetails: setContextOvertimeDetails,
     getMatchingOvertimeRequisition: contextGetMatchingOvertimeRequisition,
-    setGetMatchingOvertimeRequisition
+    setGetMatchingOvertimeRequisition,
+    fetchApprovedOvertime,
+    approveOvertime,
+    removeDeclinedOvertime
   } = usePayrollData();
 
   // After defining getMatchingOvertimeRequisition, set it in context
@@ -116,18 +116,20 @@ const PayrollRecord = () => {
   // Sync context with employee and pay period
   useEffect(() => {
     setContextOvertimeDetails(overtimeDetails);
-    setContextApprovedOvertime(approvedOvertime);
-  }, [employee, payPeriod, overtimeDetails, approvedOvertime, setContextOvertimeDetails, setContextApprovedOvertime]);
+  }, [employee, payPeriod, overtimeDetails, setContextOvertimeDetails]);
 
   // When overtimeDetails changes, update context
   useEffect(() => {
     setContextOvertimeDetails(overtimeDetails);
   }, [overtimeDetails, setContextOvertimeDetails]);
 
-  // When approvedOvertime changes, update context (already using setApprovedOvertime)
+  // Fetch approved overtime from backend whenever employee/payPeriod changes
   useEffect(() => {
-    setContextApprovedOvertime(approvedOvertime);
-  }, [approvedOvertime, setContextApprovedOvertime]);
+    if (!employee) return;
+    const cutoff = getCutoffDates(payPeriod);
+    if (!cutoff) return;
+    fetchApprovedOvertime(employee.employeeID, cutoff.start, cutoff.end);
+  }, [employee, payPeriod, fetchApprovedOvertime]);
 
   // Helper to convert HH:MM or HH:MM:SS to minutes
   const toMinutes = t => {
@@ -216,7 +218,13 @@ const PayrollRecord = () => {
               // Overtime
               if (outMins > schedEnd + 5) {
                 overtime += outMins - schedEnd;
-                overtimeArr.push({ date: dateStr, scheduled: sched.end, actual: last.time, mins: outMins - schedEnd });
+                overtimeArr.push({
+                  date: dateStr,
+                  scheduled: sched.end,
+                  actual: last.time,
+                  mins: outMins - schedEnd,
+                  employeeID: employee.employeeID // Ensure employeeID is present
+                });
               }
             }
           }
@@ -288,43 +296,33 @@ const PayrollRecord = () => {
     fetchOvertimeRequisitions();
   }, [employee, payPeriod]);
 
-  // Update tick box to only mark as pending approval
-  const handleTickBox = (checked, key) => {
-    setPendingApproval(prev => ({ ...prev, [key]: checked }));
-  };
-
-  // Approve all checked overtime entries for this cutoff
-  const handleApproveAll = async () => {
-    const updates = Object.entries(pendingApproval)
-      .filter(([key, val]) => val)
-      .map(([key]) => {
-        // Find the overtime entry and its requisition
-        const o = overtimeDetails.find(ot => (ot.date + '-' + ot.actual) === key);
-        const req = o && getMatchingOvertimeRequisition(o);
-        return req ? { reqId: req._id, key } : null;
-      })
-      .filter(Boolean);
-    // Update backend and context
-    for (const { reqId } of updates) {
-      try {
-        const token = localStorage.getItem('token');
-        await axios.put(`/api/requisitions/update/${reqId}`, { status: 'approved' }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } catch (err) {
-        // Optionally show error
-      }
-    }
-    // Update approvedOvertime context for these keys
-    const newApproved = { ...approvedOvertime };
-    updates.forEach(({ key }) => { newApproved[key] = true; });
-    setApprovedOvertime(newApproved);
-    setPendingApproval({}); // reset pending
-    // Also update context
-    setContextApprovedOvertime(newApproved);
-    // Navigate to PayrollComputation
-    navigate('/payroll-management/payroll-computation', { state: { employee, payPeriod } });
-  };
+  // Tick box handler: approve or decline overtime via backend/context
+  // const handleTickBox = async (checked, key, o, req) => {
+  //   if (!employee || !o) return;
+  //   if (checked) {
+  //     // Approve overtime
+  //     await approveOvertime({
+  //       employeeID: employee.employeeID,
+  //       date: o.date,
+  //       minutes: o.mins,
+  //       status: 'approved',
+  //       approvedBy: 'admin', // or get from user context if available
+  //       payPeriod
+  //     });
+  //   } else {
+  //     // Decline overtime (remove approval)
+  //     if (approvedOvertime[key] && approvedOvertime[key]._id) {
+  //       await removeDeclinedOvertime({
+  //         _id: approvedOvertime[key]._id,
+  //         employeeID: employee.employeeID,
+  //         date: o.date
+  //       });
+  //     }
+  //   }
+  //   // Re-fetch approved overtime to update UI
+  //   const cutoff = getCutoffDates(payPeriod);
+  //   if (cutoff) await fetchApprovedOvertime(employee.employeeID, cutoff.start, cutoff.end);
+  // };
 
   // Helper: check if an overtime entry is covered by a requisition
   const getMatchingOvertimeRequisition = useCallback((overtimeEntry) => {
@@ -366,21 +364,6 @@ const PayrollRecord = () => {
       return normalizeTime(r.time) === normalizeTime(overtimeEntry.actual);
     });
   }, [requisitionOvertimeMap]);
-
-  // Recalculate approved overtime minutes and pay when checkboxes or details change
-  useEffect(() => {
-    let totalPay = 0;
-    overtimeDetails.forEach(o => {
-      const key = o.date + '-' + o.actual;
-      if (approvedOvertime[key]) {
-        // Find matching requisition for multiplier
-        const req = getMatchingOvertimeRequisition(o);
-        const multiplier = req && req.multiplier ? parseFloat(req.multiplier) : 1.25;
-        totalPay += (o.mins / 60) * hourlyRate * multiplier;
-      }
-    });
-    setApprovedOvertimePay(totalPay);
-  }, [approvedOvertime, overtimeDetails, getMatchingOvertimeRequisition, hourlyRate]);
 
   return (
     <div className="payroll-management-layout">
@@ -526,12 +509,10 @@ const PayrollRecord = () => {
                         const req = getMatchingOvertimeRequisition(o);
                         // Supervisor approval status
                         const supervisorStatus = req ? req.hrApprovalStatus : null;
-                        // Admin approval status (checkbox)
-                        const adminStatus = req ? req.status : null;
                         // Define key before all usages
                         const key = o.date + '-' + o.actual;
                         // Only enable checkbox if supervisor/HR has approved
-                        const checkboxDisabled = !req || supervisorStatus !== 'approved' || adminStatus === 'approved';
+                        const checkboxDisabled = !req || supervisorStatus !== 'approved';
                         return (
                           <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
                             <td style={{ padding: '6px 12px' }}>{o.date}</td>
@@ -554,9 +535,32 @@ const PayrollRecord = () => {
                               {req ? (
                                 <input
                                   type="checkbox"
-                                  checked={!!(typeof pendingApproval[key] !== 'undefined' ? pendingApproval[key] : (adminStatus === 'approved'))}
+                                  checked={approvedOvertime[key]?.status === 'approved'}
                                   disabled={checkboxDisabled}
-                                  onChange={e => handleTickBox(e.target.checked, key)}
+                                  onChange={async e => {
+                                    // Optimistically update context for instant UI feedback
+                                    if (e.target.checked) {
+                                      await approveOvertime({
+                                        employeeID: employee.employeeID,
+                                        date: o.date,
+                                        minutes: o.mins,
+                                        status: 'approved',
+                                        approvedBy: 'admin',
+                                        payPeriod
+                                      });
+                                    } else {
+                                      if (approvedOvertime[key] && approvedOvertime[key]._id) {
+                                        await removeDeclinedOvertime({
+                                          _id: approvedOvertime[key]._id,
+                                          employeeID: employee.employeeID,
+                                          date: o.date
+                                        });
+                                      }
+                                    }
+                                    // Optionally re-fetch for backend consistency
+                                    const cutoff = getCutoffDates(payPeriod);
+                                    if (cutoff) await fetchApprovedOvertime(employee.employeeID, cutoff.start, cutoff.end);
+                                  }}
                                 />
                               ) : (
                                 <span style={{ color: '#aaa' }}>N/A</span>
@@ -591,16 +595,6 @@ const PayrollRecord = () => {
                       })}
                     </tbody>
                   </table>
-                  {/* Approve button inside the dropdown, below the table */}
-                  <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
-                    <button
-                      onClick={handleApproveAll}
-                      style={{ fontWeight: 600, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 28px', fontSize: 18, cursor: Object.values(pendingApproval).some(Boolean) ? 'pointer' : 'not-allowed', opacity: overtimeDetails.length > 0 ? 1 : 0.5 }}
-                      disabled={!Object.values(pendingApproval).some(Boolean)}
-                    >
-                      Approve
-                    </button>
-                  </div>
                 </div>
               )}
             </div>
@@ -609,7 +603,18 @@ const PayrollRecord = () => {
         {/* Show recalculated overtime pay if any overtime is approved */}
         {Object.values(approvedOvertime).some(Boolean) && (
           <div className="payroll-record-row" style={{ justifyContent: 'flex-end', fontWeight: 600, color: '#388e3c' }}>
-            Overtime Pay (Approved): ₱{approvedOvertimePay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            Overtime Pay (Approved): ₱{(() => {
+              let totalPay = 0;
+              overtimeDetails.forEach(o => {
+                const key = o.date + '-' + o.actual;
+                if (approvedOvertime[key]) {
+                  const req = getMatchingOvertimeRequisition(o);
+                  const multiplier = req && req.multiplier ? parseFloat(req.multiplier) : 1.25;
+                  totalPay += (o.mins / 60) * hourlyRate * multiplier;
+                }
+              });
+              return totalPay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            })()}
           </div>
         )}
       </div>

@@ -28,6 +28,7 @@ const holidayRoutes = require('./routes/holiday');
 const salaryRoutes = require('./routes/salary');
 const attendanceRoutes = require('./routes/attendance');
 const loggerRoutes = require('./routes/logger');
+const overtimeRoutes = require('./routes/overtime');
 
 app.use("/api", authRoutes);
 app.use("/api/requisitions", requisitionRoutes);
@@ -40,6 +41,7 @@ app.use('/api/holidays', holidayRoutes);
 app.use('/api/salary', salaryRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/logger', loggerRoutes);
+app.use('/api/overtime', overtimeRoutes);
 
 // Test route
 app.get("/test", (req, res) => {

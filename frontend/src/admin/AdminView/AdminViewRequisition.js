@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import "./AdminViewRequisition.css";
+import { usePayrollData } from './PayrollManagement/PayrollDataContext';
 
 const AdminViewRequisition = () => {
   const [requisitions, setRequisitions] = useState([]);
@@ -10,6 +11,7 @@ const AdminViewRequisition = () => {
   const location = useLocation();
   const requisitionId = location.state?.requisitionId;
   const rowRefs = useRef({});
+  const { removeDeclinedOvertime } = usePayrollData();
 
   useEffect(() => {
     const fetchRequisitions = async () => {
@@ -83,6 +85,17 @@ const AdminViewRequisition = () => {
             : r
         ));
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, success: "Saved!" } }));
+        // If status was changed to declined, update context
+        if (row.status === 'declined' && typeof removeDeclinedOvertime === 'function') {
+          // Find the requisition object
+          const declinedReq = requisitions.find(r => r._id === id) || {};
+          removeDeclinedOvertime({
+            ...declinedReq,
+            status: 'declined',
+            requestedByEmployeeID: declinedReq.requestedByEmployeeID || declinedReq.employeeID,
+            employeeID: declinedReq.employeeID || declinedReq.requestedByEmployeeID,
+          });
+        }
       } else {
         setEditRows(prev => ({ ...prev, [id]: { ...row, loading: false, error: data.message || "Failed to update" } }));
       }

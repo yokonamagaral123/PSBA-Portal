@@ -282,13 +282,12 @@ const PayrollComputation = () => {
     approvedOvertime,
     overtimeDetails,
     getMatchingOvertimeRequisition,
-    setOvertimeDetails, // Add setter if available in context
-    setApprovedOvertime // Add setter if available in context
+    setOvertimeDetails,
+    fetchApprovedOvertime // <-- use this from context
   } = usePayrollData();
 
   // --- NEW STATE FOR REMOTE OVERTIME DATA ---
   const [remoteOvertimeDetails, setRemoteOvertimeDetails] = useState([]);
-  const [remoteApprovedOvertime, setRemoteApprovedOvertime] = useState({});
 
   // Filter context overtime data for the current employee and pay period
   const cutoff = (() => {
@@ -316,7 +315,8 @@ const PayrollComputation = () => {
   // Filter approvedOvertime for this cutoff
   const filteredApprovedOvertime = Object.fromEntries(
     Object.entries(approvedOvertime).filter(([key, val]) => {
-      const [date] = key.split('-');
+      // Extract the date part (first 10 chars, e.g., '2025-05-01')
+      const date = key.slice(0, 10);
       if (!cutoff) return false;
       return date >= cutoff.start && date <= cutoff.end;
     })
@@ -326,43 +326,37 @@ const PayrollComputation = () => {
   useEffect(() => {
     const fetchOvertimeData = async () => {
       if (!employee || !cutoff) return;
-      // If context already has data for this employee and cutoff, skip
+      // Always fetch approved overtime from backend via context
+      await fetchApprovedOvertime(employee.employeeID, cutoff.start, cutoff.end);
+      // If context already has data for this employee and cutoff, skip fetch for overtimeDetails
       if (filteredOvertimeDetails.length > 0) return;
       try {
         // Fetch overtime details for this employee and cutoff
         const otRes = await axios.get(`/api/overtime?empID=${employee.employeeID}&start=${cutoff.start}&end=${cutoff.end}`);
         const details = otRes.data || [];
         setRemoteOvertimeDetails(details);
-        // Optionally update context if setter is available
         if (typeof setOvertimeDetails === 'function') {
           setOvertimeDetails(prev => {
-            // Merge new details, avoid duplicates
             const existing = Array.isArray(prev) ? prev : [];
             const merged = [...existing.filter(o => o.employeeID !== employee.employeeID || o.date < cutoff.start || o.date > cutoff.end), ...details];
             return merged;
           });
         }
-        // Fetch approved overtime for this employee and cutoff
-        const apprRes = await axios.get(`/api/overtime/approved?empID=${employee.employeeID}&start=${cutoff.start}&end=${cutoff.end}`);
-        const approved = apprRes.data || {};
-        setRemoteApprovedOvertime(approved);
-        if (typeof setApprovedOvertime === 'function') {
-          setApprovedOvertime(prev => ({ ...prev, ...approved }));
-        }
       } catch (err) {
-        // fallback: clear remote data
-        setRemoteOvertimeDetails([]);
-        setRemoteApprovedOvertime({});
+        // If 404, fallback: do not update remoteOvertimeDetails, just rely on context
+        if (err.response && err.response.status === 404) {
+          setRemoteOvertimeDetails([]);
+        }
       }
     };
     fetchOvertimeData();
-    // Only run when employee, cutoff, or context changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employee, cutoff, overtimeDetails, approvedOvertime]);
+  }, [employee, cutoff, overtimeDetails]);
 
   // Use remote data if context is empty for this employee/cutoff
   const overtimeDetailsToUse = filteredOvertimeDetails.length > 0 ? filteredOvertimeDetails : remoteOvertimeDetails;
-  const approvedOvertimeToUse = Object.keys(filteredApprovedOvertime).length > 0 ? filteredApprovedOvertime : remoteApprovedOvertime;
+  // Use only context for approvedOvertime
+  const approvedOvertimeToUse = filteredApprovedOvertime;
 
   // Use only admin-approved overtime for all calculations (filtered)
   const approvedOvertimeEntries = getApprovedOvertimeDetails(
